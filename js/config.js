@@ -358,24 +358,9 @@ function getCurrentWeekDeadline() {
   const now = new Date();
   const today = now.toISOString().split('T')[0];
   
-  console.log('getCurrentWeekDeadline - today:', today);
-  console.log('getCurrentWeekDeadline - DEADLINES:', DEADLINES);
-  
-  const found = DEADLINES.find(deadline => {
-    const inRange = today >= deadline.startDate && today <= deadline.endDate;
-    console.log(`  Checking week ${deadline.weekNumber}: ${deadline.startDate} to ${deadline.endDate} - inRange: ${inRange}`);
-    return inRange;
-  });
-  
-  console.log('getCurrentWeekDeadline - result:', found);
-  
-  // TEMPORARY: If no current week found, return the first deadline for testing
-  if (!found && DEADLINES.length > 0) {
-    console.log('⚠️ No current week found, using first deadline for testing');
-    return DEADLINES[0];
-  }
-  
-  return found || null;
+  return DEADLINES.find(deadline => {
+    return today >= deadline.startDate && today <= deadline.endDate;
+  }) || null;
 }
 
 function getDeadlineForLesson(lessonId) {
