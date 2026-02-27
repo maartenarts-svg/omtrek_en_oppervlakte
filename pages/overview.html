@@ -40,10 +40,6 @@
                 <div class="stat-label">Totaal XP</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value" id="currentStreak">0</div>
-                <div class="stat-label">Dagen achter elkaar</div>
-            </div>
-            <div class="stat-item">
                 <div class="stat-value" id="badgeCount">0</div>
                 <div class="stat-label">Badges</div>
             </div>
@@ -157,9 +153,6 @@
             document.getElementById('completedLessons').textContent = completed;
             document.getElementById('totalXP').textContent = userData.totalXP || 0;
             document.getElementById('totalXPStat').textContent = userData.totalXP || 0;
-            
-            // Calculate streak (simplified - zou je verder kunnen uitwerken)
-            document.getElementById('currentStreak').textContent = '0';
             
             // Badge count
             document.getElementById('badgeCount').textContent = (userData.badges || []).length;
@@ -280,26 +273,37 @@
         }
 
         function renderDeadlineMarker(deadline, isReached) {
+            const currentWeek = getCurrentWeekDeadline();
+            
+            // Only show deadline if it's the current week
+            if (!currentWeek || deadline.weekNumber !== currentWeek.weekNumber) {
+                return '';
+            }
+            
             const daysLeft = getDaysUntilDeadline(deadline);
             const hoursLeft = getHoursUntilDeadline(deadline);
             
             let countdownText = '';
             if (daysLeft > 0) {
-                countdownText = `nog ${daysLeft}d ${hoursLeft % 24}u`;
+                countdownText = `Nog ${daysLeft}d ${hoursLeft % 24}u`;
             } else if (hoursLeft > 0) {
-                countdownText = `nog ${hoursLeft}u`;
+                countdownText = `Nog ${hoursLeft}u`;
             } else {
                 countdownText = 'verstreken';
             }
             
             const markerClass = isReached ? 'reached' : (daysLeft <= 2 ? 'active' : '');
+            const finishLineClass = isReached ? 'reached' : (daysLeft <= 2 ? 'active' : '');
             
             return `
-                <div class="deadline-marker ${markerClass}">
-                    <span class="deadline-icon">📅</span>
-                    Week ${deadline.weekNumber}
-                    ${!isReached ? `<span class="deadline-countdown">${countdownText}</span>` : 
-                        '<span class="deadline-countdown">✓ behaald</span>'}
+                <div class="deadline-marker">
+                    <div class="deadline-finish-line ${finishLineClass}"></div>
+                    <div class="deadline-label ${markerClass}">
+                        <span class="deadline-icon">🏁</span>
+                        Finish deze week
+                        ${!isReached ? `<span class="deadline-countdown">${countdownText}</span>` : 
+                            '<span class="deadline-countdown">✓ gehaald</span>'}
+                    </div>
                 </div>
             `;
         }
