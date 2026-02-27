@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theorie - Wiskunde Leerplatform</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="overview.html" class="logo">📐 Wiskunde</a>
+            <nav class="nav-menu">
+                <a href="overview.html">Lessen</a>
+                <a href="theory.html" class="active">Theorie</a>
+                <a href="drill.html">Oefenen</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="xp-display">
+                <span class="xp-icon">⭐</span>
+                <span class="xp-amount" id="totalXP">0</span>
+                <span>XP</span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name">Leerling</span>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="logout()">Uitloggen</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-section">
+            <h1>📚 Theorie</h1>
+            <p class="text-muted">Hier vind je alle theorie die je tot nu toe gezien hebt.</p>
+            
+            <!-- Table of Contents -->
+            <div id="theoryTOC" class="theory-toc">
+                <!-- Wordt via JS gegenereerd op basis van progressie -->
+            </div>
+            
+            <hr style="margin: 2rem 0;">
+            
+            <!-- Theory Content -->
+            <div id="theoryContent">
+                <!-- THEORIE LES 1 -->
+                <section class="theory-section" data-section="theorie-1">
+                    <h2>Les 1: Wat is omtrek en oppervlakte?</h2>
+                    
+                    <h3>Omtrek</h3>
+                    <p>
+                        De <strong>omtrek</strong> van een figuur is de lengte van de rand rondom die figuur.
+                        Je berekent de omtrek door alle zijden bij elkaar op te tellen.
+                    </p>
+                    <p>
+                        <strong>Voorbeeld:</strong> Een rechthoek met lengte 5 cm en breedte 3 cm heeft een omtrek van:
+                        <br>Omtrek = 5 + 3 + 5 + 3 = 16 cm
+                    </p>
+                    
+                    <h3>Oppervlakte</h3>
+                    <p>
+                        De <strong>oppervlakte</strong> van een figuur is de grootte van het vlak dat de figuur beslaat.
+                        Je meet oppervlakte in vierkante eenheden (cm², m², enz.)
+                    </p>
+                    <p>
+                        <strong>Voorbeeld:</strong> Een rechthoek met lengte 5 cm en breedte 3 cm heeft een oppervlakte van:
+                        <br>Oppervlakte = 5 × 3 = 15 cm²
+                    </p>
+                    
+                    <h3>Wanneer gebruik je wat?</h3>
+                    <ul>
+                        <li><strong>Omtrek:</strong> Als je een hek rond een tuin plaatst, een kader om een foto maakt, of een rand om iets legt</li>
+                        <li><strong>Oppervlakte:</strong> Als je tegels legt op een vloer, een muur schildert, of gras zaait in een tuin</li>
+                    </ul>
+                </section>
+
+                <!-- THEORIE LES 2 -->
+                <section class="theory-section hidden" data-section="theorie-2">
+                    <h2>Les 2: Eenheden bij omtrek</h2>
+                    
+                    <h3>Lengte-eenheden</h3>
+                    <p>We gebruiken verschillende eenheden om lengte te meten:</p>
+                    <table class="theory-table">
+                        <tr>
+                            <th>Eenheid</th>
+                            <th>Afkorting</th>
+                            <th>Omrekening naar meter</th>
+                        </tr>
+                        <tr>
+                            <td>kilometer</td>
+                            <td>km</td>
+                            <td>1 km = 1000 m</td>
+                        </tr>
+                        <tr>
+                            <td>hectometer</td>
+                            <td>hm</td>
+                            <td>1 hm = 100 m</td>
+                        </tr>
+                        <tr>
+                            <td>decameter</td>
+                            <td>dam</td>
+                            <td>1 dam = 10 m</td>
+                        </tr>
+                        <tr>
+                            <td>meter</td>
+                            <td>m</td>
+                            <td>basiseenheid</td>
+                        </tr>
+                        <tr>
+                            <td>decimeter</td>
+                            <td>dm</td>
+                            <td>1 m = 10 dm</td>
+                        </tr>
+                        <tr>
+                            <td>centimeter</td>
+                            <td>cm</td>
+                            <td>1 m = 100 cm</td>
+                        </tr>
+                        <tr>
+                            <td>millimeter</td>
+                            <td>mm</td>
+                            <td>1 m = 1000 mm</td>
+                        </tr>
+                    </table>
+                    
+                    <h3>Eenheden omzetten</h3>
+                    <p>
+                        Om van een grote eenheid naar een kleine eenheid om te zetten, <strong>vermenigvuldig</strong> je.<br>
+                        Om van een kleine eenheid naar een grote eenheid om te zetten, <strong>deel</strong> je.
+                    </p>
+                    <p><strong>Voorbeelden:</strong></p>
+                    <ul>
+                        <li>5 m = 500 cm (× 100)</li>
+                        <li>3000 mm = 3 m (÷ 1000)</li>
+                        <li>2,5 km = 2500 m (× 1000)</li>
+                    </ul>
+                </section>
+
+                <!-- THEORIE LES 3 -->
+                <section class="theory-section hidden" data-section="theorie-3">
+                    <h2>Les 3: Speciale omtrekken</h2>
+                    
+                    <h3>Formules voor omtrek</h3>
+                    
+                    <h4>Rechthoek</h4>
+                    <p><strong>Omtrek = 2 × lengte + 2 × breedte</strong></p>
+                    <p>Of: <strong>O = 2l + 2b</strong></p>
+                    
+                    <h4>Vierkant</h4>
+                    <p><strong>Omtrek = 4 × zijde</strong></p>
+                    <p>Of: <strong>O = 4z</strong></p>
+                    
+                    <h4>Ruit</h4>
+                    <p>Een ruit heeft 4 gelijke zijden, dus:</p>
+                    <p><strong>Omtrek = 4 × zijde</strong></p>
+                    <p>Of: <strong>O = 4z</strong></p>
+                    
+                    <h4>Cirkel</h4>
+                    <p><strong>Omtrek = 2 × π × straal</strong></p>
+                    <p>Of: <strong>O = 2πr</strong></p>
+                    <p>Ook: <strong>O = π × diameter</strong> (want diameter = 2 × straal)</p>
+                    <p><em>π (pi) ≈ 3,14</em></p>
+                </section>
+
+                <!-- Meer theorie-secties worden hier toegevoegd naarmate lessen worden gemaakt -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    
+    <script>
+        let userData = null;
+        let currentUser = null;
+
+        async function initTheory() {
+            currentUser = checkAuth();
+            if (!currentUser) return;
+
+            // Set user avatar
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+
+            // Load user data
+            userData = await DB.getUser(currentUser.email);
+            if (!userData) return;
+
+            // Update XP
+            document.getElementById('totalXP').textContent = userData.totalXP || 0;
+
+            // Show theory based on progress
+            showRelevantTheory();
+            generateTOC();
+        }
+
+        function showRelevantTheory() {
+            // Get all lessons the student has started
+            const progress = userData.progress || {};
+            const accessedLessons = Object.keys(progress);
+
+            // Show theory for all accessed lessons
+            accessedLessons.forEach(lessonId => {
+                const lesson = getLessonById(lessonId);
+                if (!lesson || !lesson.theorySection) return;
+
+                const section = document.querySelector(`[data-section="${lesson.theorySection}"]`);
+                if (section) {
+                    section.classList.remove('hidden');
+                }
+            });
+        }
+
+        function generateTOC() {
+            const toc = document.getElementById('theoryTOC');
+            const visibleSections = document.querySelectorAll('.theory-section:not(.hidden)');
+
+            if (visibleSections.length === 0) {
+                toc.innerHTML = '<p class="text-muted">Je hebt nog geen theorie gezien. Start een les om theorie te ontgrendelen!</p>';
+                return;
+            }
+
+            let html = '<h3>Inhoud</h3><ul class="toc-list">';
+            visibleSections.forEach(section => {
+                const title = section.querySelector('h2').textContent;
+                const sectionId = section.getAttribute('data-section');
+                html += `<li><a href="#${sectionId}" onclick="scrollToSection('${sectionId}')">${title}</a></li>`;
+            });
+            html += '</ul>';
+
+            toc.innerHTML = html;
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.querySelector(`[data-section="${sectionId}"]`);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheory);
+    </script>
+
+    <style>
+        .theory-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--color-gray);
+        }
+
+        .theory-section:last-child {
+            border-bottom: none;
+        }
+
+        .theory-section h2 {
+            color: var(--color-primary);
+            margin-top: 2rem;
+        }
+
+        .theory-section h3 {
+            color: var(--color-dark);
+            margin-top: 1.5rem;
+        }
+
+        .theory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .theory-table th,
+        .theory-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid var(--color-gray);
+        }
+
+        .theory-table th {
+            background: var(--color-light);
+            font-weight: 600;
+        }
+
+        .theory-toc {
+            background: var(--color-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-list a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html>
