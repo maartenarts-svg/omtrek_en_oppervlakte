@@ -13,12 +13,12 @@
 
 // FIREBASE CONFIG - VERVANG DIT MET JOUW EIGEN CONFIG
 const firebaseConfig = {
-  apiKey: "JOUW_API_KEY",
-  authDomain: "JOUW_PROJECT.firebaseapp.com",
-  projectId: "JOUW_PROJECT_ID",
-  storageBucket: "JOUW_PROJECT.appspot.com",
-  messagingSenderId: "JOUW_SENDER_ID",
-  appId: "JOUW_APP_ID"
+  apiKey: "AIzaSyBzhjpGSnJiQ8Dz995pvVBT9EqnICqZ69Y",
+  authDomain: "omtrek-en-oppervlakte.firebaseapp.com",
+  projectId: "omtrek-en-oppervlakte",
+  storageBucket: "omtrek-en-oppervlakte.firebasestorage.app",
+  messagingSenderId: "295491045961",
+  appId: "1:295491045961:web:3469783256e6b121d48d98"
 };
 
 // Initialize Firebase
