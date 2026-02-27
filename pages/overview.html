@@ -248,37 +248,37 @@
                     // Alternate left and right: even index goes right, odd goes left
                     const goRight = index % 2 === 0;
                     
-                    // SVG Path explanation:
-                    // M = Move to (start point)
-                    // L = Line to
-                    // C = Cubic Bezier curve (smooth curve with 2 control points)
-                    
-                    // Start at center (200, 0)
-                    // Go down a bit, curve sideways, go horizontal, curve back, go down to next circle
+                    // Simple path like the drawing:
+                    // 1. Straight down from circle
+                    // 2. Smooth curve sideways (right or left)
+                    // 3. Smooth curve back to center
+                    // 4. Straight down to next circle
                     
                     let pathD;
                     if (goRight) {
-                        // Path goes right
+                        // Path goes right then back
                         pathD = `
                             M 200 0
-                            L 200 40
-                            C 200 60, 220 70, 250 70
-                            L 300 70
-                            C 330 70, 350 80, 350 110
-                            L 350 140
-                            C 350 160, 330 170, 200 170
+                            L 200 50
+                            Q 200 70, 220 80
+                            L 300 80
+                            Q 320 80, 320 100
+                            Q 320 120, 300 130
+                            L 220 130
+                            Q 200 140, 200 160
                             L 200 200
                         `;
                     } else {
-                        // Path goes left
+                        // Path goes left then back
                         pathD = `
                             M 200 0
-                            L 200 40
-                            C 200 60, 180 70, 150 70
-                            L 100 70
-                            C 70 70, 50 80, 50 110
-                            L 50 140
-                            C 50 160, 70 170, 200 170
+                            L 200 50
+                            Q 200 70, 180 80
+                            L 100 80
+                            Q 80 80, 80 100
+                            Q 80 120, 100 130
+                            L 180 130
+                            Q 200 140, 200 160
                             L 200 200
                         `;
                     }
