@@ -261,32 +261,32 @@ const LESSONS_CONFIG = {
 const DEADLINES = [
   { 
     weekNumber: 1, 
-    startDate: '2025-03-03',  // maandag
-    endDate: '2025-03-09',    // zondag 23:59
+    startDate: '2025-02-23',  // maandag
+    endDate: '2025-03-02',    // zondag 23:59
     targetLesson: 'les-2' 
   },
   { 
     weekNumber: 2, 
-    startDate: '2025-03-10', 
-    endDate: '2025-03-16', 
+    startDate: '2025-03-03', 
+    endDate: '2025-03-09', 
     targetLesson: 'les-4' 
   },
   { 
     weekNumber: 3, 
-    startDate: '2025-03-17', 
-    endDate: '2025-03-23', 
+    startDate: '2025-03-10', 
+    endDate: '2025-03-16', 
     targetLesson: 'les-6' 
   },
   { 
     weekNumber: 4, 
-    startDate: '2025-03-24', 
-    endDate: '2025-03-30', 
+    startDate: '2025-03-17', 
+    endDate: '2025-03-23', 
     targetLesson: 'les-8' 
   },
   { 
     weekNumber: 5, 
-    startDate: '2025-03-31', 
-    endDate: '2025-04-06', 
+    startDate: '2025-03-24', 
+    endDate: '2025-03-30', 
     targetLesson: 'les-10' 
   }
 ];
