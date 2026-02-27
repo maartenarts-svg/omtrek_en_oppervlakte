@@ -258,23 +258,12 @@
                     const endX = centerX;
                     const endY = 200 - radius; // Top of next circle
                     
-                    // Horizontal offset for the curve
-                    const horizontalOffset = goRight ? 120 : -120;
-                    const curveX = centerX + horizontalOffset;
+                    // Control point for the curve - this creates the S-shape
+                    const controlX = goRight ? (centerX + 150) : (centerX - 150);
+                    const controlY = (startY + endY) / 2;
                     
-                    // Middle Y position
-                    const midY = (startY + endY) / 2;
-                    
-                    // Build the path using Q (quadratic Bezier)
-                    // First curve: from start, curve to horizontal section
-                    // Second curve: from horizontal section, curve to end
-                    const pathD = `
-                        M ${startX} ${startY}
-                        Q ${startX} ${midY}, ${(startX + curveX) / 2} ${midY}
-                        T ${curveX} ${midY}
-                        Q ${curveX} ${midY}, ${(curveX + endX) / 2} ${midY}
-                        T ${endX} ${endY}
-                    `;
+                    // Simple smooth S-curve using one quadratic bezier
+                    const pathD = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
                     
                     connector.innerHTML = `
                         <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
