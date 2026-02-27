@@ -187,23 +187,29 @@
             pathContainer.innerHTML = '';
             
             const allLessons = getAllLessons();
+            const currentWeek = getCurrentWeekDeadline();
+            
+            console.log('Current week deadline:', currentWeek);
+            console.log('Today:', new Date().toISOString().split('T')[0]);
             
             allLessons.forEach((lesson, index) => {
                 const lessonProgress = userData.progress?.[lesson.id] || {};
                 const parts = lesson.parts || [];
-                const completedParts = parts.filter(p => 
-                    lessonProgress.parts?.[p.id]?.completed
-                ).length;
                 
                 const isCompleted = lessonProgress.completed || false;
                 const isCurrent = userData.currentLesson === lesson.id;
                 const isLocked = !isCompleted && !isCurrent;
                 
-                // Check for deadline
+                // Check for deadline AFTER this lesson
                 const deadline = getDeadlineForLesson(lesson.id);
-                const currentWeek = getCurrentWeekDeadline();
                 const showDeadlineAfter = deadline && currentWeek && 
                     deadline.weekNumber === currentWeek.weekNumber;
+                
+                console.log(`Lesson ${lesson.id}:`, { 
+                    hasDeadline: !!deadline, 
+                    deadline, 
+                    showDeadlineAfter 
+                });
                 
                 // Create lesson node
                 const nodeEl = document.createElement('div');
@@ -211,7 +217,7 @@
                 nodeEl.setAttribute('data-lesson-id', lesson.id);
                 
                 // Lesson circle with SVG progress
-                const circleHTML = `
+                nodeEl.innerHTML = `
                     <div class="lesson-circle ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''}"
                          onclick="${!isLocked ? `openLesson('${lesson.id}')` : ''}">
                         
@@ -228,21 +234,25 @@
                     </div>
                 `;
                 
-                nodeEl.innerHTML = circleHTML;
                 pathContainer.appendChild(nodeEl);
                 
                 // Add curved connector to next lesson (if not last)
                 if (index < allLessons.length - 1) {
                     const connector = document.createElement('div');
-                    connector.className = 'lesson-connector';
+                    connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     
-                    // Alternate left and right curves
-                    const isOdd = index % 2 === 0;
-                    const curveDirection = isOdd ? 50 : -50;
+                    // Alternate left and right: even index goes right, odd goes left
+                    const isEven = index % 2 === 0;
+                    
+                    // Path that goes: down, curve sideways, curve back, down to next
+                    // M startX startY C controlX1 controlY1, controlX2 controlY2, endX endY
+                    const pathD = isEven 
+                        ? 'M 150 0 C 150 40, 220 60, 220 90 C 220 110, 150 130, 150 140'  // Right curve
+                        : 'M 150 0 C 150 40, 80 60, 80 90 C 80 110, 150 130, 150 140';    // Left curve
                     
                     connector.innerHTML = `
-                        <svg viewBox="0 0 200 80" preserveAspectRatio="none">
-                            <path d="M 100 0 Q ${100 + curveDirection} 40, 100 80" />
+                        <svg viewBox="0 0 300 140" preserveAspectRatio="xMidYMid meet">
+                            <path d="${pathD}" />
                         </svg>
                     `;
                     
@@ -251,6 +261,7 @@
                 
                 // Add deadline marker AFTER this lesson if applicable
                 if (showDeadlineAfter) {
+                    console.log('ADDING DEADLINE MARKER after lesson', lesson.id);
                     const deadlineEl = document.createElement('div');
                     deadlineEl.className = 'deadline-marker-wrapper';
                     deadlineEl.innerHTML = renderDeadlineMarker(deadline, isCompleted);
