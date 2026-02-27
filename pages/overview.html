@@ -188,7 +188,7 @@
             
             const allLessons = getAllLessons();
             
-            allLessons.forEach(lesson => {
+            allLessons.forEach((lesson, index) => {
                 const lessonProgress = userData.progress?.[lesson.id] || {};
                 const parts = lesson.parts || [];
                 const completedParts = parts.filter(p => 
@@ -201,6 +201,9 @@
                 
                 // Check for deadline
                 const deadline = getDeadlineForLesson(lesson.id);
+                const currentWeek = getCurrentWeekDeadline();
+                const showDeadlineAfter = deadline && currentWeek && 
+                    deadline.weekNumber === currentWeek.weekNumber;
                 
                 // Create lesson node
                 const nodeEl = document.createElement('div');
@@ -220,18 +223,39 @@
                     
                     <div class="lesson-info">
                         <div class="lesson-title">${lesson.title}</div>
-                        <div class="lesson-progress-text">
-                            ${completedParts}/${parts.length} onderdelen
-                        </div>
                         ${calculateLessonXP(lessonProgress, parts) > 0 ? 
                             `<div class="lesson-xp">⭐ ${calculateLessonXP(lessonProgress, parts)} XP</div>` : ''}
                     </div>
-                    
-                    ${deadline ? renderDeadlineMarker(deadline, isCompleted) : ''}
                 `;
                 
                 nodeEl.innerHTML = circleHTML;
                 pathContainer.appendChild(nodeEl);
+                
+                // Add curved connector to next lesson (if not last)
+                if (index < allLessons.length - 1) {
+                    const connector = document.createElement('div');
+                    connector.className = 'lesson-connector';
+                    
+                    // Alternate left and right curves
+                    const isOdd = index % 2 === 0;
+                    const curveDirection = isOdd ? 50 : -50;
+                    
+                    connector.innerHTML = `
+                        <svg viewBox="0 0 200 80" preserveAspectRatio="none">
+                            <path d="M 100 0 Q ${100 + curveDirection} 40, 100 80" />
+                        </svg>
+                    `;
+                    
+                    nodeEl.appendChild(connector);
+                }
+                
+                // Add deadline marker AFTER this lesson if applicable
+                if (showDeadlineAfter) {
+                    const deadlineEl = document.createElement('div');
+                    deadlineEl.className = 'deadline-marker-wrapper';
+                    deadlineEl.innerHTML = renderDeadlineMarker(deadline, isCompleted);
+                    nodeEl.appendChild(deadlineEl);
+                }
             });
         }
 
@@ -275,6 +299,12 @@
         function renderDeadlineMarker(deadline, isReached) {
             const currentWeek = getCurrentWeekDeadline();
             
+            console.log('Checking deadline:', {
+                deadline: deadline,
+                currentWeek: currentWeek,
+                isCurrentWeek: currentWeek && deadline.weekNumber === currentWeek.weekNumber
+            });
+            
             // Only show deadline if it's the current week
             if (!currentWeek || deadline.weekNumber !== currentWeek.weekNumber) {
                 return '';
@@ -294,6 +324,8 @@
             
             const markerClass = isReached ? 'reached' : (daysLeft <= 2 ? 'active' : '');
             const finishLineClass = isReached ? 'reached' : (daysLeft <= 2 ? 'active' : '');
+            
+            console.log('Rendering deadline marker:', { daysLeft, hoursLeft, markerClass });
             
             return `
                 <div class="deadline-marker">
