@@ -202,14 +202,18 @@
                 
                 // Check for deadline AFTER this lesson
                 const deadline = getDeadlineForLesson(lesson.id);
+                
+                console.log(`Checking lesson ${lesson.id}:`);
+                console.log('  - All deadlines:', DEADLINES);
+                console.log('  - Looking for targetLesson:', lesson.id);
+                console.log('  - Found deadline:', deadline);
+                
                 const showDeadlineAfter = deadline && currentWeek && 
                     deadline.weekNumber === currentWeek.weekNumber;
                 
-                console.log(`Lesson ${lesson.id}:`, { 
-                    hasDeadline: !!deadline, 
-                    deadline, 
-                    showDeadlineAfter 
-                });
+                console.log(`  - showDeadlineAfter:`, showDeadlineAfter);
+                console.log(`  - currentWeek:`, currentWeek);
+                console.log('---');
                 
                 // Create lesson node
                 const nodeEl = document.createElement('div');
