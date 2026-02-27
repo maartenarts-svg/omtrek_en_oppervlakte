@@ -252,18 +252,36 @@
                     // Alternate left and right
                     const goRight = index % 2 === 0;
                     
-                    // Start and end points
-                    const startX = centerX;
-                    const startY = radius; // Bottom of current circle
-                    const endX = centerX;
-                    const endY = 200 - radius; // Top of next circle
+                    // Start: bottom of current circle (x1, y1-r)
+                    const x1 = centerX;
+                    const y1 = 0; // Circle center in SVG coordinates
+                    const startX = x1;
+                    const startY = y1 + radius; // y1 - r in circle coordinates = y1 + r in SVG
                     
-                    // Control point for the curve - this creates the S-shape
-                    const controlX = goRight ? (centerX + 150) : (centerX - 150);
-                    const controlY = (startY + endY) / 2;
+                    // End: top of next circle (x2, y2+r)
+                    const x2 = centerX;
+                    const y2 = 200; // Next circle center
+                    const endX = x2;
+                    const endY = y2 - radius; // y2 + r in circle coordinates = y2 - r in SVG
                     
-                    // Simple smooth S-curve using one quadratic bezier
-                    const pathD = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
+                    // Middle point ((x1+x2)/2, (y1+y2)/2)
+                    const midX = (x1 + x2) / 2;
+                    const midY = (startY + endY) / 2;
+                    
+                    // Control points for cubic Bezier to create S-curve
+                    // The curve goes out to the side, through the middle, then back
+                    const horizontalOffset = goRight ? 150 : -150;
+                    
+                    // First control point: pulls curve from start towards the side
+                    const cp1X = midX + horizontalOffset;
+                    const cp1Y = startY + (midY - startY) * 0.3;
+                    
+                    // Second control point: pulls curve from side back to end
+                    const cp2X = midX + horizontalOffset;
+                    const cp2Y = endY - (endY - midY) * 0.3;
+                    
+                    // Cubic Bezier: M start C cp1 cp2 end
+                    const pathD = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
                     
                     connector.innerHTML = `
                         <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
