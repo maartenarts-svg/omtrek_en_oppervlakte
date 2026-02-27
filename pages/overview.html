@@ -245,59 +245,36 @@
                     const connector = document.createElement('div');
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     
-                    // Circle radius
-                    const r = 60;
+                    // Circle properties
+                    const radius = 60;
+                    const centerX = 200; // SVG center
                     
-                    // Alternate left and right: even index goes right, odd goes left
+                    // Alternate left and right
                     const goRight = index % 2 === 0;
                     
-                    // Circle centers in SVG coordinates
-                    const x1 = 200; // Center of current circle
-                    const y1 = 0;   // Top of SVG (circle center)
-                    const x2 = 200; // Center of next circle (always centered)
-                    const y2 = 200; // Bottom of SVG (next circle center)
+                    // Start and end points
+                    const startX = centerX;
+                    const startY = radius; // Bottom of current circle
+                    const endX = centerX;
+                    const endY = 200 - radius; // Top of next circle
                     
-                    // Calculate positions
-                    const startY = y1 + r;           // Bottom of first circle: (x1, y1+r)
-                    const endY = y2 - r;             // Top of next circle: (x2, y2-r)
-                    const midY = (y1 + y2) / 2;      // Middle height: (y1+y2)/2
+                    // Horizontal offset for the curve
+                    const horizontalOffset = goRight ? 120 : -120;
+                    const curveX = centerX + horizontalOffset;
                     
-                    // Horizontal offset (how far left/right)
-                    const offset = 120;
-                    const horizontalX = goRight ? (x1 + offset) : (x1 - offset);
+                    // Middle Y position
+                    const midY = (startY + endY) / 2;
                     
-                    // Curve radius for smooth transitions
-                    const curveRadius = 30;
-                    
-                    // Build path using Q (quadratic bezier) for smooth curves
-                    // Path: start -> vertical down -> curve -> horizontal -> curve -> vertical down -> end
-                    
-                    let pathD;
-                    if (goRight) {
-                        pathD = `
-                            M ${x1} ${startY}
-                            L ${x1} ${midY - curveRadius}
-                            Q ${x1} ${midY}, ${x1 + curveRadius} ${midY}
-                            L ${horizontalX - curveRadius} ${midY}
-                            Q ${horizontalX} ${midY}, ${horizontalX} ${midY + curveRadius}
-                            Q ${horizontalX} ${midY + curveRadius * 2}, ${horizontalX - curveRadius} ${midY + curveRadius * 2}
-                            L ${x2 + curveRadius} ${midY + curveRadius * 2}
-                            Q ${x2} ${midY + curveRadius * 2}, ${x2} ${midY + curveRadius * 3}
-                            L ${x2} ${endY}
-                        `;
-                    } else {
-                        pathD = `
-                            M ${x1} ${startY}
-                            L ${x1} ${midY - curveRadius}
-                            Q ${x1} ${midY}, ${x1 - curveRadius} ${midY}
-                            L ${horizontalX + curveRadius} ${midY}
-                            Q ${horizontalX} ${midY}, ${horizontalX} ${midY + curveRadius}
-                            Q ${horizontalX} ${midY + curveRadius * 2}, ${horizontalX + curveRadius} ${midY + curveRadius * 2}
-                            L ${x2 - curveRadius} ${midY + curveRadius * 2}
-                            Q ${x2} ${midY + curveRadius * 2}, ${x2} ${midY + curveRadius * 3}
-                            L ${x2} ${endY}
-                        `;
-                    }
+                    // Build the path using Q (quadratic Bezier)
+                    // First curve: from start, curve to horizontal section
+                    // Second curve: from horizontal section, curve to end
+                    const pathD = `
+                        M ${startX} ${startY}
+                        Q ${startX} ${midY}, ${(startX + curveX) / 2} ${midY}
+                        T ${curveX} ${midY}
+                        Q ${curveX} ${midY}, ${(curveX + endX) / 2} ${midY}
+                        T ${endX} ${endY}
+                    `;
                     
                     connector.innerHTML = `
                         <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
