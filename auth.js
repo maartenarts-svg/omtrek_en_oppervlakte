@@ -9,7 +9,12 @@ const ADMIN_CODE = '852874179639';
 function checkAuth() {
   const currentUser = localStorage.getItem('currentUser');
   if (!currentUser) {
-    window.location.href = '/index.html';
+    // Redirect naar root
+    if (window.location.pathname.includes('/pages/')) {
+      window.location.href = '../index.html';
+    } else {
+      window.location.href = './index.html';
+    }
     return null;
   }
   return JSON.parse(currentUser);
@@ -42,7 +47,7 @@ async function login(email) {
         isAdmin: true
       }));
       
-      window.location.href = '/pages/dashboard.html';
+      window.location.href = './pages/dashboard.html';
       return true;
     }
     
@@ -64,7 +69,7 @@ async function login(email) {
     // Update last active
     await DB.updateUserProgress(email, 'dummy', 'dummy', {});
     
-    window.location.href = '/pages/overview.html';
+    window.location.href = './pages/overview.html';
     return true;
     
   } catch (error) {
@@ -78,7 +83,13 @@ async function login(email) {
 function logout() {
   localStorage.removeItem('currentUser');
   localStorage.removeItem('lessonCache');
-  window.location.href = '/index.html';
+  
+  // Redirect naar root
+  if (window.location.pathname.includes('/pages/')) {
+    window.location.href = '../index.html';
+  } else {
+    window.location.href = './index.html';
+  }
 }
 
 // Get current user
@@ -88,7 +99,7 @@ function getCurrentUser() {
 }
 
 // Initialize auth check on page load (behalve index.html)
-if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
+if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/' && !window.location.pathname.endsWith('/')) {
   document.addEventListener('DOMContentLoaded', () => {
     const user = checkAuth();
     if (!user) return;
@@ -102,7 +113,7 @@ if (window.location.pathname !== '/index.html' && window.location.pathname !== '
     // Check admin pages
     if (window.location.pathname.includes('dashboard') && !user.isAdmin) {
       alert('Je hebt geen toegang tot deze pagina');
-      window.location.href = '/pages/overview.html';
+      window.location.href = './overview.html';
     }
   });
 }
