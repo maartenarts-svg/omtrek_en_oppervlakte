@@ -65,20 +65,20 @@
 .lesson-node {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
     z-index: 1;
 }
 
-/* Alternating left-right alignment */
+/* Text on right side for left-positioned circles (odd) */
 .lesson-node:nth-child(odd) {
-    align-items: flex-start;
-    padding-left: 20%;
+    flex-direction: row;
 }
 
+/* Text on left side for right-positioned circles (even) */
 .lesson-node:nth-child(even) {
-    align-items: flex-end;
-    padding-right: 20%;
+    flex-direction: row-reverse;
 }
 
 /* ============================================
@@ -240,12 +240,19 @@
    ============================================ */
 
 .lesson-info {
-    margin-top: var(--spacing-md);
-    text-align: center;
-    max-width: 140px;
+    margin-left: var(--spacing-lg);
+    margin-right: var(--spacing-lg);
+    text-align: left;
+    max-width: 180px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.lesson-node:nth-child(even) .lesson-info {
+    align-items: flex-end;
+    text-align: right;
 }
 
 .lesson-title {
@@ -253,9 +260,8 @@
     font-weight: 600;
     color: var(--color-dark);
     margin-bottom: var(--spacing-xs);
-    max-width: 140px;
+    max-width: 180px;
     word-wrap: break-word;
-    text-align: center;
     line-height: 1.3;
 }
 
@@ -284,7 +290,7 @@
 .deadline-marker-wrapper {
     position: absolute;
     left: 50%;
-    bottom: -100px; /* More space for the deadline */
+    bottom: -140px; /* Much lower to avoid text overlap */
     transform: translateX(-50%);
     width: 100%;
     display: flex;
@@ -590,9 +596,21 @@
     
     .lesson-node:nth-child(odd),
     .lesson-node:nth-child(even) {
+        flex-direction: column;
         align-items: center;
-        padding-left: 0;
-        padding-right: 0;
+    }
+    
+    .lesson-info {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: var(--spacing-md);
+        text-align: center;
+        align-items: center;
+    }
+    
+    .lesson-node:nth-child(even) .lesson-info {
+        text-align: center;
+        align-items: center;
     }
     
     .lesson-circle {
@@ -605,7 +623,7 @@
         height: 112px;
     }
     
-    .deadline-marker {
+    .deadline-marker-wrapper {
         position: static;
         transform: none;
         margin-top: var(--spacing-md);
