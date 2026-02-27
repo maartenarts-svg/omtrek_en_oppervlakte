@@ -242,16 +242,45 @@
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     
                     // Alternate left and right: even index goes right, odd goes left
-                    const isEven = index % 2 === 0;
+                    const goRight = index % 2 === 0;
                     
-                    // Path that goes: down, curve sideways, curve back, down to next
-                    // M startX startY C controlX1 controlY1, controlX2 controlY2, endX endY
-                    const pathD = isEven 
-                        ? 'M 150 0 C 150 40, 220 60, 220 90 C 220 110, 150 130, 150 140'  // Right curve
-                        : 'M 150 0 C 150 40, 80 60, 80 90 C 80 110, 150 130, 150 140';    // Left curve
+                    // SVG Path explanation:
+                    // M = Move to (start point)
+                    // L = Line to
+                    // C = Cubic Bezier curve (smooth curve with 2 control points)
+                    
+                    // Start at center (200, 0)
+                    // Go down a bit, curve sideways, go horizontal, curve back, go down to next circle
+                    
+                    let pathD;
+                    if (goRight) {
+                        // Path goes right
+                        pathD = `
+                            M 200 0
+                            L 200 40
+                            C 200 60, 220 70, 250 70
+                            L 300 70
+                            C 330 70, 350 80, 350 110
+                            L 350 140
+                            C 350 160, 330 170, 200 170
+                            L 200 200
+                        `;
+                    } else {
+                        // Path goes left
+                        pathD = `
+                            M 200 0
+                            L 200 40
+                            C 200 60, 180 70, 150 70
+                            L 100 70
+                            C 70 70, 50 80, 50 110
+                            L 50 140
+                            C 50 160, 70 170, 200 170
+                            L 200 200
+                        `;
+                    }
                     
                     connector.innerHTML = `
-                        <svg viewBox="0 0 300 140" preserveAspectRatio="xMidYMid meet">
+                        <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
                             <path d="${pathD}" />
                         </svg>
                     `;
