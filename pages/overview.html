@@ -245,41 +245,57 @@
                     const connector = document.createElement('div');
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     
+                    // Circle radius
+                    const r = 60;
+                    
                     // Alternate left and right: even index goes right, odd goes left
                     const goRight = index % 2 === 0;
                     
-                    // Simple path like the drawing:
-                    // 1. Straight down from circle
-                    // 2. Smooth curve sideways (right or left)
-                    // 3. Smooth curve back to center
-                    // 4. Straight down to next circle
+                    // Circle centers in SVG coordinates
+                    const x1 = 200; // Center of current circle
+                    const y1 = 0;   // Top of SVG (circle center)
+                    const x2 = 200; // Center of next circle (always centered)
+                    const y2 = 200; // Bottom of SVG (next circle center)
+                    
+                    // Calculate positions
+                    const startY = y1 + r;           // Bottom of first circle: (x1, y1+r)
+                    const endY = y2 - r;             // Top of next circle: (x2, y2-r)
+                    const midY = (y1 + y2) / 2;      // Middle height: (y1+y2)/2
+                    
+                    // Horizontal offset (how far left/right)
+                    const offset = 120;
+                    const horizontalX = goRight ? (x1 + offset) : (x1 - offset);
+                    
+                    // Curve radius for smooth transitions
+                    const curveRadius = 30;
+                    
+                    // Build path using Q (quadratic bezier) for smooth curves
+                    // Path: start -> vertical down -> curve -> horizontal -> curve -> vertical down -> end
                     
                     let pathD;
                     if (goRight) {
-                        // Path goes right then back
                         pathD = `
-                            M 200 0
-                            L 200 50
-                            Q 200 70, 220 80
-                            L 300 80
-                            Q 320 80, 320 100
-                            Q 320 120, 300 130
-                            L 220 130
-                            Q 200 140, 200 160
-                            L 200 200
+                            M ${x1} ${startY}
+                            L ${x1} ${midY - curveRadius}
+                            Q ${x1} ${midY}, ${x1 + curveRadius} ${midY}
+                            L ${horizontalX - curveRadius} ${midY}
+                            Q ${horizontalX} ${midY}, ${horizontalX} ${midY + curveRadius}
+                            Q ${horizontalX} ${midY + curveRadius * 2}, ${horizontalX - curveRadius} ${midY + curveRadius * 2}
+                            L ${x2 + curveRadius} ${midY + curveRadius * 2}
+                            Q ${x2} ${midY + curveRadius * 2}, ${x2} ${midY + curveRadius * 3}
+                            L ${x2} ${endY}
                         `;
                     } else {
-                        // Path goes left then back
                         pathD = `
-                            M 200 0
-                            L 200 50
-                            Q 200 70, 180 80
-                            L 100 80
-                            Q 80 80, 80 100
-                            Q 80 120, 100 130
-                            L 180 130
-                            Q 200 140, 200 160
-                            L 200 200
+                            M ${x1} ${startY}
+                            L ${x1} ${midY - curveRadius}
+                            Q ${x1} ${midY}, ${x1 - curveRadius} ${midY}
+                            L ${horizontalX + curveRadius} ${midY}
+                            Q ${horizontalX} ${midY}, ${horizontalX} ${midY + curveRadius}
+                            Q ${horizontalX} ${midY + curveRadius * 2}, ${horizontalX + curveRadius} ${midY + curveRadius * 2}
+                            L ${x2 - curveRadius} ${midY + curveRadius * 2}
+                            Q ${x2} ${midY + curveRadius * 2}, ${x2} ${midY + curveRadius * 3}
+                            L ${x2} ${endY}
                         `;
                     }
                     
