@@ -109,35 +109,35 @@
     border: 1px solid red;
 }
 
-/* ODD lessons: Circle LEFT (0-120px), text RIGHT (120-360px) */
-.lesson-node:nth-child(odd) {
+/* ODD lessons (order 1,3,5...): Circle LEFT (0-120px), text RIGHT (120-360px) */
+.lesson-node.position-left {
     flex-direction: row;
 }
 
-.lesson-node:nth-child(odd) .lesson-circle {
+.lesson-node.position-left .lesson-circle {
     position: absolute;
     left: 0;
     top: 0;
 }
 
-.lesson-node:nth-child(odd) .lesson-info {
+.lesson-node.position-left .lesson-info {
     margin-left: 130px; /* 120px circle + 10px gap */
     text-align: left;
     align-items: flex-start;
 }
 
-/* EVEN lessons: Circle RIGHT (240-360px), text LEFT (0-240px) */
-.lesson-node:nth-child(even) {
+/* EVEN lessons (order 2,4,6...): Circle RIGHT (240-360px), text LEFT (0-240px) */
+.lesson-node.position-right {
     flex-direction: row;
 }
 
-.lesson-node:nth-child(even) .lesson-circle {
+.lesson-node.position-right .lesson-circle {
     position: absolute;
     right: 0;
     top: 0;
 }
 
-.lesson-node:nth-child(even) .lesson-info {
+.lesson-node.position-right .lesson-info {
     margin-right: 130px; /* 120px circle + 10px gap */
     text-align: right;
     align-items: flex-end;
@@ -317,12 +317,12 @@
 }
 
 /* Text alignment */
-.lesson-node:nth-child(odd) .lesson-info {
+.lesson-node.position-left .lesson-info {
     align-items: flex-start;
     text-align: left;
 }
 
-.lesson-node:nth-child(even) .lesson-info {
+.lesson-node.position-right .lesson-info {
     align-items: flex-end;
     text-align: right;
 }
@@ -666,8 +666,8 @@
         padding: var(--spacing-lg) var(--spacing-sm);
     }
     
-    .lesson-node:nth-child(odd),
-    .lesson-node:nth-child(even) {
+    .lesson-node.position-left,
+    .lesson-node.position-right {
         flex-direction: column;
         align-items: center;
     }
@@ -680,7 +680,7 @@
         align-items: center;
     }
     
-    .lesson-node:nth-child(even) .lesson-info {
+    .lesson-node.position-right .lesson-info {
         text-align: center;
         align-items: center;
     }
