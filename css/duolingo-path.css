@@ -112,33 +112,35 @@
 /* ODD lessons: Circle LEFT (0-120px), text RIGHT (120-360px) */
 .lesson-node:nth-child(odd) {
     flex-direction: row;
-    justify-content: flex-start;
 }
 
 .lesson-node:nth-child(odd) .lesson-circle {
-    /* Circle stays on left */
-    margin-right: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .lesson-node:nth-child(odd) .lesson-info {
-    /* Text takes remaining space on right */
-    margin-left: 0;
+    margin-left: 130px; /* 120px circle + 10px gap */
+    text-align: left;
+    align-items: flex-start;
 }
 
 /* EVEN lessons: Circle RIGHT (240-360px), text LEFT (0-240px) */
 .lesson-node:nth-child(even) {
     flex-direction: row;
-    justify-content: space-between;
-}
-
-.lesson-node:nth-child(even) .lesson-info {
-    /* Text on left side */
-    order: 1;
 }
 
 .lesson-node:nth-child(even) .lesson-circle {
-    /* Circle on right side */
-    order: 2;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.lesson-node:nth-child(even) .lesson-info {
+    margin-right: 130px; /* 120px circle + 10px gap */
+    text-align: right;
+    align-items: flex-end;
 }
 
 /* ============================================
