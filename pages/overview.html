@@ -253,16 +253,17 @@
                     const endX = 180 + 120 * Math.pow(-1, n + 1);
                     const endY_formula = -300 * n;
                     
-                    // Convert to positive Y (SVG coordinates go down)
-                    const startY = Math.abs(startY_formula);
-                    const endY = Math.abs(endY_formula);
+                    // For SVG, we need relative coordinates within this 300px segment
+                    // Convert from absolute to relative (within this lesson's 300px space)
+                    const relativeStartY = 120; // Bottom of circle (120px from top of container)
+                    const relativeEndY = 300; // Top of next circle (300px = 180 gap + 120 height)
                     
                     // Path function: f(x) = (-1)^n / 19200 * (x - 180)³ - 300*n + 90
                     const a = Math.pow(-1, n) / 19200;
                     const b = -300 * n + 90;
                     
                     // Build path by sampling points
-                    let pathD = `M ${startX} ${startY}`;
+                    let pathD = `M ${startX} ${relativeStartY}`;
                     
                     const numPoints = 50;
                     const xStep = (endX - startX) / numPoints;
@@ -270,28 +271,26 @@
                     for (let i = 1; i <= numPoints; i++) {
                         const x = startX + i * xStep;
                         const y_formula = a * Math.pow(x - 180, 3) + b;
-                        const y = Math.abs(y_formula);
-                        pathD += ` L ${x} ${y}`;
+                        // Convert absolute Y to relative Y within this 300px segment
+                        const y_relative = Math.abs(y_formula) - Math.abs(startY_formula) + relativeStartY;
+                        pathD += ` L ${x} ${y_relative}`;
                     }
                     
-                    // Calculate SVG viewBox based on lesson position
-                    // Each lesson is at y = (n-1) * 300
-                    const svgTop = (n - 1) * 300;
-                    const svgHeight = 300;
-                    
+                    // Create SVG connector positioned between this lesson and next
                     const connector = document.createElement('div');
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     connector.style.position = 'absolute';
-                    connector.style.top = `${svgTop}px`;
-                    connector.style.left = '0';
+                    connector.style.top = `${index * 300}px`; // Position at lesson index
+                    connector.style.left = '50%';
+                    connector.style.transform = 'translateX(-180px)'; // Center 360px SVG
                     connector.style.width = '360px';
-                    connector.style.height = `${svgHeight}px`;
+                    connector.style.height = '300px'; // Height of gap + next container
                     connector.style.pointerEvents = 'none';
                     connector.style.zIndex = '0';
                     
                     connector.innerHTML = `
-                        <svg viewBox="0 0 360 ${svgHeight}" preserveAspectRatio="none" style="width:100%;height:100%;">
-                            <path d="${pathD}" fill="none" stroke="${isCompleted ? '#B8E5B8' : '#999'}" stroke-width="8" stroke-linecap="round"/>
+                        <svg viewBox="0 0 360 300" preserveAspectRatio="none" style="width:100%;height:100%;">
+                            <path d="${pathD}" fill="none" stroke="${isCompleted ? '#4CAF50' : '#999'}" stroke-width="8" stroke-linecap="round"/>
                         </svg>
                     `;
                     
