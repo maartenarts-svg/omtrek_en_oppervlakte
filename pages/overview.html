@@ -247,41 +247,61 @@
                     
                     // Circle properties
                     const radius = 60;
-                    const centerX = 200; // SVG center
+                    const centerX = 200;
                     
                     // Alternate left and right
                     const goRight = index % 2 === 0;
                     
-                    // Start: bottom of current circle (x1, y1-r)
+                    // Circle 1 center (current)
                     const x1 = centerX;
-                    const y1 = 0; // Circle center in SVG coordinates
-                    const startX = x1;
-                    const startY = y1 + radius; // y1 - r in circle coordinates = y1 + r in SVG
+                    const y1 = radius; // Distance from top of SVG to circle center
                     
-                    // End: top of next circle (x2, y2+r)
+                    // Circle 2 center (next)
                     const x2 = centerX;
-                    const y2 = 200; // Next circle center
+                    const y2 = 200 - radius;
+                    
+                    // Start and end points
+                    const startX = x1;
+                    const startY = y1 + radius; // y1 - r (below circle 1)
                     const endX = x2;
-                    const endY = y2 - radius; // y2 + r in circle coordinates = y2 - r in SVG
+                    const endY = y2 - radius; // y2 + r (above circle 2)
                     
-                    // Middle point ((x1+x2)/2, (y1+y2)/2)
-                    const midX = (x1 + x2) / 2;
-                    const midY = (startY + endY) / 2;
+                    // Middle point
+                    const xm = (x1 + x2) / 2;
+                    const ym = (startY + endY) / 2;
                     
-                    // Control points for cubic Bezier to create S-curve
-                    // The curve goes out to the side, through the middle, then back
-                    const horizontalOffset = goRight ? 150 : -150;
+                    // Cubic function: f(x) = a(x - xm)³ + ym
+                    // We need: f(x1) = startY
+                    // So: a(x1 - xm)³ + ym = startY
+                    // Therefore: a = (startY - ym) / (x1 - xm)³
                     
-                    // First control point: pulls curve from start towards the side
-                    const cp1X = midX + horizontalOffset;
-                    const cp1Y = startY + (midY - startY) * 0.3;
+                    // But we want horizontal displacement!
+                    // Let's use a rotated approach: treat y as parameter, x as function
+                    // x(y) = a(y - ym)³ + xm
                     
-                    // Second control point: pulls curve from side back to end
-                    const cp2X = midX + horizontalOffset;
-                    const cp2Y = endY - (endY - midY) * 0.3;
+                    const horizontalOffset = goRight ? 100 : -100;
                     
-                    // Cubic Bezier: M start C cp1 cp2 end
-                    const pathD = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+                    // At startY: x = x1 = xm (center)
+                    // At ym (middle): x = xm + horizontalOffset (max displacement)
+                    // At endY: x = x2 = xm (center)
+                    
+                    // We want: x(startY) = xm, x(ym) = xm + offset, x(endY) = xm
+                    // This is: x(y) = offset * (4*(y-startY)/(endY-startY) - 4*((y-startY)/(endY-startY))²) + xm
+                    
+                    // Build path by sampling points
+                    let pathD = `M ${startX} ${startY}`;
+                    
+                    const numPoints = 50;
+                    for (let i = 1; i <= numPoints; i++) {
+                        const t = i / numPoints; // 0 to 1
+                        const y = startY + t * (endY - startY);
+                        
+                        // Cubic interpolation: x = xm + offset * (4t³ - 6t² + 2t)
+                        // This gives: x(0) = xm, x(0.5) ≈ xm + offset, x(1) = xm
+                        const x = xm + horizontalOffset * (4 * Math.pow(t, 3) - 6 * Math.pow(t, 2) + 2 * t);
+                        
+                        pathD += ` L ${x} ${y}`;
+                    }
                     
                     connector.innerHTML = `
                         <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
