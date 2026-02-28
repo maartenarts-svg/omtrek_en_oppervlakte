@@ -242,41 +242,60 @@
                 
                 // Add curved connector to next lesson (if not last)
                 if (index < allLessons.length - 1) {
+                    const n = lesson.order; // Lesson number (1-based)
+                    
+                    // YOUR EXACT FORMULA:
+                    // Start point: (180 + 120*(-1)^n, -300*n+180)
+                    const startX = 180 + 120 * Math.pow(-1, n);
+                    const startY_formula = -300 * n + 180;
+                    
+                    // End point: (180 + 120*(-1)^(n+1), -300*n)
+                    const endX = 180 + 120 * Math.pow(-1, n + 1);
+                    const endY_formula = -300 * n;
+                    
+                    // Convert to positive Y (SVG coordinates go down)
+                    const startY = Math.abs(startY_formula);
+                    const endY = Math.abs(endY_formula);
+                    
+                    // Path function: f(x) = (-1)^n / 19200 * (x - 180)³ - 300*n + 90
+                    const a = Math.pow(-1, n) / 19200;
+                    const b = -300 * n + 90;
+                    
+                    // Build path by sampling points
+                    let pathD = `M ${startX} ${startY}`;
+                    
+                    const numPoints = 50;
+                    const xStep = (endX - startX) / numPoints;
+                    
+                    for (let i = 1; i <= numPoints; i++) {
+                        const x = startX + i * xStep;
+                        const y_formula = a * Math.pow(x - 180, 3) + b;
+                        const y = Math.abs(y_formula);
+                        pathD += ` L ${x} ${y}`;
+                    }
+                    
+                    // Calculate SVG viewBox based on lesson position
+                    // Each lesson is at y = (n-1) * 300
+                    const svgTop = (n - 1) * 300;
+                    const svgHeight = 300;
+                    
                     const connector = document.createElement('div');
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
-                    
-                    // Determine positions
-                    const currentIsLeft = index % 2 === 0;
-                    const nextIsLeft = (index + 1) % 2 === 0;
-                    
-                    // Approximate circle X positions in pixels (within 800px container)
-                    // Left position: ~150px from left
-                    // Right position: ~650px from left
-                    const leftX = 100;
-                    const rightX = 300;
-                    
-                    const x1 = currentIsLeft ? leftX : rightX;
-                    const x2 = nextIsLeft ? leftX : rightX;
-                    
-                    // Y positions (relative to SVG viewBox height)
-                    const r = 60;
-                    const startY = r; // Bottom of circle 1
-                    const endY = 240 - r; // Top of circle 2 (with 300px total height)
-                    
-                    // Middle point
-                    const xm = (x1 + x2) / 2;
-                    const ym = (startY + endY) / 2;
-                    
-                    // Simple smooth cubic bezier for S-curve
-                    const pathD = `M ${x1} ${startY} C ${x1} ${ym}, ${x2} ${ym}, ${x2} ${endY}`;
+                    connector.style.position = 'absolute';
+                    connector.style.top = `${svgTop}px`;
+                    connector.style.left = '0';
+                    connector.style.width = '360px';
+                    connector.style.height = `${svgHeight}px`;
+                    connector.style.pointerEvents = 'none';
+                    connector.style.zIndex = '0';
                     
                     connector.innerHTML = `
-                        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
-                            <path d="${pathD}" />
+                        <svg viewBox="0 0 360 ${svgHeight}" preserveAspectRatio="none" style="width:100%;height:100%;">
+                            <path d="${pathD}" fill="none" stroke="${isCompleted ? '#B8E5B8' : '#999'}" stroke-width="8" stroke-linecap="round"/>
                         </svg>
                     `;
                     
-                    nodeEl.appendChild(connector);
+                    pathContainer.appendChild(connector);
                 }
                 
                 // Add deadline marker AFTER this lesson if applicable
