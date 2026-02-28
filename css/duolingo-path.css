@@ -7,6 +7,23 @@
     margin: 0 auto;
     padding: var(--spacing-xl) var(--spacing-md);
     position: relative;
+    
+    /* DEBUG: Show container width */
+    border: 3px dashed purple;
+}
+
+/* DEBUG: Add coordinate markers */
+.lesson-path-container::before {
+    content: 'Container: 800px max-width';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    color: purple;
+    background: white;
+    padding: 2px 5px;
+    z-index: 100;
 }
 
 .lesson-path {
@@ -76,6 +93,20 @@
     /* DEBUG: Visible borders */
     border: 2px solid red;
     box-sizing: border-box;
+}
+
+/* DEBUG: Add lesson number label */
+.lesson-node::before {
+    content: 'Les ' attr(data-lesson-id);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+    font-weight: bold;
+    color: red;
+    background: white;
+    padding: 2px 5px;
+    border: 1px solid red;
 }
 
 /* ODD lessons: Circle LEFT (0-120px), text RIGHT (120-360px) */
