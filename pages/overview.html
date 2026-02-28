@@ -245,57 +245,33 @@
                     const connector = document.createElement('div');
                     connector.className = `lesson-connector ${isCompleted ? 'completed' : ''}`;
                     
-                    // Circle properties in SVG viewBox (0 0 400 200)
-                    const r = 60; // radius
+                    // Determine positions
+                    const currentIsLeft = index % 2 === 0;
+                    const nextIsLeft = (index + 1) % 2 === 0;
                     
-                    // Circle 1 center in SVG coordinates
-                    const x1 = 200; // horizontal center of viewBox
-                    const y1 = 60;  // top circle center
+                    // Approximate circle X positions in pixels (within 800px container)
+                    // Left position: ~150px from left
+                    // Right position: ~650px from left
+                    const leftX = 100;
+                    const rightX = 300;
                     
-                    // Circle 2 center in SVG coordinates  
-                    const x2 = 200; // horizontal center of viewBox
-                    const y2 = 140; // bottom circle center (200 - 60)
+                    const x1 = currentIsLeft ? leftX : rightX;
+                    const x2 = nextIsLeft ? leftX : rightX;
                     
-                    // Start point: bottom of circle 1
-                    const startX = x1;
-                    const startY = y1 + r; // y1 + r = 60 + 60 = 120
-                    
-                    // End point: top of circle 2
-                    const endX = x2;
-                    const endY = y2 - r; // y2 - r = 140 - 60 = 80
+                    // Y positions (relative to SVG viewBox height)
+                    const r = 60;
+                    const startY = r; // Bottom of circle 1
+                    const endY = 240 - r; // Top of circle 2 (with 300px total height)
                     
                     // Middle point
-                    const xm = (x1 + x2) / 2; // = 200
-                    const ym = (y1 + y2) / 2; // = 100
+                    const xm = (x1 + x2) / 2;
+                    const ym = (startY + endY) / 2;
                     
-                    // Alternate left and right
-                    const goRight = index % 2 === 0;
-                    
-                    // Your formula: f(x) = a * (x - xm)³ + ym
-                    // Where: a = (startY - ym) / (x1 - xm)³
-                    
-                    // But we want horizontal displacement, so we use inverse:
-                    // x(y) = b * (y - ym)³ + xm
-                    // Where: b = (xOffset - xm) / (ym - startY)³
-                    
-                    const xOffset = goRight ? 280 : 120; // Max horizontal displacement
-                    const b = (xOffset - xm) / Math.pow(ym - startY, 3);
-                    
-                    // Build path by sampling points from startY to endY
-                    let pathD = `M ${startX} ${startY}`;
-                    
-                    const numPoints = 50;
-                    for (let i = 1; i <= numPoints; i++) {
-                        const y = startY + (i / numPoints) * (endY - startY);
-                        
-                        // Calculate x using cubic function: x = b * (y - ym)³ + xm
-                        const x = b * Math.pow(y - ym, 3) + xm;
-                        
-                        pathD += ` L ${x} ${y}`;
-                    }
+                    // Simple smooth cubic bezier for S-curve
+                    const pathD = `M ${x1} ${startY} C ${x1} ${ym}, ${x2} ${ym}, ${x2} ${endY}`;
                     
                     connector.innerHTML = `
-                        <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
+                        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
                             <path d="${pathD}" />
                         </svg>
                     `;
