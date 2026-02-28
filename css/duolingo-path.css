@@ -14,6 +14,9 @@
     display: flex;
     flex-direction: column;
     gap: 180px; /* Vertical space between lesson containers */
+    
+    /* DEBUG: Path container background */
+    background: rgba(255, 255, 0, 0.1);
 }
 
 /* Path line connecting lessons - HIDDEN */
@@ -69,18 +72,32 @@
     align-items: center;
     z-index: 1;
     margin: 0 auto; /* Center the 360px container */
+    
+    /* DEBUG: Visible borders */
+    border: 2px solid red;
+    box-sizing: border-box;
 }
 
-/* ODD lessons: Circle LEFT, text RIGHT */
+/* ODD lessons: Circle LEFT (0-120px), text RIGHT (120-360px) */
 .lesson-node:nth-child(odd) {
     flex-direction: row;
     justify-content: flex-start;
 }
 
-/* EVEN lessons: Circle RIGHT, text LEFT */
+.lesson-node:nth-child(odd) .lesson-circle {
+    /* Force circle to left side */
+    margin-right: auto;
+}
+
+/* EVEN lessons: Circle RIGHT (240-360px), text LEFT (0-240px) */
 .lesson-node:nth-child(even) {
     flex-direction: row-reverse;
     justify-content: flex-start;
+}
+
+.lesson-node:nth-child(even) .lesson-circle {
+    /* Force circle to right side */
+    margin-left: auto;
 }
 
 /* ============================================
@@ -100,6 +117,10 @@
     cursor: pointer;
     transition: all var(--transition-normal);
     box-shadow: var(--shadow-md);
+    flex-shrink: 0; /* Prevent circle from shrinking */
+    
+    /* DEBUG: Circle border */
+    outline: 3px solid blue;
 }
 
 .lesson-circle:hover {
@@ -247,6 +268,9 @@
     flex-direction: column;
     justify-content: center;
     padding: 0 var(--spacing-md);
+    
+    /* DEBUG: Text container border */
+    outline: 3px solid green;
 }
 
 /* Text alignment */
