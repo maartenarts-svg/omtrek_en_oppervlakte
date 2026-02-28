@@ -217,7 +217,9 @@
                 
                 // Create lesson node
                 const nodeEl = document.createElement('div');
-                nodeEl.className = 'lesson-node';
+                // Determine left/right position based on lesson order (1-based, odd=left, even=right)
+                const positionClass = (lesson.order % 2 === 1) ? 'position-left' : 'position-right';
+                nodeEl.className = `lesson-node ${positionClass}`;
                 nodeEl.setAttribute('data-lesson-id', lesson.id);
                 
                 // Lesson circle with SVG progress
