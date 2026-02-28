@@ -116,19 +116,29 @@
 }
 
 .lesson-node:nth-child(odd) .lesson-circle {
-    /* Force circle to left side */
-    margin-right: auto;
+    /* Circle stays on left */
+    margin-right: 0;
+}
+
+.lesson-node:nth-child(odd) .lesson-info {
+    /* Text takes remaining space on right */
+    margin-left: 0;
 }
 
 /* EVEN lessons: Circle RIGHT (240-360px), text LEFT (0-240px) */
 .lesson-node:nth-child(even) {
-    flex-direction: row-reverse;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.lesson-node:nth-child(even) .lesson-info {
+    /* Text on left side */
+    order: 1;
 }
 
 .lesson-node:nth-child(even) .lesson-circle {
-    /* Force circle to right side */
-    margin-left: auto;
+    /* Circle on right side */
+    order: 2;
 }
 
 /* ============================================
