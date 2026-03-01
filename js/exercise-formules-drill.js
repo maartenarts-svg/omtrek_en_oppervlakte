@@ -294,9 +294,25 @@ class FormulasDrillExercise {
     initDragDrop() {
         const items = document.querySelectorAll('.draggable-item');
         const zones = document.querySelectorAll('.zone-items');
+        const pool = document.querySelector('.pool-items');
         let draggedElement = null;
         
-        items.forEach(item => {
+        // Remove old event listeners by cloning and replacing zones and pool
+        zones.forEach(zone => {
+            const newZone = zone.cloneNode(true);
+            zone.parentNode.replaceChild(newZone, zone);
+        });
+        
+        const newPool = pool.cloneNode(true);
+        pool.parentNode.replaceChild(newPool, pool);
+        
+        // Re-query after cloning
+        const freshZones = document.querySelectorAll('.zone-items');
+        const freshPool = document.querySelector('.pool-items');
+        const freshItems = document.querySelectorAll('.draggable-item');
+        
+        // Add drag events to items
+        freshItems.forEach(item => {
             item.addEventListener('dragstart', (e) => {
                 draggedElement = item;
                 item.classList.add('dragging');
@@ -305,11 +321,12 @@ class FormulasDrillExercise {
             
             item.addEventListener('dragend', (e) => {
                 item.classList.remove('dragging');
-                this.checkIfAllPlaced();
+                setTimeout(() => this.checkIfAllPlaced(), 10);
             });
         });
         
-        zones.forEach(zone => {
+        // Add drop events to zones
+        freshZones.forEach(zone => {
             zone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
@@ -327,36 +344,41 @@ class FormulasDrillExercise {
                 if (draggedElement) {
                     zone.appendChild(draggedElement);
                     draggedElement = null;
+                    setTimeout(() => this.checkIfAllPlaced(), 10);
                 }
             });
         });
         
-        // Also allow dropping back to pool
-        const pool = document.querySelector('.pool-items');
-        pool.addEventListener('dragover', (e) => {
+        // Add drop events to pool
+        freshPool.addEventListener('dragover', (e) => {
             e.preventDefault();
-            pool.classList.add('drag-over');
+            freshPool.classList.add('drag-over');
         });
         
-        pool.addEventListener('dragleave', (e) => {
-            pool.classList.remove('drag-over');
+        freshPool.addEventListener('dragleave', (e) => {
+            freshPool.classList.remove('drag-over');
         });
         
-        pool.addEventListener('drop', (e) => {
+        freshPool.addEventListener('drop', (e) => {
             e.preventDefault();
-            pool.classList.remove('drag-over');
+            freshPool.classList.remove('drag-over');
             
             if (draggedElement) {
-                pool.appendChild(draggedElement);
+                freshPool.appendChild(draggedElement);
                 draggedElement = null;
+                setTimeout(() => this.checkIfAllPlaced(), 10);
             }
         });
     }
     
     checkIfAllPlaced() {
         const pool = document.querySelector('.pool-items');
+        if (!pool) return;
+        
         const itemsInPool = pool.querySelectorAll('.draggable-item').length;
         const checkBtn = document.getElementById('checkBtn');
+        
+        if (!checkBtn) return;
         
         if (itemsInPool === 0) {
             checkBtn.classList.remove('hidden');
@@ -458,7 +480,6 @@ class FormulasDrillExercise {
     }
     
     resetDragDrop() {
-        const question = this.questions[this.currentQuestion];
         const pool = document.querySelector('.pool-items');
         const items = document.querySelectorAll('.draggable-item');
         
@@ -467,15 +488,18 @@ class FormulasDrillExercise {
             pool.appendChild(item);
         });
         
-        // Shuffle again
+        // Shuffle items
         const itemsArray = Array.from(items);
         itemsArray.sort(() => Math.random() - 0.5);
         itemsArray.forEach(item => pool.appendChild(item));
         
-        // Hide check button initially
-        document.getElementById('checkBtn').classList.add('hidden');
+        // Hide check button
+        const checkBtn = document.getElementById('checkBtn');
+        if (checkBtn) {
+            checkBtn.classList.add('hidden');
+        }
         
-        // Re-initialize drag and drop listeners
+        // Re-initialize all drag and drop events
         this.initDragDrop();
     }
     
