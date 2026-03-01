@@ -548,6 +548,12 @@
             
             // Hide action buttons for exercises - they will complete automatically
             document.getElementById('partActions').classList.add('hidden');
+            
+            // Hide the part-level progress bar during exercises
+            const partProgress = document.querySelector('.part-progress');
+            if (partProgress) {
+                partProgress.style.display = 'none';
+            }
 
             // Load exercise based on type
             const exerciseContainer = document.querySelector('#exerciseContent .exercise-container');
