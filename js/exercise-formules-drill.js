@@ -111,8 +111,7 @@ class FormulasDrillExercise {
                            class="answer-input" 
                            autocomplete="off"
                            spellcheck="false"
-                           maxlength="1"
-                           placeholder="Typ je antwoord...">
+                           maxlength="1">
                 </div>
                 
                 <div class="feedback-area hidden" id="feedbackArea">
@@ -153,6 +152,9 @@ class FormulasDrillExercise {
         const isCorrect = answer === question.correctAnswer;
         const isUppercase = answer === answer.toUpperCase();
         
+        // Disable input during feedback
+        input.disabled = true;
+        
         if (isCorrect) {
             // Correct answer
             const points = attempt === 1 ? 1 : 0.5;
@@ -183,10 +185,14 @@ class FormulasDrillExercise {
                 }
                 
                 this.showFeedback(hints.join('<br>'), false, () => {
-                    // Clear input and give second chance
+                    // Clear input, enable it, and give second chance
                     input.value = '';
+                    input.disabled = false;
                     input.focus();
                     document.getElementById('feedbackArea').classList.add('hidden');
+                    // Show submit button again for second attempt (no "Controleer" button shown)
+                    const submitBtn = document.getElementById('submitBtn');
+                    if (submitBtn) submitBtn.style.display = 'block';
                 });
             } else {
                 // Second attempt - show correct answer
@@ -536,13 +542,16 @@ class FormulasDrillExercise {
             letterScore = 'B';
         }
         
+        // Calculate XP: score * 10
+        const xpEarned = Math.round(this.score * 10);
+        
         // Call completion callback
         if (this.onComplete) {
             this.onComplete({
                 score: percentage,
                 correctAnswers: this.score,
                 totalQuestions: this.maxScore,
-                xpEarned: 30, // From part config
+                xpEarned: xpEarned,
                 letterScore: letterScore
             });
         }
