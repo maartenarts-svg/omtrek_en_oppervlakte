@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Onderdeel - Wiskunde Leerplatform</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .part-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .part-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .part-header h1 {
+            margin: 0 0 var(--spacing-sm) 0;
+            color: white;
+        }
+
+        .part-breadcrumb {
+            font-size: var(--font-size-small);
+            opacity: 0.9;
+        }
+
+        .part-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: #000;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+
+        .video-placeholder-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .video-status {
+            background: var(--color-light);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .video-status.watching {
+            background: #fff3cd;
+            border-left: 4px solid var(--color-warning);
+        }
+
+        .video-status.completed {
+            background: #d4edda;
+            border-left: 4px solid var(--color-success);
+        }
+
+        /* Exercise Container */
+        .exercise-container {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .exercise-placeholder {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            background: var(--color-light);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--color-gray);
+        }
+
+        .exercise-placeholder-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Action Buttons */
+        .part-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: space-between;
+        }
+
+        .part-actions .btn {
+            flex: 1;
+        }
+
+        /* XP Reward Display */
+        .xp-reward {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .xp-reward-icon {
+            font-size: 24px;
+        }
+
+        /* Progress Indicator */
+        .part-progress {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-gray);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: var(--spacing-sm);
+            font-size: var(--font-size-small);
+            color: #666;
+        }
+
+        /* Loading State */
+        .loading-container {
+            text-align: center;
+            padding: var(--spacing-xxl);
+        }
+
+        /* Completion Message */
+        .completion-message {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, #B8E5B8 0%, #A8D8A8 100%);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .completion-message h2 {
+            color: #2d6a2d;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .completion-message .xp-earned {
+            font-size: var(--font-size-h1);
+            font-weight: 700;
+            color: #2d6a2d;
+            margin: var(--spacing-lg) 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <a href="overview.html" class="logo">📐 Wiskunde</a>
+        </div>
+        <div class="header-right">
+            <div class="xp-display">
+                <span class="xp-icon">⭐</span>
+                <span class="xp-amount" id="totalXP">0</span>
+                <span>XP</span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name">Leerling</span>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="logout()">Uitloggen</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="part-container">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Laden...</p>
+            </div>
+
+            <!-- Part Content (hidden until loaded) -->
+            <div id="partContent" class="hidden">
+                <!-- Header -->
+                <div class="part-header">
+                    <div class="part-breadcrumb" id="breadcrumb"></div>
+                    <h1 id="partTitle">Les Onderdeel</h1>
+                    <div class="xp-reward">
+                        <span class="xp-reward-icon">⭐</span>
+                        <span id="xpReward">0 XP</span>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div class="part-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Part 1 van 4</div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="part-content">
+                    <!-- Video Content -->
+                    <div id="videoContent" class="hidden">
+                        <div class="video-status" id="videoStatus">
+                            <span>ℹ️</span>
+                            <span>Bekijk de hele video om door te gaan naar het volgende onderdeel.</span>
+                        </div>
+                        <div class="video-container" id="videoContainer">
+                            <!-- Video will be embedded here -->
+                        </div>
+                        <div id="videoInstructions">
+                            <h3>Over deze video</h3>
+                            <p>Bekijk de video aandachtig. Je kunt de video pauzeren en terugspoelen indien nodig.</p>
+                        </div>
+                    </div>
+
+                    <!-- Exercise Content -->
+                    <div id="exerciseContent" class="hidden">
+                        <div class="exercise-container">
+                            <div class="exercise-placeholder">
+                                <div class="exercise-placeholder-icon">💪</div>
+                                <h3>Oefening</h3>
+                                <p>Oefeningen worden binnenkort toegevoegd.</p>
+                                <p><strong>Type:</strong> <span id="exerciseType"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion Message -->
+                    <div id="completionMessage" class="hidden">
+                        <div class="completion-message">
+                            <h2>✅ Onderdeel voltooid!</h2>
+                            <div class="xp-earned">
+                                <span>+<span id="earnedXP">0</span> XP</span>
+                            </div>
+                            <p>Geweldig gedaan! Je kunt nu terug naar het overzicht.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="part-actions">
+                    <button class="btn btn-secondary" onclick="goToOverview()">
+                        ← Terug naar overzicht
+                    </button>
+                    <button class="btn btn-primary" id="completeBtn" onclick="completePart()" disabled>
+                        Markeer als voltooid
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/progress.js"></script>
+    
+    <script>
+        let userData = null;
+        let currentUser = null;
+        let lessonId = null;
+        let partId = null;
+        let lesson = null;
+        let part = null;
+        let videoWatched = false;
+        let videoPlayer = null;
+
+        async function initPart() {
+            // Check auth
+            currentUser = checkAuth();
+            if (!currentUser) return;
+
+            // Set user avatar
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+
+            // Get URL parameters
+            const params = new URLSearchParams(window.location.search);
+            lessonId = params.get('lesson');
+            partId = params.get('part');
+
+            if (!lessonId || !partId) {
+                alert('Ongeldige URL parameters');
+                goToOverview();
+                return;
+            }
+
+            // Load user data
+            userData = await DB.getUser(currentUser.email);
+            if (!userData) {
+                alert('Er ging iets mis bij het laden van je gegevens');
+                return;
+            }
+
+            // Update XP display
+            document.getElementById('totalXP').textContent = userData.totalXP || 0;
+
+            // Get lesson and part config
+            lesson = getLessonById(lessonId);
+            part = getPartById(lessonId, partId);
+
+            if (!lesson || !part) {
+                alert('Les of onderdeel niet gevonden');
+                goToOverview();
+                return;
+            }
+
+            // Render page
+            renderPartContent();
+
+            // Hide loading, show content
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('partContent').classList.remove('hidden');
+        }
+
+        function renderPartContent() {
+            // Breadcrumb
+            document.getElementById('breadcrumb').textContent = 
+                `Les ${lesson.order}: ${lesson.title}`;
+
+            // Title
+            document.getElementById('partTitle').textContent = part.title;
+
+            // XP Reward
+            document.getElementById('xpReward').textContent = `${part.xpReward} XP`;
+
+            // Progress
+            const partIndex = lesson.parts.findIndex(p => p.id === partId);
+            const totalParts = lesson.parts.length;
+            const progressPercent = ((partIndex + 1) / totalParts) * 100;
+            
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            document.getElementById('progressText').textContent = 
+                `Onderdeel ${partIndex + 1} van ${totalParts}`;
+
+            // Check if already completed
+            const partProgress = userData.progress?.[lessonId]?.parts?.[partId];
+            if (partProgress?.completed) {
+                showCompletionMessage();
+                return;
+            }
+
+            // Render based on type
+            if (part.type === 'video') {
+                renderVideo();
+            } else if (part.type === 'exercise') {
+                renderExercise();
+            }
+        }
+
+        function renderVideo() {
+            document.getElementById('videoContent').classList.remove('hidden');
+            document.getElementById('exerciseContent').classList.add('hidden');
+
+            const videoContainer = document.getElementById('videoContainer');
+
+            if (!part.videoUrl || part.videoUrl === '') {
+                videoContainer.innerHTML = `
+                    <div class="video-placeholder">
+                        <div class="video-placeholder-icon">🎬</div>
+                        <p>Video URL ontbreekt in configuratie</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Embed video based on URL type
+            if (part.videoUrl.includes('youtube.com') || part.videoUrl.includes('youtu.be')) {
+                embedYouTubeVideo(part.videoUrl);
+            } else if (part.videoUrl.includes('drive.google.com')) {
+                embedGoogleDriveVideo(part.videoUrl);
+            } else {
+                // Generic iframe embed
+                videoContainer.innerHTML = `
+                    <iframe src="${part.videoUrl}" 
+                            allowfullscreen 
+                            allow="autoplay"></iframe>
+                `;
+                // Enable complete button after 30 seconds
+                setTimeout(() => {
+                    markVideoAsWatched();
+                }, 30000);
+            }
+        }
+
+        function embedYouTubeVideo(url) {
+            const videoContainer = document.getElementById('videoContainer');
+            
+            // Extract video ID
+            let videoId;
+            if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                videoId = urlParams.get('v');
+            }
+
+            if (!videoId) {
+                videoContainer.innerHTML = '<div class="video-placeholder">Ongeldige YouTube URL</div>';
+                return;
+            }
+
+            // Embed with YouTube iframe API
+            videoContainer.innerHTML = `
+                <iframe id="youtubePlayer"
+                        src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
+                        allowfullscreen
+                        allow="autoplay"></iframe>
+            `;
+
+            // Enable button after reasonable time (video length / 2)
+            // For now, just enable after 30 seconds
+            setTimeout(() => {
+                markVideoAsWatched();
+            }, 30000);
+        }
+
+        function embedGoogleDriveVideo(url) {
+            const videoContainer = document.getElementById('videoContainer');
+            
+            // Extract file ID from Google Drive URL
+            let fileId;
+            if (url.includes('/file/d/')) {
+                fileId = url.split('/file/d/')[1].split('/')[0];
+            } else if (url.includes('id=')) {
+                fileId = url.split('id=')[1].split('&')[0];
+            }
+
+            if (!fileId) {
+                videoContainer.innerHTML = '<div class="video-placeholder">Ongeldige Google Drive URL</div>';
+                return;
+            }
+
+            // Embed Google Drive video
+            videoContainer.innerHTML = `
+                <iframe src="https://drive.google.com/file/d/${fileId}/preview" 
+                        allowfullscreen
+                        allow="autoplay"></iframe>
+            `;
+
+            // Enable button after 30 seconds
+            setTimeout(() => {
+                markVideoAsWatched();
+            }, 30000);
+        }
+
+        function markVideoAsWatched() {
+            if (videoWatched) return;
+            
+            videoWatched = true;
+            
+            // Update status
+            const statusEl = document.getElementById('videoStatus');
+            statusEl.className = 'video-status completed';
+            statusEl.innerHTML = '<span>✅</span><span>Video bekeken! Je kunt nu het onderdeel voltooien.</span>';
+            
+            // Enable complete button
+            document.getElementById('completeBtn').disabled = false;
+        }
+
+        function renderExercise() {
+            document.getElementById('videoContent').classList.add('hidden');
+            document.getElementById('exerciseContent').classList.remove('hidden');
+
+            // Show exercise type
+            document.getElementById('exerciseType').textContent = part.exerciseType || 'onbekend';
+
+            // TODO: Load actual exercise based on exerciseType
+            // For now, show placeholder and enable button for testing
+            setTimeout(() => {
+                document.getElementById('completeBtn').disabled = false;
+            }, 1000);
+        }
+
+        async function completePart() {
+            const completeBtn = document.getElementById('completeBtn');
+            completeBtn.disabled = true;
+            completeBtn.textContent = 'Bezig met opslaan...';
+
+            try {
+                // For video parts, just mark as completed with full XP
+                // For exercise parts, this will be called after exercise completion
+                const result = {
+                    score: 100,
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    xpEarned: part.xpReward
+                };
+
+                const completionResult = await window.completePart(lessonId, partId, result);
+
+                if (completionResult.success) {
+                    // Update XP display
+                    document.getElementById('totalXP').textContent = 
+                        (userData.totalXP || 0) + part.xpReward;
+
+                    // Show completion message
+                    showCompletionMessage();
+                } else {
+                    alert('Er ging iets mis bij het opslaan van je voortgang.');
+                    completeBtn.disabled = false;
+                    completeBtn.textContent = 'Markeer als voltooid';
+                }
+
+            } catch (error) {
+                console.error('Error completing part:', error);
+                alert('Er ging iets mis bij het opslaan van je voortgang.');
+                completeBtn.disabled = false;
+                completeBtn.textContent = 'Markeer als voltooid';
+            }
+        }
+
+        function showCompletionMessage() {
+            // Hide video/exercise content
+            document.getElementById('videoContent').classList.add('hidden');
+            document.getElementById('exerciseContent').classList.add('hidden');
+            
+            // Show completion message
+            document.getElementById('completionMessage').classList.remove('hidden');
+            document.getElementById('earnedXP').textContent = part.xpReward;
+
+            // Hide complete button
+            document.getElementById('completeBtn').classList.add('hidden');
+        }
+
+        function goToOverview() {
+            window.location.href = 'overview.html';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initPart);
+    </script>
+</body>
+</html>
