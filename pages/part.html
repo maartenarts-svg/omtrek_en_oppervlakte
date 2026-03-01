@@ -286,7 +286,7 @@
                     <button class="btn btn-secondary" onclick="goToOverview()">
                         ← Terug naar overzicht
                     </button>
-                    <button class="btn btn-primary" id="completeBtn" onclick="completePart()" disabled>
+                    <button class="btn btn-primary" id="completeBtn" onclick="completePartAction()" disabled>
                         Markeer als voltooid
                     </button>
                 </div>
@@ -522,7 +522,7 @@
             }, 1000);
         }
 
-        async function completePart() {
+        async function completePartAction() {
             const completeBtn = document.getElementById('completeBtn');
             completeBtn.disabled = true;
             completeBtn.textContent = 'Bezig met opslaan...';
@@ -537,9 +537,10 @@
                     xpEarned: part.xpReward
                 };
 
-                const completionResult = await window.completePart(lessonId, partId, result);
+                // Call the completePart function from progress.js
+                const completionResult = await completePart(lessonId, partId, result);
 
-                if (completionResult.success) {
+                if (completionResult && completionResult.success) {
                     // Update XP display
                     document.getElementById('totalXP').textContent = 
                         (userData.totalXP || 0) + part.xpReward;
@@ -547,14 +548,16 @@
                     // Show completion message
                     showCompletionMessage();
                 } else {
-                    alert('Er ging iets mis bij het opslaan van je voortgang.');
+                    const errorMsg = completionResult?.error || 'Onbekende fout';
+                    console.error('Completion failed:', errorMsg);
+                    alert('Er ging iets mis bij het opslaan van je voortgang: ' + errorMsg);
                     completeBtn.disabled = false;
                     completeBtn.textContent = 'Markeer als voltooid';
                 }
 
             } catch (error) {
                 console.error('Error completing part:', error);
-                alert('Er ging iets mis bij het opslaan van je voortgang.');
+                alert('Er ging iets mis bij het opslaan van je voortgang: ' + error.message);
                 completeBtn.disabled = false;
                 completeBtn.textContent = 'Markeer als voltooid';
             }
