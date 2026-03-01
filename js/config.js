@@ -18,7 +18,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Onderscheid tussen omtrek en oppervlakte',
-        videoUrl: '', // Vul later in
+        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link', // Vul later in
         xpReward: 20
       },
       {
