@@ -336,6 +336,7 @@
     <!-- Exercise Scripts -->
     <script src="../js/exercise-formules-drill.js"></script>
     <script src="../js/exercise-rooster-berekening.js"></script>
+    <script src="../js/exercise-keuze-vraag.js"></script>
     
     <script>
         let userData = null;
@@ -571,6 +572,8 @@
                 initFormulasDrill(container, handleExerciseComplete);
             } else if (part.exerciseType === 'rooster-berekening') {
                 initRoosterBerekening(container, handleExerciseComplete);
+            } else if (part.exerciseType === 'keuze-vraag') {
+                initKeuzeVraag(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
