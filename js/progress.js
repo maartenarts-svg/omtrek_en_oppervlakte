@@ -54,13 +54,17 @@ async function completePart(lessonId, partId, result) {
     */
     
     const user = getCurrentUser();
-    if (!user) return false;
+    if (!user) {
+        return { success: false, error: 'Geen gebruiker ingelogd' };
+    }
     
     try {
         // Calculate letter score
         const lesson = getLessonById(lessonId);
         const part = getPartById(lessonId, partId);
-        if (!lesson || !part) return false;
+        if (!lesson || !part) {
+            return { success: false, error: 'Les of onderdeel niet gevonden' };
+        }
         
         const letterScore = calculateLetterScore(result.score, part.passingCriteria);
         
