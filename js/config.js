@@ -33,12 +33,16 @@ const LESSONS_CONFIG = {
         }
       },
       {
-        id: 'part-3',
-        type: 'video',
-        title: 'Omtrek of oppervlakte?',
-        videoUrl: '',
-        xpReward: 20
-      },
+      id: 'part-3',
+      type: 'exercise',
+      title: 'Omtrek en oppervlakte in rooster',
+      exerciseType: 'rooster-berekening',  // ← Nieuwe oefening!
+      xpReward: 50,
+      passingCriteria: {
+        scoreA: 83,  // 5/6
+        scoreB: 67   // 4/6
+      }
+    },
       {
         id: 'part-4',
         type: 'exercise',
