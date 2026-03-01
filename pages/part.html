@@ -647,13 +647,13 @@
             
             if (letterScore === 'A') {
                 scoreClass = 'score-A';
-                scoreMessage = 'Uitstekend!';
+                scoreMessage = 'Knap zo! Je hebt dit onder de knie.';
             } else if (letterScore === 'B') {
                 scoreClass = 'score-B';
-                scoreMessage = 'Goed gedaan!';
+                scoreMessage = 'Je bent al goed op weg! Blijf oefenen!';
             } else if (letterScore === 'C') {
                 scoreClass = 'score-C';
-                scoreMessage = 'Je kunt beter! Blijf oefenen.';
+                scoreMessage = 'Dit kan je nog niet zo goed. Maak deze oefening opnieuw.';
             }
             
             // Show completion message
@@ -670,7 +670,6 @@
                     <div class="xp-earned">
                         <span>+${xpEarned || part.xpReward} XP</span>
                     </div>
-                    <p>Geweldig gedaan! Je kunt nu terug naar het overzicht.</p>
                     <button class="btn btn-primary btn-large" onclick="goToOverview()" style="margin-top: var(--spacing-lg);">
                         OK
                     </button>
