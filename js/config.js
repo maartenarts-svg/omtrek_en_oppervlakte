@@ -24,14 +24,12 @@ const LESSONS_CONFIG = {
       {
         id: 'part-2',
         type: 'exercise',
-        title: 'Omtrek en oppervlakte in rooster',
-        exerciseType: 'rooster-berekening',
-        xpReward: 50,
+        title: 'Formules inprenten',
+        exerciseType: 'formules-drill',  // ← Dit is belangrijk!
+        xpReward: 30,
         passingCriteria: {
-          minCorrect: 7,
-          minPercentage: 70,
-          scoreA: 90, // >= 90% = A
-          scoreB: 70  // >= 70% = B, < 70% = C
+          scoreA: 100,
+          scoreB: 67
         }
       },
       {
