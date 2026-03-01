@@ -335,6 +335,7 @@
     
     <!-- Exercise Scripts -->
     <script src="../js/exercise-formules-drill.js"></script>
+    <script src="../js/exercise-rooster-berekening.js"></script>
     
     <script>
         let userData = null;
@@ -568,6 +569,8 @@
             // Load the appropriate exercise
             if (part.exerciseType === 'formules-drill') {
                 initFormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === 'rooster-berekening') {
+                initRoosterBerekening(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
