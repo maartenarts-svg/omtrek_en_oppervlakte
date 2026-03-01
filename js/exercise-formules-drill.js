@@ -70,7 +70,7 @@ class FormulasDrillExercise {
                 <div class="exercise-progress">
                     <div class="progress-header">
                         <span class="progress-label">Voortgang</span>
-                        <span class="progress-score">Score: <strong>${this.score.toFixed(1)}</strong> / ${this.maxScore}</span>
+                        <span class="progress-score">Score: <strong>${this.score.toFixed(1).replace('.', ',')}</strong> / ${this.maxScore}</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${(this.currentQuestion / this.questions.length) * 100}%"></div>
@@ -172,8 +172,8 @@ class FormulasDrillExercise {
             this.attempts[question.id] = attempt;
             
             if (attempt === 1) {
-                // First attempt - give hints
-                let hints = [];
+                // First attempt - give hints with "Dit antwoord is niet juist." first
+                let hints = ['Dit antwoord is niet juist.'];
                 
                 if (!isUppercase && answer.toLowerCase() === question.correctAnswer.toLowerCase()) {
                     hints.push(question.hints.notUppercase);
@@ -190,7 +190,7 @@ class FormulasDrillExercise {
                     input.disabled = false;
                     input.focus();
                     document.getElementById('feedbackArea').classList.add('hidden');
-                    // Show submit button again for second attempt (no "Controleer" button shown)
+                    // Show submit button again for second attempt
                     const submitBtn = document.getElementById('submitBtn');
                     if (submitBtn) submitBtn.style.display = 'block';
                 });
@@ -412,6 +412,7 @@ class FormulasDrillExercise {
                     // Reset to initial state
                     this.resetDragDrop();
                     document.getElementById('feedbackArea').classList.add('hidden');
+                    // Items are now back in pool, checkIfAllPlaced will show button when ready
                 });
             } else {
                 // Second attempt - show correct answer
@@ -514,7 +515,7 @@ class FormulasDrillExercise {
             progressFill.style.width = `${((this.currentQuestion + 1) / this.questions.length) * 100}%`;
         }
         if (progressScore) {
-            progressScore.textContent = this.score.toFixed(1);
+            progressScore.textContent = this.score.toFixed(1).replace('.', ',');
         }
         if (progressText) {
             progressText.textContent = `Vraag ${this.currentQuestion + 1} van ${this.questions.length}`;
