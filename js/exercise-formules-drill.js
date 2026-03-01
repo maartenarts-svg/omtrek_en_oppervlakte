@@ -472,8 +472,11 @@ class FormulasDrillExercise {
         itemsArray.sort(() => Math.random() - 0.5);
         itemsArray.forEach(item => pool.appendChild(item));
         
-        // Hide check button
+        // Hide check button initially
         document.getElementById('checkBtn').classList.add('hidden');
+        
+        // Re-initialize drag and drop listeners
+        this.initDragDrop();
     }
     
     showFeedback(message, isCorrect, onOK) {
