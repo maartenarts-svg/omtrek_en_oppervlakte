@@ -241,7 +241,7 @@ class FormulasDrillExercise {
                 </div>
                 
                 <div class="question-actions">
-                    <button class="btn btn-primary hidden" id="checkBtn" onclick="exerciseInstance.checkDragDropAnswer()">
+                    <button class="btn btn-primary" id="checkBtn" onclick="exerciseInstance.checkDragDropAnswer()">
                         Controleer
                     </button>
                 </div>
@@ -321,7 +321,6 @@ class FormulasDrillExercise {
             
             item.addEventListener('dragend', (e) => {
                 item.classList.remove('dragging');
-                setTimeout(() => this.checkIfAllPlaced(), 10);
             });
         });
         
@@ -344,7 +343,6 @@ class FormulasDrillExercise {
                 if (draggedElement) {
                     zone.appendChild(draggedElement);
                     draggedElement = null;
-                    setTimeout(() => this.checkIfAllPlaced(), 10);
                 }
             });
         });
@@ -366,28 +364,20 @@ class FormulasDrillExercise {
             if (draggedElement) {
                 freshPool.appendChild(draggedElement);
                 draggedElement = null;
-                setTimeout(() => this.checkIfAllPlaced(), 10);
             }
         });
     }
     
-    checkIfAllPlaced() {
-        const pool = document.querySelector('.pool-items');
-        if (!pool) return;
-        
-        const itemsInPool = pool.querySelectorAll('.draggable-item').length;
-        const checkBtn = document.getElementById('checkBtn');
-        
-        if (!checkBtn) return;
-        
-        if (itemsInPool === 0) {
-            checkBtn.classList.remove('hidden');
-        } else {
-            checkBtn.classList.add('hidden');
-        }
-    }
-    
     checkDragDropAnswer() {
+        // First check if all items are placed
+        const pool = document.querySelector('.pool-items');
+        const itemsInPool = pool.querySelectorAll('.draggable-item').length;
+        
+        if (itemsInPool > 0) {
+            alert('Plaats eerst alle items in een zone voordat je controleert.');
+            return;
+        }
+        
         const question = this.questions[this.currentQuestion];
         const zones = document.querySelectorAll('.drop-zone');
         const attempt = this.attempts[question.id] + 1;
@@ -434,7 +424,6 @@ class FormulasDrillExercise {
                     // Reset to initial state
                     this.resetDragDrop();
                     document.getElementById('feedbackArea').classList.add('hidden');
-                    // Items are now back in pool, checkIfAllPlaced will show button when ready
                 });
             } else {
                 // Second attempt - show correct answer
@@ -492,12 +481,6 @@ class FormulasDrillExercise {
         const itemsArray = Array.from(items);
         itemsArray.sort(() => Math.random() - 0.5);
         itemsArray.forEach(item => pool.appendChild(item));
-        
-        // Hide check button
-        const checkBtn = document.getElementById('checkBtn');
-        if (checkBtn) {
-            checkBtn.classList.add('hidden');
-        }
         
         // Re-initialize all drag and drop events
         this.initDragDrop();
