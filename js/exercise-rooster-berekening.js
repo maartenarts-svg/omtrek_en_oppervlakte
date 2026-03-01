@@ -51,58 +51,71 @@ class RoosterBerekeningExercise {
     
     generatePolygon() {
         // Generate a random rectilinear polygon (only horizontal/vertical sides)
-        // Strategy: Start with a rectangle, then add random indentations
+        // Strategy: Create complex shapes with at least 6 sides
         
         const minSize = 3;
         const maxSize = 7;
         
-        // Start with a rectangle
-        const width = minSize + Math.floor(Math.random() * (maxSize - minSize));
-        const height = minSize + Math.floor(Math.random() * (maxSize - minSize));
+        // Start with a base rectangle
+        const baseWidth = minSize + Math.floor(Math.random() * (maxSize - minSize));
+        const baseHeight = minSize + Math.floor(Math.random() * (maxSize - minSize));
         
         // Position it somewhat centered
-        const startX = 2 + Math.floor(Math.random() * 3);
-        const startY = 2 + Math.floor(Math.random() * 3);
+        const startX = 2 + Math.floor(Math.random() * 2);
+        const startY = 2 + Math.floor(Math.random() * 2);
         
-        // Create L-shape or similar by cutting a corner
-        const cutCorner = Math.random() > 0.5;
+        // Create more complex shapes by cutting multiple corners/adding indentations
+        const shapeType = Math.floor(Math.random() * 3);
         
-        if (cutCorner && width > 3 && height > 3) {
-            // Create L-shape
-            const cutWidth = 1 + Math.floor(Math.random() * Math.floor(width / 2));
-            const cutHeight = 1 + Math.floor(Math.random() * Math.floor(height / 2));
+        if (shapeType === 0) {
+            // L-shape with extra indentation (8 sides)
+            const cutWidth = 1 + Math.floor(Math.random() * Math.floor(baseWidth / 3));
+            const cutHeight = 1 + Math.floor(Math.random() * Math.floor(baseHeight / 3));
+            const indentDepth = 1 + Math.floor(Math.random() * 2);
             
-            // Choose which corner to cut (top-right or bottom-left most common)
-            const corner = Math.random();
-            
-            if (corner < 0.5) {
-                // Cut top-right corner
-                return [
-                    {x: startX, y: startY},
-                    {x: startX + width - cutWidth, y: startY},
-                    {x: startX + width - cutWidth, y: startY + cutHeight},
-                    {x: startX + width, y: startY + cutHeight},
-                    {x: startX + width, y: startY + height},
-                    {x: startX, y: startY + height}
-                ];
-            } else {
-                // Cut bottom-left corner
-                return [
-                    {x: startX, y: startY},
-                    {x: startX + width, y: startY},
-                    {x: startX + width, y: startY + height},
-                    {x: startX + cutWidth, y: startY + height},
-                    {x: startX + cutWidth, y: startY + height - cutHeight},
-                    {x: startX, y: startY + height - cutHeight}
-                ];
-            }
-        } else {
-            // Simple rectangle
             return [
                 {x: startX, y: startY},
-                {x: startX + width, y: startY},
-                {x: startX + width, y: startY + height},
-                {x: startX, y: startY + height}
+                {x: startX + baseWidth, y: startY},
+                {x: startX + baseWidth, y: startY + cutHeight},
+                {x: startX + baseWidth - indentDepth, y: startY + cutHeight},
+                {x: startX + baseWidth - indentDepth, y: startY + baseHeight},
+                {x: startX + cutWidth, y: startY + baseHeight},
+                {x: startX + cutWidth, y: startY + baseHeight - cutHeight},
+                {x: startX, y: startY + baseHeight - cutHeight}
+            ];
+        } else if (shapeType === 1) {
+            // U-shape (8 sides)
+            const innerWidth = Math.floor(baseWidth / 3);
+            const innerHeight = Math.floor(baseHeight * 0.6);
+            
+            return [
+                {x: startX, y: startY},
+                {x: startX + baseWidth, y: startY},
+                {x: startX + baseWidth, y: startY + baseHeight},
+                {x: startX + baseWidth - innerWidth, y: startY + baseHeight},
+                {x: startX + baseWidth - innerWidth, y: startY + innerHeight},
+                {x: startX + innerWidth, y: startY + innerHeight},
+                {x: startX + innerWidth, y: startY + baseHeight},
+                {x: startX, y: startY + baseHeight}
+            ];
+        } else {
+            // T-shape or cross-like (10 sides)
+            const armWidth = Math.floor(baseWidth / 3);
+            const armHeight = Math.floor(baseHeight / 3);
+            
+            return [
+                {x: startX + armWidth, y: startY},
+                {x: startX + baseWidth - armWidth, y: startY},
+                {x: startX + baseWidth - armWidth, y: startY + armHeight},
+                {x: startX + baseWidth, y: startY + armHeight},
+                {x: startX + baseWidth, y: startY + baseHeight - armHeight},
+                {x: startX + baseWidth - armWidth, y: startY + baseHeight - armHeight},
+                {x: startX + baseWidth - armWidth, y: startY + baseHeight},
+                {x: startX + armWidth, y: startY + baseHeight},
+                {x: startX + armWidth, y: startY + baseHeight - armHeight},
+                {x: startX, y: startY + baseHeight - armHeight},
+                {x: startX, y: startY + armHeight},
+                {x: startX + armWidth, y: startY + armHeight}
             ];
         }
     }
@@ -254,7 +267,7 @@ class RoosterBerekeningExercise {
         
         // Draw polygon
         const points = polygon.map(p => `${p.x * this.cellSize},${p.y * this.cellSize}`).join(' ');
-        svg += `<polygon points="${points}" fill="#e0e0e0" stroke="#000" stroke-width="2"/>`;
+        svg += `<polygon points="${points}" fill="rgba(224, 224, 224, 0.6)" stroke="#000" stroke-width="2"/>`;
         
         // Add side labels if requested
         if (showLabels) {
