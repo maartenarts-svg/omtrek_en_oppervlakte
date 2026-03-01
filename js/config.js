@@ -24,7 +24,7 @@ const LESSONS_CONFIG = {
       {
         id: 'part-2',
         type: 'exercise',
-        title: 'Formules inprenten',
+        title: 'Theorie inprenten',
         exerciseType: 'formules-drill',  // ← Dit is belangrijk!
         xpReward: 30,
         passingCriteria: {
