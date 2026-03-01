@@ -189,6 +189,10 @@
             color: #2d6a2d;
             margin: var(--spacing-lg) 0;
         }
+        
+        .completion-message .btn {
+            min-width: 200px;
+        }
     </style>
 </head>
 <body>
@@ -277,12 +281,15 @@
                                 <span>+<span id="earnedXP">0</span> XP</span>
                             </div>
                             <p>Geweldig gedaan! Je kunt nu terug naar het overzicht.</p>
+                            <button class="btn btn-primary btn-large" onclick="goToOverview()" style="margin-top: var(--spacing-lg);">
+                                OK
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Actions -->
-                <div class="part-actions">
+                <!-- Actions (alleen voor video's) -->
+                <div class="part-actions" id="partActions">
                     <button class="btn btn-secondary" onclick="goToOverview()">
                         ← Terug naar overzicht
                     </button>
@@ -401,6 +408,9 @@
         function renderVideo() {
             document.getElementById('videoContent').classList.remove('hidden');
             document.getElementById('exerciseContent').classList.add('hidden');
+            
+            // Show action buttons for videos
+            document.getElementById('partActions').classList.remove('hidden');
 
             const videoContainer = document.getElementById('videoContainer');
 
@@ -511,15 +521,17 @@
         function renderExercise() {
             document.getElementById('videoContent').classList.add('hidden');
             document.getElementById('exerciseContent').classList.remove('hidden');
+            
+            // Hide action buttons for exercises - they will complete automatically
+            document.getElementById('partActions').classList.add('hidden');
 
             // Show exercise type
             document.getElementById('exerciseType').textContent = part.exerciseType || 'onbekend';
 
             // TODO: Load actual exercise based on exerciseType
-            // For now, show placeholder and enable button for testing
-            setTimeout(() => {
-                document.getElementById('completeBtn').disabled = false;
-            }, 1000);
+            // For now, show placeholder
+            // When exercises are implemented, they should call completePartAction() 
+            // automatically when the student finishes
         }
 
         async function completePartAction() {
@@ -568,12 +580,12 @@
             document.getElementById('videoContent').classList.add('hidden');
             document.getElementById('exerciseContent').classList.add('hidden');
             
+            // Hide action buttons
+            document.getElementById('partActions').classList.add('hidden');
+            
             // Show completion message
             document.getElementById('completionMessage').classList.remove('hidden');
             document.getElementById('earnedXP').textContent = part.xpReward;
-
-            // Hide complete button
-            document.getElementById('completeBtn').classList.add('hidden');
         }
 
         function goToOverview() {
