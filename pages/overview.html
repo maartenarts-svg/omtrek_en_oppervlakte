@@ -198,7 +198,7 @@
                 
                 const isCompleted = lessonProgress.completed || false;
                 const isCurrent = userData.currentLesson === lesson.id;
-                const isLocked = !isCompleted && !isCurrent;
+                const isLocked = !isCurrent; // Only current lesson is clickable
                 
                 // Check for deadline AFTER this lesson
                 const deadline = getDeadlineForLesson(lesson.id);
