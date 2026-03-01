@@ -33,26 +33,25 @@ const LESSONS_CONFIG = {
         }
       },
       {
-      id: 'part-3',
-      type: 'exercise',
-      title: 'Omtrek en oppervlakte in rooster',
-      exerciseType: 'rooster-berekening',  // ← Nieuwe oefening!
-      xpReward: 50,
-      passingCriteria: {
-        scoreA: 83,  // 5/6
-        scoreB: 67   // 4/6
-      }
-    },
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Omtrek en oppervlakte in rooster',
+        exerciseType: 'rooster-berekening',  // ← Nieuwe oefening!
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 83,  // 5/6
+          scoreB: 67   // 4/6
+        }
+      },
       {
         id: 'part-4',
         type: 'exercise',
         title: 'Kies: omtrek of oppervlakte',
-        exerciseType: 'keuze-vraag',
+        exerciseType: 'keuze-vraag',  // ← Nieuwe oefening!
         xpReward: 40,
         passingCriteria: {
-          minCorrect: 8,
-          scoreA: 90,
-          scoreB: 75
+          scoreA: 83,  // 5/6
+          scoreB: 67   // 4/6
         }
       }
     ]
