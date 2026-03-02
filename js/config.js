@@ -26,7 +26,7 @@ const LESSONS_CONFIG = {
         type: 'exercise',
         title: 'Theorie inprenten',
         exerciseType: 'formules-drill',  // ← Dit is belangrijk!
-        xpReward: 30,
+        xpReward: 0,
         passingCriteria: {
           scoreA: 100,
           scoreB: 66
@@ -37,7 +37,7 @@ const LESSONS_CONFIG = {
         type: 'exercise',
         title: 'Omtrek en oppervlakte in rooster',
         exerciseType: 'rooster-berekening',  // ← Nieuwe oefening!
-        xpReward: 50,
+        xpReward: 0,
         passingCriteria: {
           scoreA: 83,  // 5/6
           scoreB: 67   // 4/6
@@ -48,7 +48,7 @@ const LESSONS_CONFIG = {
         type: 'exercise',
         title: 'Kies: omtrek of oppervlakte',
         exerciseType: 'keuze-vraag',  // ← Nieuwe oefening!
-        xpReward: 40,
+        xpReward: 0,
         passingCriteria: {
           scoreA: 83,  // 5/6
           scoreB: 67   // 4/6
