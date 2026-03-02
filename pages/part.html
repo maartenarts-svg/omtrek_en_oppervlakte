@@ -606,7 +606,7 @@
                     // Exercise completed - use the provided result
                     result = exerciseResult;
                 } else {
-                    // Video completed - mark as completed with full XP
+                    // Video completed - mark as completed with full XP and score A
                     result = {
                         score: 100,
                         correctAnswers: 0,
@@ -623,8 +623,11 @@
                     document.getElementById('totalXP').textContent = 
                         (userData.totalXP || 0) + result.xpEarned;
 
-                    // Show completion message with letter score
-                    showCompletionMessage(completionResult.letterScore, result.xpEarned);
+                    // Show completion message
+                    // For videos: don't show letter score (pass null)
+                    // For exercises: show the letter score
+                    const displayLetterScore = exerciseResult ? completionResult.letterScore : null;
+                    showCompletionMessage(displayLetterScore, result.xpEarned);
                 } else {
                     const errorMsg = completionResult?.error || 'Onbekende fout';
                     console.error('Completion failed:', errorMsg);
@@ -653,25 +656,29 @@
             // Hide action buttons
             document.getElementById('partActions').classList.add('hidden');
             
-            // Determine score color and message
+            // Determine score color, message, and background
             let scoreClass = '';
             let scoreMessage = '';
+            let backgroundColor = '';
             
             if (letterScore === 'A') {
                 scoreClass = 'score-A';
                 scoreMessage = 'Knap zo! Je hebt dit onder de knie.';
+                backgroundColor = 'linear-gradient(135deg, #B8E5B8 0%, #A8D8A8 100%)'; // Groen
             } else if (letterScore === 'B') {
                 scoreClass = 'score-B';
                 scoreMessage = 'Je bent al goed op weg! Blijf oefenen!';
+                backgroundColor = 'linear-gradient(135deg, #FFE5A3 0%, #FFD580 100%)'; // Geel
             } else if (letterScore === 'C') {
                 scoreClass = 'score-C';
                 scoreMessage = 'Dit kan je nog niet zo goed. Maak deze oefening opnieuw.';
+                backgroundColor = 'linear-gradient(135deg, #FFB8A3 0%, #FFA080 100%)'; // Oranje
             }
             
             // Show completion message
             const completionEl = document.getElementById('completionMessage');
             completionEl.innerHTML = `
-                <div class="completion-message">
+                <div class="completion-message" style="background: ${backgroundColor};">
                     <h2>✅ Onderdeel voltooid!</h2>
                     ${letterScore ? `
                         <div class="completion-score">
