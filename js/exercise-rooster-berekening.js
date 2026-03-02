@@ -99,23 +99,17 @@ class RoosterBerekeningExercise {
                 {x: startX, y: startY + baseHeight}
             ];
         } else {
-            // T-shape or cross-like (10 sides)
-            const armWidth = Math.floor(baseWidth / 3);
-            const armHeight = Math.floor(baseHeight / 3);
+            // L-shape variant 2 (6 sides) - cut from bottom-left
+            const cutWidth = Math.floor(baseWidth / 2);
+            const cutHeight = Math.floor(baseHeight / 2);
             
             return [
-                {x: startX + armWidth, y: startY},
-                {x: startX + baseWidth - armWidth, y: startY},
-                {x: startX + baseWidth - armWidth, y: startY + armHeight},
-                {x: startX + baseWidth, y: startY + armHeight},
-                {x: startX + baseWidth, y: startY + baseHeight - armHeight},
-                {x: startX + baseWidth - armWidth, y: startY + baseHeight - armHeight},
-                {x: startX + baseWidth - armWidth, y: startY + baseHeight},
-                {x: startX + armWidth, y: startY + baseHeight},
-                {x: startX + armWidth, y: startY + baseHeight - armHeight},
-                {x: startX, y: startY + baseHeight - armHeight},
-                {x: startX, y: startY + armHeight},
-                {x: startX + armWidth, y: startY + armHeight}
+                {x: startX, y: startY},
+                {x: startX + baseWidth, y: startY},
+                {x: startX + baseWidth, y: startY + baseHeight},
+                {x: startX + cutWidth, y: startY + baseHeight},
+                {x: startX + cutWidth, y: startY + cutHeight},
+                {x: startX, y: startY + cutHeight}
             ];
         }
     }
