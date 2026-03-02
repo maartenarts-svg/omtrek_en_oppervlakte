@@ -347,8 +347,8 @@ class KeuzeVraagExercise {
             letterScore = 'B';
         }
         
-        // Calculate XP: score * 10
-        const xpEarned = this.score * 10;
+        // Calculate XP: score * 10 (minimum 0)
+        const xpEarned = Math.max(0, this.score * 10);
         
         // Call completion callback
         if (this.onComplete) {
