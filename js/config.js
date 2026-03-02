@@ -40,7 +40,7 @@ const LESSONS_CONFIG = {
         xpReward: 0,
         passingCriteria: {
           scoreA: 83,  // 5/6
-          scoreB: 67   // 4/6
+          scoreB: 66   // 4/6
         }
       },
       {
@@ -51,7 +51,7 @@ const LESSONS_CONFIG = {
         xpReward: 0,
         passingCriteria: {
           scoreA: 83,  // 5/6
-          scoreB: 67   // 4/6
+          scoreB: 66   // 4/6
         }
       }
     ]
@@ -72,11 +72,10 @@ const LESSONS_CONFIG = {
         id: 'part-2',
         type: 'exercise',
         title: 'Oefenen op eenheden en voorvoegsels',
-        exerciseType: 'eenheden-voorvoegsels',
-        xpReward: 40,
+        exerciseType: '2-2-eenheden-voorvoegsels',
+        xpReward: 0,
         passingCriteria: {
-          minCorrect: 8,
-          scoreA: 90,
+          scoreA: 87.5,
           scoreB: 75
         }
       },
