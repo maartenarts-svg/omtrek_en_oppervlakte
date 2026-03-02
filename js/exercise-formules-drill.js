@@ -424,6 +424,9 @@ class FormulasDrillExercise {
                     // Reset to initial state
                     this.resetDragDrop();
                     document.getElementById('feedbackArea').classList.add('hidden');
+                    // Show check button again
+                    const checkBtn = document.getElementById('checkBtn');
+                    if (checkBtn) checkBtn.style.display = 'block';
                 });
             } else {
                 // Second attempt - show correct answer
