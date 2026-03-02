@@ -29,7 +29,7 @@ const LESSONS_CONFIG = {
         xpReward: 30,
         passingCriteria: {
           scoreA: 100,
-          scoreB: 67
+          scoreB: 66
         }
       },
       {
