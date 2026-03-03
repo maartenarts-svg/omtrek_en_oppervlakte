@@ -51,251 +51,191 @@ class RoosterBerekeningExercise {
     }
     
     generatePolygon() {
-        // Choose random shape
+        // STAP 1: Kies willekeurig de vorm
         const shapes = ['L', 'U', 'T', '+', 'E'];
         const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
         
-        // Generate shape parameters
-        let params;
-        if (shapeType === 'L') {
-            params = this.generateLShape();
-        } else if (shapeType === 'U') {
-            params = this.generateUShape();
-        } else if (shapeType === 'T') {
-            params = this.generateTShape();
-        } else if (shapeType === '+') {
-            params = this.generatePlusShape();
-        } else {
-            params = this.generateEShape();
-        }
+        // STAP 2: Genereer lengtes volgens constraints
+        const lengths = this.generateLengths(shapeType);
         
-        // Choose random start direction (0=N, 1=E, 2=S, 3=W)
-        const startDir = Math.floor(Math.random() * 4);
+        // STAP 3: Bereken hulpfiguur hoekpunten (H1, H2, ...)
+        const helpPoints = this.calculateHelpPoints(shapeType, lengths);
         
-        // Determine start point based on shape and direction
-        let startX, startY;
-        const needsOffset = (shapeType === 'T' || shapeType === '+');
-        const offset = needsOffset ? params.z1 : 0;
+        // STAP 4: Kies rotatie (0, 1, 2, of 3 voor 0°, 90°, 180°, 270°)
+        const n = Math.floor(Math.random() * 4);
         
-        if (startDir === 0) { // North
-            startX = 2 + offset;
-            startY = 8;
-        } else if (startDir === 1) { // East
-            startX = 2;
-            startY = 2 + offset;
-        } else if (startDir === 2) { // South
-            startX = 8 - offset;
-            startY = 2;
-        } else { // West
-            startX = 8;
-            startY = 8 - offset;
-        }
+        // STAP 5: Transformeer hulpfiguur naar definitieve figuur
+        const polygon = this.transformPoints(helpPoints, n);
         
-        // Build polygon following algorithm
-        const polygon = this.buildPolygon(shapeType, params, startX, startY, startDir);
-        
-        // Store metadata for feedback
+        // Bewaar metadata voor feedback
         polygon.shapeType = shapeType;
-        polygon.params = params;
-        polygon.startDir = startDir;
-        polygon.startPoint = {x: startX, y: startY};
+        polygon.lengths = lengths;
+        polygon.rotation = n;
         
         return polygon;
     }
     
-    generateLShape() {
-        // n1 = z1 + z2, w1 = o1 + o2
-        // All sums ≤ 6
-        const z1 = 1 + Math.floor(Math.random() * 3); // 1-3
-        const z2 = 1 + Math.floor(Math.random() * 3); // 1-3
-        const n1 = z1 + z2;
+    generateLengths(shapeType) {
+        const r = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
         
-        const o1 = 1 + Math.floor(Math.random() * 3);
-        const o2 = 1 + Math.floor(Math.random() * Math.min(3, 7 - o1)); // ensure o1+o2 ≤ 6
-        const w1 = o1 + o2;
-        
-        return {n1, o1, z1, o2, z2, w1};
+        if (shapeType === 'L') {
+            const l1 = r(2, 6);
+            const l2 = r(1, 5);
+            const l3 = r(1, l1 - 1);
+            const l4 = r(1, 6 - l2);
+            const l5 = l1 - l3;
+            const l6 = l2 + l4;
+            return [l1, l2, l3, l4, l5, l6];
+            
+        } else if (shapeType === 'U') {
+            const l1 = r(2, 6);
+            const l2 = r(1, 4);
+            const l3 = r(1, l1 - 1);
+            const l4 = r(1, 5 - l2);
+            const l5 = r(1, 6 - l1 + l3);
+            const l6 = r(1, 6 - l2 - l4);
+            const l7 = l1 + l5 - l3;
+            const l8 = l2 + l4 + l6;
+            return [l1, l2, l3, l4, l5, l6, l7, l8];
+            
+        } else if (shapeType === 'T') {
+            const l1 = r(1, 5);
+            const l2 = r(1, 4);
+            const l3 = r(1, 6 - l1);
+            const l4 = r(l2 + 2, 6);
+            const l5 = r(1, l1 + l3 - 1);
+            const l6 = r(1, l4 - l2 - 1);
+            const l7 = l1 + l3 - l5;
+            const l8 = l4 - l2 - l6;
+            return [l1, l2, l3, l4, l5, l6, l7, l8];
+            
+        } else if (shapeType === 'E') {
+            const l1 = r(5, 6);
+            const l2 = r(2, 6);
+            const l3 = r(1, l1 - 4);
+            const l4 = r(1, l2 - 1);
+            const l5 = r(1, l1 - l3 - 3);
+            const l6 = r(1, 6 - l2 + l4);
+            const l7 = r(1, l1 - l3 - l5 - 2);
+            const l8 = r(1, l2 - l4 + l6 - 1);
+            const l9 = r(1, l1 - l3 - l5 - l7 - 1);
+            const l10 = r(1, 6 - l2 + l4 - l6 + l8);
+            const l11 = l1 - l3 - l5 - l7 - l9;
+            const l12 = l2 + l6 + l10 - l4 - l8;
+            return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12];
+            
+        } else { // '+'
+            const l1 = r(1, 4);
+            const l2 = r(1, 4);
+            const l3 = r(1, 5 - l1);
+            const l4 = r(1, 4);
+            const l5 = r(1, 6 - l1 - l3);
+            const l6 = r(Math.max(l1 - l4 + 1, 1), 5 - l4);
+            const l7 = r(1, l1 + l3 + l5 - 2);
+            const l8 = r(Math.max(l1 - l4 - l6 + 1, 1), 6 - l4 - l6);
+            const l9 = r(1, l1 + l3 + l5 - l7 - 1);
+            const l10 = r(1, 5 - l2);
+            const l11 = l1 + l3 + l5 - l7 - l9;
+            const l12 = l4 + l6 + l8 - l2 - l10;
+            return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12];
+        }
     }
     
-    generateUShape() {
-        // n1 + n2 = z1 + z2, n1 > z1, o1 + o2 + o3 = w1
-        const z1 = 1 + Math.floor(Math.random() * 2); // 1-2
-        const z2 = 1 + Math.floor(Math.random() * 2);
-        const n1 = z1 + 1 + Math.floor(Math.random() * 2); // n1 > z1
-        const n2 = z1 + z2 - n1;
+    calculateHelpPoints(shapeType, L) {
+        const add = (p, delta) => ({x: p.x + delta[0], y: p.y + delta[1]});
         
-        const o1 = 1 + Math.floor(Math.random() * 2);
-        const o2 = 1 + Math.floor(Math.random() * 2);
-        const remaining = Math.max(1, 6 - o1 - o2);
-        const o3 = 1 + Math.floor(Math.random() * Math.min(2, remaining));
-        const w1 = o1 + o2 + o3;
-        
-        return {n1, o1, z1, o2, n2, o3, z2, w1};
+        if (shapeType === 'L') {
+            const H1 = {x: 2, y: 8};
+            const H2 = add(H1, [0, -L[0]]);
+            const H3 = add(H2, [L[1], 0]);
+            const H4 = add(H3, [0, L[2]]);
+            const H5 = add(H4, [L[3], 0]);
+            const H6 = add(H5, [0, L[4]]);
+            return [H1, H2, H3, H4, H5, H6];
+            
+        } else if (shapeType === 'U') {
+            const H1 = {x: 2, y: 8};
+            const H2 = add(H1, [0, -L[0]]);
+            const H3 = add(H2, [L[1], 0]);
+            const H4 = add(H3, [0, L[2]]);
+            const H5 = add(H4, [L[3], 0]);
+            const H6 = add(H5, [0, -L[4]]);
+            const H7 = add(H6, [L[5], 0]);
+            const H8 = add(H7, [0, L[6]]);
+            return [H1, H2, H3, H4, H5, H6, H7, H8];
+            
+        } else if (shapeType === 'T') {
+            const H1 = {x: 2 + L[1], y: 8};
+            const H2 = add(H1, [0, -L[0]]);
+            const H3 = add(H2, [-L[1], 0]);
+            const H4 = add(H3, [0, -L[2]]);
+            const H5 = add(H4, [L[3], 0]);
+            const H6 = add(H5, [0, L[4]]);
+            const H7 = add(H6, [-L[5], 0]);
+            const H8 = add(H7, [0, L[6]]);
+            return [H1, H2, H3, H4, H5, H6, H7, H8];
+            
+        } else if (shapeType === 'E') {
+            const H1 = {x: 2, y: 8};
+            const H2 = add(H1, [0, -L[0]]);
+            const H3 = add(H2, [L[1], 0]);
+            const H4 = add(H3, [0, L[2]]);
+            const H5 = add(H4, [-L[3], 0]);
+            const H6 = add(H5, [0, L[4]]);
+            const H7 = add(H6, [L[5], 0]);
+            const H8 = add(H7, [0, L[6]]);
+            const H9 = add(H8, [-L[7], 0]);
+            const H10 = add(H9, [0, L[8]]);
+            const H11 = add(H10, [L[9], 0]);
+            const H12 = add(H11, [0, L[10]]);
+            return [H1, H2, H3, H4, H5, H6, H7, H8, H9, H10, H11, H12];
+            
+        } else { // '+'
+            const H1 = {x: 2 + L[1], y: 8};
+            const H2 = add(H1, [0, -L[0]]);
+            const H3 = add(H2, [-L[1], 0]);
+            const H4 = add(H3, [0, -L[2]]);
+            const H5 = add(H4, [L[3], 0]);
+            const H6 = add(H5, [0, -L[4]]);
+            const H7 = add(H6, [L[5], 0]);
+            const H8 = add(H7, [0, L[6]]);
+            const H9 = add(H8, [L[7], 0]);
+            const H10 = add(H9, [0, L[8]]);
+            const H11 = add(H10, [-L[9], 0]);
+            const H12 = add(H11, [0, L[10]]);
+            return [H1, H2, H3, H4, H5, H6, H7, H8, H9, H10, H11, H12];
+        }
     }
     
-    generateTShape() {
-        // n1 + n2 = z1 + z2, w1 + w2 + w3 = o1
-        const n1 = 1 + Math.floor(Math.random() * 2);
-        const n2 = 1 + Math.floor(Math.random() * 2);
-        const total = n1 + n2;
-        const z1 = 1 + Math.floor(Math.random() * (total - 1));
-        const z2 = total - z1;
+    transformPoints(helpPoints, n) {
+        // Bi = (Hi - (5,5)) × R^n + (5,5)
+        // R = [[0, 1], [-1, 0]] (90° ccw rotatie)
+        // (x, y) × R = (-y, x)
         
-        const w1 = 1 + Math.floor(Math.random() * 2);
-        const w2 = 1 + Math.floor(Math.random() * 2);
-        const w3 = 1 + Math.floor(Math.random() * 2);
-        const o1 = w1 + w2 + w3;
-        
-        return {n1, w1, n2, o1, z1, w2, z2, w3};
-    }
-    
-    generatePlusShape() {
-        // n1 + n2 + n3 = z1 + z2 + z3, w1 + w2 + w3 = o1 + o2 + o3
-        const n1 = 1 + Math.floor(Math.random() * 2);
-        const n2 = 1 + Math.floor(Math.random() * 2);
-        const n3 = 1 + Math.floor(Math.random() * 2);
-        const total_n = n1 + n2 + n3;
-        
-        const z1 = 1 + Math.floor(Math.random() * Math.max(1, total_n - 2));
-        const z2 = 1 + Math.floor(Math.random() * Math.max(1, total_n - z1 - 1));
-        const z3 = total_n - z1 - z2;
-        
-        const w1 = 1 + Math.floor(Math.random() * 2);
-        const w2 = 1 + Math.floor(Math.random() * 2);
-        const w3 = 1 + Math.floor(Math.random() * 2);
-        const total_w = w1 + w2 + w3;
-        
-        const o1 = 1 + Math.floor(Math.random() * Math.max(1, total_w - 2));
-        const o2 = 1 + Math.floor(Math.random() * Math.max(1, total_w - o1 - 1));
-        const o3 = total_w - o1 - o2;
-        
-        return {n1, w1, n2, o1, n3, o2, z1, o3, z2, w2, z3, w3};
-    }
-    
-    generateEShape() {
-        // n1 = z1 + z2 + z3 + z4 + z5, w1 + w2 + w3 = o1 + o2 + o3
-        const z1 = 1;
-        const z2 = 1;
-        const z3 = 1;
-        const z4 = 1;
-        const z5 = 1 + Math.floor(Math.random() * 2);
-        const n1 = z1 + z2 + z3 + z4 + z5;
-        
-        const w1 = 1;
-        const w2 = 1;
-        const w3 = 1;
-        const total_w = w1 + w2 + w3;
-        
-        const o1 = 1;
-        const o2 = 1;
-        const o3 = total_w - o1 - o2;
-        
-        return {n1, o1, z1, w1, z2, o2, z3, w2, z4, o3, z5, w3};
-    }
-    
-    buildPolygon(shapeType, params, startX, startY, startDir) {
+        const center = {x: 5, y: 5};
         const points = [];
-        let x = startX;
-        let y = startY;
-        let dir = startDir; // 0=N, 1=E, 2=S, 3=W
         
-        points.push({x, y});
-        
-        const algorithm = this.getAlgorithm(shapeType, params);
-        
-        for (let step of algorithm) {
-            // Move forward in current direction
-            const distance = step.distance;
-            if (dir === 0) { // North
-                y -= distance;
-            } else if (dir === 1) { // East
-                x += distance;
-            } else if (dir === 2) { // South
-                y += distance;
-            } else { // West
-                x -= distance;
+        for (let H of helpPoints) {
+            // Verplaats naar oorsprong
+            let x = H.x - center.x;
+            let y = H.y - center.y;
+            
+            // Pas rotatie n keer toe
+            for (let i = 0; i < n; i++) {
+                const newX = -y;
+                const newY = x;
+                x = newX;
+                y = newY;
             }
             
-            // Add point after movement (except for last step)
-            points.push({x, y});
-            
-            // Turn clockwise for next iteration
-            dir = (dir + 1) % 4;
-        }
-        
-        // Remove last point if it equals first (closed polygon)
-        if (points.length > 1 && 
-            points[0].x === points[points.length - 1].x && 
-            points[0].y === points[points.length - 1].y) {
-            points.pop();
+            // Verplaats terug
+            points.push({
+                x: x + center.x,
+                y: y + center.y
+            });
         }
         
         return points;
-    }
-    
-    getAlgorithm(shapeType, params) {
-        if (shapeType === 'L') {
-            return [
-                {distance: params.n1},
-                {distance: params.o1},
-                {distance: params.z1},
-                {distance: params.o2},
-                {distance: params.z2},
-                {distance: params.w1}
-            ];
-        } else if (shapeType === 'U') {
-            return [
-                {distance: params.n1},
-                {distance: params.o1},
-                {distance: params.z1},
-                {distance: params.o2},
-                {distance: params.n2},
-                {distance: params.o3},
-                {distance: params.z2},
-                {distance: params.w1}
-            ];
-        } else if (shapeType === 'T') {
-            return [
-                {distance: params.n1},
-                {distance: params.w1},
-                {distance: params.n2},
-                {distance: params.o1},
-                {distance: params.z1},
-                {distance: params.w2},
-                {distance: params.z2},
-                {distance: params.w3}
-            ];
-        } else if (shapeType === '+') {
-            return [
-                {distance: params.n1},
-                {distance: params.w1},
-                {distance: params.n2},
-                {distance: params.o1},
-                {distance: params.n3},
-                {distance: params.o2},
-                {distance: params.z1},
-                {distance: params.o3},
-                {distance: params.z2},
-                {distance: params.w2},
-                {distance: params.z3},
-                {distance: params.w3}
-            ];
-        } else { // E
-            return [
-                {distance: params.n1},
-                {distance: params.o1},
-                {distance: params.z1},
-                {distance: params.w1},
-                {distance: params.z2},
-                {distance: params.o2},
-                {distance: params.z3},
-                {distance: params.w2},
-                {distance: params.z4},
-                {distance: params.o3},
-                {distance: params.z5},
-                {distance: params.w3}
-            ];
-        }
     }
     
     calculatePerimeter(polygon) {
@@ -330,7 +270,7 @@ class RoosterBerekeningExercise {
                 <div class="exercise-progress">
                     <div class="progress-header">
                         <span class="progress-label">Vraag ${this.currentQuestion + 1} van ${this.maxScore}</span>
-                        <span class="progress-score">Score: <strong>${this.score}</strong>/${this.currentQuestion}</span>
+                        <span class="progress-score">Score: <strong>${this.score}</strong>/6</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${(this.currentQuestion / this.maxScore) * 100}%"></div>
@@ -347,9 +287,10 @@ class RoosterBerekeningExercise {
                             <input type="number" 
                                    id="answerInput" 
                                    class="rooster-answer-input" 
-                                   style="width: 40px;"
+                                   style="width: 120px;"
                                    min="0" 
                                    step="1"
+                                   autocomplete="off"
                                    autofocus>
                         </div>
                     </div>
@@ -410,42 +351,37 @@ class RoosterBerekeningExercise {
             // Draw with orange border and show side lengths
             svg += `<polygon points="${points}" fill="rgba(224, 224, 224, 0.6)" stroke="#FFB366" stroke-width="3"/>`;
             
-            // Add side lengths
-            const algorithm = this.getAlgorithm(polygon.shapeType, polygon.params);
-            let x = polygon.startPoint.x;
-            let y = polygon.startPoint.y;
-            let dir = polygon.startDir;
+            // Add side lengths (li values)
+            const lengths = polygon.lengths;
             
-            for (let i = 0; i < algorithm.length; i++) {
-                const step = algorithm[i];
-                const distance = step.distance;
+            for (let i = 0; i < polygon.length; i++) {
+                const p1 = polygon[i];
+                const p2 = polygon[(i + 1) % polygon.length];
                 
-                // Calculate end point
-                let x2 = x, y2 = y;
-                if (dir === 0) y2 -= distance;
-                else if (dir === 1) x2 += distance;
-                else if (dir === 2) y2 += distance;
-                else x2 -= distance;
+                // Midpoint van deze zijde
+                const mx = (p1.x + p2.x) / 2 * this.cellSize;
+                const my = (p1.y + p2.y) / 2 * this.cellSize;
                 
-                // Calculate midpoint
-                const mx = (x + x2) / 2 * this.cellSize;
-                const my = (y + y2) / 2 * this.cellSize;
+                // Bepaal richting van de zijde
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
                 
-                // Calculate offset (to the left of the direction, outside polygon)
+                // Offset naar links (buitenkant): loodrecht op bewegingsrichting, naar links
                 let ox = 0, oy = 0;
                 const offset = 15;
-                if (dir === 0) ox = -offset; // Moving north, text to west
-                else if (dir === 1) oy = -offset; // Moving east, text to north
-                else if (dir === 2) ox = offset; // Moving south, text to east
-                else oy = offset; // Moving west, text to south
+                
+                if (dx > 0) { // Moving right
+                    oy = -offset; // Text above
+                } else if (dx < 0) { // Moving left
+                    oy = offset; // Text below
+                } else if (dy > 0) { // Moving down
+                    ox = offset; // Text to right
+                } else if (dy < 0) { // Moving up
+                    ox = -offset; // Text to left
+                }
                 
                 svg += `<text x="${mx + ox}" y="${my + oy}" text-anchor="middle" dominant-baseline="middle" 
-                             font-size="12" font-weight="600" fill="#FF8C42">${distance}</text>`;
-                
-                // Move to next point
-                x = x2;
-                y = y2;
-                dir = (dir + 1) % 4;
+                             font-size="12" font-weight="600" fill="#FF8C42">${lengths[i]}</text>`;
             }
         } else {
             // Normal display
