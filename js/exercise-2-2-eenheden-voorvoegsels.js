@@ -174,12 +174,6 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                 border-color: var(--color-primary);
             }
             
-            .dropzone-placeholder {
-                color: #999;
-                font-size: 18px;
-                pointer-events: none;
-            }
-            
             .ladder-dropzone .ladder-unit {
                 margin: 0;
                 font-size: 14px;
@@ -244,6 +238,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             }
             
             .sequence-input {
+                width: 90px;
                 padding: 0.5rem;
                 text-align: center;
                 border: 2px solid var(--color-gray);
@@ -335,7 +330,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     }
     
     // Create ladder SVG (reusable)
-    function createLadderSVG(width = 200, height = 350) {
+    function createLadderSVG(width = 200, height = 350, showLabels = true) {
         const svg = `
             <svg width="${width}" height="${height}" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg">
                 <!-- Left rail -->
@@ -349,9 +344,9 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                         const y = 25 + i * 48;
                         return `
                             <rect x="35" y="${y}" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
-                            <text x="100" y="${y + 22}" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">
+                            ${showLabels ? `<text x="100" y="${y + 22}" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">
                                 ${UNITS[i]}
-                            </text>
+                            </text>` : ''}
                         `;
                     }).join('')}
                 </g>
@@ -559,8 +554,8 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             
             <div class="ladder-exercise-container">
                 <div class="ladder-with-overlay">
-                    <!-- Ladder SVG -->
-                    ${createLadderSVG()}
+                    <!-- Ladder SVG zonder labels -->
+                    ${createLadderSVG(200, 350, false)}
                     
                     <!-- Overlay met dropzones -->
                     <div class="ladder-overlay">
@@ -573,7 +568,6 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                                         top: ${19 + 48 * i}px; 
                                         width: 130px; 
                                         height: 24px;">
-                                <span class="dropzone-placeholder">⬇</span>
                             </div>
                         `).join('')}
                     </div>
@@ -644,9 +638,6 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                 }
                 
                 // Add draggable to zone
-                const placeholder = zone.querySelector('.dropzone-placeholder');
-                if (placeholder) placeholder.style.display = 'none';
-                
                 zone.appendChild(draggable);
             });
         });
@@ -664,15 +655,6 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             
             if (draggable && !pool.contains(draggable)) {
                 pool.appendChild(draggable);
-                
-                // Show placeholder again in the zone it came from
-                const zones = document.querySelectorAll('.ladder-dropzone');
-                zones.forEach(zone => {
-                    if (!zone.querySelector('.ladder-unit')) {
-                        const placeholder = zone.querySelector('.dropzone-placeholder');
-                        if (placeholder) placeholder.style.display = 'block';
-                    }
-                });
             }
         });
         
@@ -752,7 +734,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             <div class="unit-sequence">
                 ${sequence.map((unit, i) => {
                     if (missing[i]) {
-                        return `<input type="text" class="sequence-input" data-index="${i}" style="width: 60px;">`;
+                        return `<input type="text" class="sequence-input" data-index="${i}" style="width: 90px;">`;
                     } else {
                         return `<span class="sequence-item">${unit}</span>`;
                     }
@@ -881,14 +863,14 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                 html = `
                     <div class="feedback-message feedback-correct">
                         <p class="feedback-text">Correct bij de tweede poging.</p>
-                        <button class="btn btn-primary" onclick="nextQuestion()">Volgende →</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()">OK</button>
                     </div>
                 `;
             } else {
                 html = `
                     <div class="feedback-message feedback-correct">
                         <p class="feedback-text">Correct!</p>
-                        <button class="btn btn-primary" onclick="nextQuestion()">Volgende →</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()">OK</button>
                     </div>
                 `;
             }
@@ -908,7 +890,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                         <div style="margin-top: 1rem;">
                             ${showCorrectAnswer(q)}
                         </div>
-                        <button class="btn btn-primary" onclick="nextQuestion()">Volgende →</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()">OK</button>
                     </div>
                 `;
             } else if (variant === 'first' && type === 'fill-three') {
@@ -924,7 +906,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                         <div style="margin-top: 1rem;">
                             ${showCorrectAnswer(q)}
                         </div>
-                        <button class="btn btn-primary" onclick="nextQuestion()">Volgende →</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()">OK</button>
                     </div>
                 `;
             }
