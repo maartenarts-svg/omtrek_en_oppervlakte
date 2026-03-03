@@ -332,11 +332,13 @@
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/progress.js"></script>
+    <script src="../js/deadlines.js"></script>
     
     <!-- Exercise Scripts -->
     <script src="../js/exercise-formules-drill.js"></script>
     <script src="../js/exercise-rooster-berekening.js"></script>
     <script src="../js/exercise-keuze-vraag.js"></script>
+    <script src="../js/exercise-2-2-eenheden-voorvoegsels.js"></script>
     
     <script>
         let userData = null;
@@ -575,7 +577,7 @@
             } else if (part.exerciseType === 'keuze-vraag') {
                 initKeuzeVraag(container, handleExerciseComplete);
             } else if (part.exerciseType === '2-2-eenheden-voorvoegsels') {
-                initKeuzeVraag(container, handleExerciseComplete);
+                initEenhedenVoorvoegsels(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
