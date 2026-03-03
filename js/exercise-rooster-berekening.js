@@ -2,6 +2,7 @@
 // EXERCISE: ROOSTER BEREKENING
 // Oefening voor omtrek en oppervlakte in rooster
 // 6 vragen met willekeurig gegenereerde veelhoeken
+// Gebaseerd op vaste vormen: L, U, T, +, E
 // ============================================
 
 class RoosterBerekeningExercise {
@@ -50,66 +51,249 @@ class RoosterBerekeningExercise {
     }
     
     generatePolygon() {
-        // Generate a random rectilinear polygon (only horizontal/vertical sides)
-        // Strategy: Create complex shapes with at least 6 sides
+        // Choose random shape
+        const shapes = ['L', 'U', 'T', '+', 'E'];
+        const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
         
-        const minSize = 3;
-        const maxSize = 7;
-        
-        // Start with a base rectangle
-        const baseWidth = minSize + Math.floor(Math.random() * (maxSize - minSize));
-        const baseHeight = minSize + Math.floor(Math.random() * (maxSize - minSize));
-        
-        // Position it somewhat centered
-        const startX = 2 + Math.floor(Math.random() * 2);
-        const startY = 2 + Math.floor(Math.random() * 2);
-        
-        // Create more complex shapes by cutting multiple corners/adding indentations
-        const shapeType = Math.floor(Math.random() * 3);
-        
-        if (shapeType === 0) {
-            // L-shape with extra indentation (8 sides)
-            const cutWidth = 1 + Math.floor(Math.random() * Math.floor(baseWidth / 3));
-            const cutHeight = 1 + Math.floor(Math.random() * Math.floor(baseHeight / 3));
-            const indentDepth = 1 + Math.floor(Math.random() * 2);
-            
-            return [
-                {x: startX, y: startY},
-                {x: startX + baseWidth, y: startY},
-                {x: startX + baseWidth, y: startY + cutHeight},
-                {x: startX + baseWidth - indentDepth, y: startY + cutHeight},
-                {x: startX + baseWidth - indentDepth, y: startY + baseHeight},
-                {x: startX + cutWidth, y: startY + baseHeight},
-                {x: startX + cutWidth, y: startY + baseHeight - cutHeight},
-                {x: startX, y: startY + baseHeight - cutHeight}
-            ];
-        } else if (shapeType === 1) {
-            // U-shape (8 sides)
-            const innerWidth = Math.floor(baseWidth / 3);
-            const innerHeight = Math.floor(baseHeight * 0.6);
-            
-            return [
-                {x: startX, y: startY},
-                {x: startX + baseWidth, y: startY},
-                {x: startX + baseWidth, y: startY + baseHeight},
-                {x: startX + baseWidth - innerWidth, y: startY + baseHeight},
-                {x: startX + baseWidth - innerWidth, y: startY + innerHeight},
-                {x: startX + innerWidth, y: startY + innerHeight},
-                {x: startX + innerWidth, y: startY + baseHeight},
-                {x: startX, y: startY + baseHeight}
-            ];
+        // Generate shape parameters
+        let params;
+        if (shapeType === 'L') {
+            params = this.generateLShape();
+        } else if (shapeType === 'U') {
+            params = this.generateUShape();
+        } else if (shapeType === 'T') {
+            params = this.generateTShape();
+        } else if (shapeType === '+') {
+            params = this.generatePlusShape();
         } else {
-            // L-shape variant 2 (6 sides) - cut from bottom-left
-            const cutWidth = Math.floor(baseWidth / 2);
-            const cutHeight = Math.floor(baseHeight / 2);
+            params = this.generateEShape();
+        }
+        
+        // Choose random start direction (0=N, 1=E, 2=S, 3=W)
+        const startDir = Math.floor(Math.random() * 4);
+        
+        // Determine start point based on shape and direction
+        let startX, startY;
+        const needsOffset = (shapeType === 'T' || shapeType === '+');
+        const offset = needsOffset ? params.z1 : 0;
+        
+        if (startDir === 0) { // North
+            startX = 2 + offset;
+            startY = 8;
+        } else if (startDir === 1) { // East
+            startX = 2;
+            startY = 2 + offset;
+        } else if (startDir === 2) { // South
+            startX = 8 - offset;
+            startY = 2;
+        } else { // West
+            startX = 8;
+            startY = 8 - offset;
+        }
+        
+        // Build polygon following algorithm
+        const polygon = this.buildPolygon(shapeType, params, startX, startY, startDir);
+        
+        // Store metadata for feedback
+        polygon.shapeType = shapeType;
+        polygon.params = params;
+        polygon.startDir = startDir;
+        polygon.startPoint = {x: startX, y: startY};
+        
+        return polygon;
+    }
+    
+    generateLShape() {
+        // n1 = z1 + z2, w1 = o1 + o2
+        // All sums ≤ 6
+        const z1 = 1 + Math.floor(Math.random() * 3); // 1-3
+        const z2 = 1 + Math.floor(Math.random() * 3); // 1-3
+        const n1 = z1 + z2;
+        
+        const o1 = 1 + Math.floor(Math.random() * 3);
+        const o2 = 1 + Math.floor(Math.random() * Math.min(3, 7 - o1)); // ensure o1+o2 ≤ 6
+        const w1 = o1 + o2;
+        
+        return {n1, o1, z1, o2, z2, w1};
+    }
+    
+    generateUShape() {
+        // n1 + n2 = z1 + z2, n1 > z1, o1 + o2 + o3 = w1
+        const z1 = 1 + Math.floor(Math.random() * 2); // 1-2
+        const z2 = 1 + Math.floor(Math.random() * 2);
+        const n1 = z1 + 1 + Math.floor(Math.random() * 2); // n1 > z1
+        const n2 = z1 + z2 - n1;
+        
+        const o1 = 1 + Math.floor(Math.random() * 2);
+        const o2 = 1 + Math.floor(Math.random() * 2);
+        const remaining = Math.max(1, 6 - o1 - o2);
+        const o3 = 1 + Math.floor(Math.random() * Math.min(2, remaining));
+        const w1 = o1 + o2 + o3;
+        
+        return {n1, o1, z1, o2, n2, o3, z2, w1};
+    }
+    
+    generateTShape() {
+        // n1 + n2 = z1 + z2, w1 + w2 + w3 = o1
+        const n1 = 1 + Math.floor(Math.random() * 2);
+        const n2 = 1 + Math.floor(Math.random() * 2);
+        const total = n1 + n2;
+        const z1 = 1 + Math.floor(Math.random() * (total - 1));
+        const z2 = total - z1;
+        
+        const w1 = 1 + Math.floor(Math.random() * 2);
+        const w2 = 1 + Math.floor(Math.random() * 2);
+        const w3 = 1 + Math.floor(Math.random() * 2);
+        const o1 = w1 + w2 + w3;
+        
+        return {n1, w1, n2, o1, z1, w2, z2, w3};
+    }
+    
+    generatePlusShape() {
+        // n1 + n2 + n3 = z1 + z2 + z3, w1 + w2 + w3 = o1 + o2 + o3
+        const n1 = 1 + Math.floor(Math.random() * 2);
+        const n2 = 1 + Math.floor(Math.random() * 2);
+        const n3 = 1 + Math.floor(Math.random() * 2);
+        const total_n = n1 + n2 + n3;
+        
+        const z1 = 1 + Math.floor(Math.random() * Math.max(1, total_n - 2));
+        const z2 = 1 + Math.floor(Math.random() * Math.max(1, total_n - z1 - 1));
+        const z3 = total_n - z1 - z2;
+        
+        const w1 = 1 + Math.floor(Math.random() * 2);
+        const w2 = 1 + Math.floor(Math.random() * 2);
+        const w3 = 1 + Math.floor(Math.random() * 2);
+        const total_w = w1 + w2 + w3;
+        
+        const o1 = 1 + Math.floor(Math.random() * Math.max(1, total_w - 2));
+        const o2 = 1 + Math.floor(Math.random() * Math.max(1, total_w - o1 - 1));
+        const o3 = total_w - o1 - o2;
+        
+        return {n1, w1, n2, o1, n3, o2, z1, o3, z2, w2, z3, w3};
+    }
+    
+    generateEShape() {
+        // n1 = z1 + z2 + z3 + z4 + z5, w1 + w2 + w3 = o1 + o2 + o3
+        const z1 = 1;
+        const z2 = 1;
+        const z3 = 1;
+        const z4 = 1;
+        const z5 = 1 + Math.floor(Math.random() * 2);
+        const n1 = z1 + z2 + z3 + z4 + z5;
+        
+        const w1 = 1;
+        const w2 = 1;
+        const w3 = 1;
+        const total_w = w1 + w2 + w3;
+        
+        const o1 = 1;
+        const o2 = 1;
+        const o3 = total_w - o1 - o2;
+        
+        return {n1, o1, z1, w1, z2, o2, z3, w2, z4, o3, z5, w3};
+    }
+    
+    buildPolygon(shapeType, params, startX, startY, startDir) {
+        const points = [];
+        let x = startX;
+        let y = startY;
+        let dir = startDir; // 0=N, 1=E, 2=S, 3=W
+        
+        points.push({x, y});
+        
+        const algorithm = this.getAlgorithm(shapeType, params);
+        
+        for (let step of algorithm) {
+            // Move forward in current direction
+            const distance = step.distance;
+            if (dir === 0) { // North
+                y -= distance;
+            } else if (dir === 1) { // East
+                x += distance;
+            } else if (dir === 2) { // South
+                y += distance;
+            } else { // West
+                x -= distance;
+            }
             
+            // Add point after movement (except for last step)
+            points.push({x, y});
+            
+            // Turn clockwise for next iteration
+            dir = (dir + 1) % 4;
+        }
+        
+        // Remove last point if it equals first (closed polygon)
+        if (points.length > 1 && 
+            points[0].x === points[points.length - 1].x && 
+            points[0].y === points[points.length - 1].y) {
+            points.pop();
+        }
+        
+        return points;
+    }
+    
+    getAlgorithm(shapeType, params) {
+        if (shapeType === 'L') {
             return [
-                {x: startX, y: startY},
-                {x: startX + baseWidth, y: startY},
-                {x: startX + baseWidth, y: startY + baseHeight},
-                {x: startX + cutWidth, y: startY + baseHeight},
-                {x: startX + cutWidth, y: startY + cutHeight},
-                {x: startX, y: startY + cutHeight}
+                {distance: params.n1},
+                {distance: params.o1},
+                {distance: params.z1},
+                {distance: params.o2},
+                {distance: params.z2},
+                {distance: params.w1}
+            ];
+        } else if (shapeType === 'U') {
+            return [
+                {distance: params.n1},
+                {distance: params.o1},
+                {distance: params.z1},
+                {distance: params.o2},
+                {distance: params.n2},
+                {distance: params.o3},
+                {distance: params.z2},
+                {distance: params.w1}
+            ];
+        } else if (shapeType === 'T') {
+            return [
+                {distance: params.n1},
+                {distance: params.w1},
+                {distance: params.n2},
+                {distance: params.o1},
+                {distance: params.z1},
+                {distance: params.w2},
+                {distance: params.z2},
+                {distance: params.w3}
+            ];
+        } else if (shapeType === '+') {
+            return [
+                {distance: params.n1},
+                {distance: params.w1},
+                {distance: params.n2},
+                {distance: params.o1},
+                {distance: params.n3},
+                {distance: params.o2},
+                {distance: params.z1},
+                {distance: params.o3},
+                {distance: params.z2},
+                {distance: params.w2},
+                {distance: params.z3},
+                {distance: params.w3}
+            ];
+        } else { // E
+            return [
+                {distance: params.n1},
+                {distance: params.o1},
+                {distance: params.z1},
+                {distance: params.w1},
+                {distance: params.z2},
+                {distance: params.o2},
+                {distance: params.z3},
+                {distance: params.w2},
+                {distance: params.z4},
+                {distance: params.o3},
+                {distance: params.z5},
+                {distance: params.w3}
             ];
         }
     }
@@ -117,438 +301,317 @@ class RoosterBerekeningExercise {
     calculatePerimeter(polygon) {
         let perimeter = 0;
         for (let i = 0; i < polygon.length; i++) {
-            const current = polygon[i];
-            const next = polygon[(i + 1) % polygon.length];
-            const dist = Math.abs(current.x - next.x) + Math.abs(current.y - next.y);
-            perimeter += dist;
+            const p1 = polygon[i];
+            const p2 = polygon[(i + 1) % polygon.length];
+            const dx = Math.abs(p2.x - p1.x);
+            const dy = Math.abs(p2.y - p1.y);
+            perimeter += dx + dy;
         }
         return perimeter;
     }
     
     calculateArea(polygon) {
-        // Use shoelace formula
+        // Shoelace formula
         let area = 0;
         for (let i = 0; i < polygon.length; i++) {
-            const current = polygon[i];
-            const next = polygon[(i + 1) % polygon.length];
-            area += current.x * next.y - next.x * current.y;
+            const p1 = polygon[i];
+            const p2 = polygon[(i + 1) % polygon.length];
+            area += p1.x * p2.y - p2.x * p1.y;
         }
-        return Math.abs(area) / 2;
-    }
-    
-    getSideLengths(polygon) {
-        const lengths = [];
-        for (let i = 0; i < polygon.length; i++) {
-            const current = polygon[i];
-            const next = polygon[(i + 1) % polygon.length];
-            const dist = Math.abs(current.x - next.x) + Math.abs(current.y - next.y);
-            lengths.push(dist);
-        }
-        return lengths;
+        return Math.abs(area / 2);
     }
     
     render() {
-        this.container.innerHTML = `
+        const q = this.questions[this.currentQuestion];
+        
+        let html = `
             <div class="exercise-container">
-                <!-- Progress Bar -->
+                <!-- Progress -->
                 <div class="exercise-progress">
                     <div class="progress-header">
-                        <span class="progress-label">Voortgang</span>
-                        <span class="progress-score">Score: <strong>${this.score.toFixed(1).replace('.', ',')}</strong> / ${this.maxScore}</span>
+                        <span class="progress-label">Vraag ${this.currentQuestion + 1} van ${this.maxScore}</span>
+                        <span class="progress-score">Score: <strong>${this.score}</strong>/${this.currentQuestion}</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${(this.currentQuestion / this.questions.length) * 100}%"></div>
+                        <div class="progress-fill" style="width: ${(this.currentQuestion / this.maxScore) * 100}%"></div>
                     </div>
-                    <div class="progress-text">Vraag ${this.currentQuestion + 1} van ${this.questions.length}</div>
                 </div>
                 
-                <!-- Question Container -->
-                <div class="question-container" id="questionContainer">
-                    <!-- Will be filled dynamically -->
-                </div>
-            </div>
-        `;
-        
-        this.renderQuestion();
-    }
-    
-    renderQuestion() {
-        const question = this.questions[this.currentQuestion];
-        const container = document.getElementById('questionContainer');
-        
-        const symbol = question.type === 'perimeter' ? 'P' : 'A';
-        const label = question.type === 'perimeter' ? 'Omtrek' : 'Oppervlakte';
-        
-        container.innerHTML = `
-            <div class="question-card">
-                <h3 class="question-title">Vraag ${this.currentQuestion + 1}</h3>
-                <p class="question-text">Bereken de ${label.toLowerCase()} van de figuur.</p>
-                
-                <div class="rooster-container">
-                    <div class="rooster-canvas" id="roosterCanvas">
-                        ${this.renderGrid(question.polygon, false, false)}
+                <div class="question-card">
+                    <div class="rooster-container">
+                        <div class="rooster-canvas">
+                            ${this.drawRooster(q.polygon, false)}
+                        </div>
+                        <div class="rooster-input-area">
+                            <span class="rooster-label">${q.type === 'perimeter' ? 'P' : 'A'} =</span>
+                            <input type="number" 
+                                   id="answerInput" 
+                                   class="rooster-answer-input" 
+                                   style="width: 40px;"
+                                   min="0" 
+                                   step="1"
+                                   autofocus>
+                        </div>
                     </div>
                     
-                    <div class="rooster-input-area">
-                        <label class="rooster-label">${symbol} = </label>
-                        <input type="number" 
-                               id="answerInput" 
-                               class="rooster-answer-input" 
-                               autocomplete="off"
-                               min="0"
-                               step="1">
+                    <div id="feedbackArea" class="feedback-area"></div>
+                    
+                    <div class="question-actions">
+                        <button class="btn btn-primary" id="checkBtn">Controleer</button>
                     </div>
-                </div>
-                
-                <div class="feedback-area hidden" id="feedbackArea">
-                    <!-- Feedback will appear here -->
-                </div>
-                
-                <div class="question-actions">
-                    <button class="btn btn-primary" id="submitBtn" onclick="roosterExerciseInstance.checkAnswer()">
-                        Controleer
-                    </button>
                 </div>
             </div>
         `;
         
-        // Focus input
-        setTimeout(() => {
-            const input = document.getElementById('answerInput');
-            input.focus();
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.checkAnswer();
-                }
-            });
-        }, 100);
+        this.container.innerHTML = html;
+        
+        // Event listeners
+        document.getElementById('checkBtn').addEventListener('click', () => this.checkAnswer());
+        document.getElementById('answerInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.checkAnswer();
+        });
     }
     
-    renderGrid(polygon, showLabels, showNumbers) {
-        const width = this.gridSize * this.cellSize;
-        const height = this.gridSize * this.cellSize;
+    drawRooster(polygon, showFeedback = false, questionType = null) {
+        const width = (this.gridSize + 1) * this.cellSize;
+        const height = (this.gridSize + 1) * this.cellSize;
         
-        let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="rooster-svg">`;
+        let svg = `
+            <svg class="rooster-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                <!-- Grid lines -->
+                <g class="grid-lines">
+        `;
         
-        // Draw grid lines
-        if (!showLabels) {
-            // Show full grid
-            svg += '<g class="grid-lines">';
-            for (let i = 0; i <= this.gridSize; i++) {
-                const pos = i * this.cellSize;
-                svg += `<line x1="${pos}" y1="0" x2="${pos}" y2="${height}" stroke="#ddd" stroke-width="1"/>`;
-                svg += `<line x1="0" y1="${pos}" x2="${width}" y2="${pos}" stroke="#ddd" stroke-width="1"/>`;
-            }
-            svg += '</g>';
+        // Draw grid
+        for (let i = 0; i <= this.gridSize; i++) {
+            const pos = i * this.cellSize;
+            svg += `<line x1="${pos}" y1="0" x2="${pos}" y2="${height}" stroke="#ddd" stroke-width="1"/>`;
+            svg += `<line x1="0" y1="${pos}" x2="${width}" y2="${pos}" stroke="#ddd" stroke-width="1"/>`;
+        }
+        
+        svg += `</g>`;
+        
+        // Draw polygon
+        const points = polygon.map(p => `${p.x * this.cellSize},${p.y * this.cellSize}`).join(' ');
+        
+        if (showFeedback && questionType === 'area') {
+            // Fill with blue and number the cells
+            svg += `<polygon points="${points}" fill="rgba(168, 216, 229, 0.6)" stroke="#6B9BD1" stroke-width="3"/>`;
             
-            // Unit indicator (top-left)
-            svg += `<g class="unit-indicator">
-                <line x1="${this.cellSize}" y1="${this.cellSize * 0.7}" x2="${this.cellSize * 2}" y2="${this.cellSize * 0.7}" stroke="#333" stroke-width="2"/>
-                <line x1="${this.cellSize}" y1="${this.cellSize * 0.5}" x2="${this.cellSize}" y2="${this.cellSize * 0.9}" stroke="#333" stroke-width="2"/>
-                <line x1="${this.cellSize * 2}" y1="${this.cellSize * 0.5}" x2="${this.cellSize * 2}" y2="${this.cellSize * 0.9}" stroke="#333" stroke-width="2"/>
-                <text x="${this.cellSize * 1.5}" y="${this.cellSize * 0.4}" text-anchor="middle" font-size="14" font-weight="bold">1</text>
-            </g>`;
-        } else {
-            // Simplified grid for feedback
-            svg += '<g class="grid-lines">';
-            for (let i = 0; i <= this.gridSize; i++) {
-                const pos = i * this.cellSize;
-                svg += `<line x1="${pos}" y1="0" x2="${pos}" y2="${height}" stroke="#ddd" stroke-width="1"/>`;
-                svg += `<line x1="0" y1="${pos}" x2="${width}" y2="${pos}" stroke="#ddd" stroke-width="1"/>`;
-            }
-            svg += '</g>';
-        }
-        
-        // Draw polygon
-        const points = polygon.map(p => `${p.x * this.cellSize},${p.y * this.cellSize}`).join(' ');
-        svg += `<polygon points="${points}" fill="rgba(224, 224, 224, 0.6)" stroke="#000" stroke-width="2"/>`;
-        
-        // Add side labels if requested
-        if (showLabels) {
-            const lengths = this.getSideLengths(polygon);
-            for (let i = 0; i < polygon.length; i++) {
-                const current = polygon[i];
-                const next = polygon[(i + 1) % polygon.length];
-                const midX = ((current.x + next.x) / 2) * this.cellSize;
-                const midY = ((current.y + next.y) / 2) * this.cellSize;
-                
-                // Offset label based on direction
-                let offsetX = 0;
-                let offsetY = 0;
-                if (current.x === next.x) {
-                    // Vertical line
-                    offsetX = current.x < polygon.reduce((sum, p) => sum + p.x, 0) / polygon.length ? -15 : 15;
-                } else {
-                    // Horizontal line
-                    offsetY = current.y < polygon.reduce((sum, p) => sum + p.y, 0) / polygon.length ? -10 : 20;
-                }
-                
-                svg += `<text x="${midX + offsetX}" y="${midY + offsetY}" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">${lengths[i]}</text>`;
-            }
-        }
-        
-        // Add cell numbers if requested
-        if (showNumbers) {
-            const cellsInside = this.getCellsInsidePolygon(polygon);
-            cellsInside.forEach((cell, index) => {
-                const x = (cell.x + 0.5) * this.cellSize;
-                const y = (cell.y + 0.5) * this.cellSize;
-                svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="bold" fill="#333">${index + 1}</text>`;
+            // Number cells inside polygon
+            const cells = this.getCellsInPolygon(polygon);
+            cells.forEach((cell, index) => {
+                const cx = cell.x * this.cellSize + this.cellSize / 2;
+                const cy = cell.y * this.cellSize + this.cellSize / 2;
+                svg += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" 
+                             font-size="14" font-weight="600" fill="#2C3E50">${index + 1}</text>`;
             });
-        }
-        
-        svg += '</svg>';
-        return svg;
-    }
-    
-    renderFeedbackPolygon(polygon, type, showLabels) {
-        const width = this.gridSize * this.cellSize;
-        const height = this.gridSize * this.cellSize;
-        
-        let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="feedback-svg">`;
-        
-        // Draw grid if labels shown
-        if (showLabels) {
-            svg += '<g class="grid-lines">';
-            for (let i = 0; i <= this.gridSize; i++) {
-                const pos = i * this.cellSize;
-                svg += `<line x1="${pos}" y1="0" x2="${pos}" y2="${height}" stroke="#ddd" stroke-width="1"/>`;
-                svg += `<line x1="0" y1="${pos}" x2="${width}" y2="${pos}" stroke="#ddd" stroke-width="1"/>`;
+        } else if (showFeedback && questionType === 'perimeter') {
+            // Draw with orange border and show side lengths
+            svg += `<polygon points="${points}" fill="rgba(224, 224, 224, 0.6)" stroke="#FFB366" stroke-width="3"/>`;
+            
+            // Add side lengths
+            const algorithm = this.getAlgorithm(polygon.shapeType, polygon.params);
+            let x = polygon.startPoint.x;
+            let y = polygon.startPoint.y;
+            let dir = polygon.startDir;
+            
+            for (let i = 0; i < algorithm.length; i++) {
+                const step = algorithm[i];
+                const distance = step.distance;
+                
+                // Calculate end point
+                let x2 = x, y2 = y;
+                if (dir === 0) y2 -= distance;
+                else if (dir === 1) x2 += distance;
+                else if (dir === 2) y2 += distance;
+                else x2 -= distance;
+                
+                // Calculate midpoint
+                const mx = (x + x2) / 2 * this.cellSize;
+                const my = (y + y2) / 2 * this.cellSize;
+                
+                // Calculate offset (to the left of the direction, outside polygon)
+                let ox = 0, oy = 0;
+                const offset = 15;
+                if (dir === 0) ox = -offset; // Moving north, text to west
+                else if (dir === 1) oy = -offset; // Moving east, text to north
+                else if (dir === 2) ox = offset; // Moving south, text to east
+                else oy = offset; // Moving west, text to south
+                
+                svg += `<text x="${mx + ox}" y="${my + oy}" text-anchor="middle" dominant-baseline="middle" 
+                             font-size="12" font-weight="600" fill="#FF8C42">${distance}</text>`;
+                
+                // Move to next point
+                x = x2;
+                y = y2;
+                dir = (dir + 1) % 4;
             }
-            svg += '</g>';
-        }
-        
-        // Draw polygon
-        const points = polygon.map(p => `${p.x * this.cellSize},${p.y * this.cellSize}`).join(' ');
-        
-        if (type === 'perimeter') {
-            // Orange outline, no fill
-            svg += `<polygon points="${points}" fill="none" stroke="#FFB366" stroke-width="4"/>`;
         } else {
-            // Blue fill
-            svg += `<polygon points="${points}" fill="#A8D8E5" stroke="#333" stroke-width="2"/>`;
+            // Normal display
+            svg += `<polygon points="${points}" fill="rgba(224, 224, 224, 0.6)" stroke="#333" stroke-width="2"/>`;
         }
         
-        // Add labels if requested
-        if (showLabels) {
-            if (type === 'perimeter') {
-                const lengths = this.getSideLengths(polygon);
-                for (let i = 0; i < polygon.length; i++) {
-                    const current = polygon[i];
-                    const next = polygon[(i + 1) % polygon.length];
-                    const midX = ((current.x + next.x) / 2) * this.cellSize;
-                    const midY = ((current.y + next.y) / 2) * this.cellSize;
-                    
-                    let offsetX = 0;
-                    let offsetY = 0;
-                    if (current.x === next.x) {
-                        offsetX = current.x < polygon.reduce((sum, p) => sum + p.x, 0) / polygon.length ? -15 : 15;
-                    } else {
-                        offsetY = current.y < polygon.reduce((sum, p) => sum + p.y, 0) / polygon.length ? -10 : 20;
-                    }
-                    
-                    svg += `<text x="${midX + offsetX}" y="${midY + offsetY}" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">${lengths[i]}</text>`;
-                }
-            } else {
-                // Number cells for area
-                const cellsInside = this.getCellsInsidePolygon(polygon);
-                cellsInside.forEach((cell, index) => {
-                    const x = (cell.x + 0.5) * this.cellSize;
-                    const y = (cell.y + 0.5) * this.cellSize;
-                    svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="bold" fill="#333">${index + 1}</text>`;
-                });
-            }
-        }
+        // Unit indicator
+        const unitY = height - 25;
+        svg += `
+            <g class="unit-indicator">
+                <line x1="${this.cellSize}" y1="${unitY}" x2="${this.cellSize * 2}" y2="${unitY}" 
+                      stroke="#333" stroke-width="2"/>
+                <line x1="${this.cellSize}" y1="${unitY - 5}" x2="${this.cellSize}" y2="${unitY + 5}" 
+                      stroke="#333" stroke-width="2"/>
+                <line x1="${this.cellSize * 2}" y1="${unitY - 5}" x2="${this.cellSize * 2}" y2="${unitY + 5}" 
+                      stroke="#333" stroke-width="2"/>
+                <text x="${this.cellSize * 1.5}" y="${unitY + 20}" text-anchor="middle" 
+                      font-size="12" fill="#333">1 eenheid</text>
+            </g>
+        `;
         
-        svg += '</svg>';
+        svg += `</svg>`;
+        
         return svg;
     }
     
-    getCellsInsidePolygon(polygon) {
+    getCellsInPolygon(polygon) {
+        // Get all grid cells that are inside the polygon
         const cells = [];
+        
         for (let y = 0; y < this.gridSize; y++) {
             for (let x = 0; x < this.gridSize; x++) {
                 // Check if cell center is inside polygon
                 const cx = x + 0.5;
                 const cy = y + 0.5;
                 
-                if (this.pointInPolygon(cx, cy, polygon)) {
+                if (this.isPointInPolygon(cx, cy, polygon)) {
                     cells.push({x, y});
                 }
             }
         }
+        
         return cells;
     }
     
-    pointInPolygon(x, y, polygon) {
+    isPointInPolygon(x, y, polygon) {
+        // Ray casting algorithm
         let inside = false;
+        
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-            const xi = polygon[i].x, yi = polygon[i].y;
-            const xj = polygon[j].x, yj = polygon[j].y;
+            const xi = polygon[i].x;
+            const yi = polygon[i].y;
+            const xj = polygon[j].x;
+            const yj = polygon[j].y;
             
-            const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            const intersect = ((yi > y) !== (yj > y)) &&
+                             (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            
             if (intersect) inside = !inside;
         }
+        
         return inside;
     }
     
     checkAnswer() {
-        const question = this.questions[this.currentQuestion];
+        const q = this.questions[this.currentQuestion];
         const input = document.getElementById('answerInput');
-        const answer = parseInt(input.value);
-        const attempt = this.attempts[question.id] + 1;
+        const userAnswer = parseFloat(input.value);
         
-        if (isNaN(answer) || input.value.trim() === '') {
-            alert('Vul eerst een antwoord in.');
+        if (isNaN(userAnswer)) {
             return;
         }
         
-        const isCorrect = answer === question.correctAnswer;
-        
-        // Disable input during feedback
-        input.disabled = true;
+        const isCorrect = userAnswer === q.correctAnswer;
+        this.attempts[q.id]++;
         
         if (isCorrect) {
-            // Correct answer
-            const points = attempt === 1 ? 1 : 0.5;
-            this.score += points;
-            
-            const feedbackText = attempt === 1 ? 
-                'Correct!' : 
-                'Correct bij de tweede poging!';
-            
-            this.showFeedback(feedbackText, true, null, () => {
-                this.nextQuestion();
-            });
-        } else {
-            // Wrong answer
-            this.attempts[question.id] = attempt;
-            
-            if (attempt === 1) {
-                // First attempt - show hint with visualization
-                const hintText = question.type === 'perimeter' ?
-                    'Dit is niet juist.<br>De omtrek is de afstand die je aflegt als je volledig rond de figuur wandelt. Probeer opnieuw.' :
-                    'Dit is niet juist.<br>De oppervlakte is de plaats die de figuur inneemt in het vlak. Probeer opnieuw.';
-                
-                const visualization = this.renderFeedbackPolygon(question.polygon, question.type, false);
-                
-                this.showFeedback(hintText, false, visualization, () => {
-                    // Clear input, enable it, and give second chance
-                    input.value = '';
-                    input.disabled = false;
-                    input.focus();
-                    document.getElementById('feedbackArea').classList.add('hidden');
-                    const submitBtn = document.getElementById('submitBtn');
-                    if (submitBtn) submitBtn.style.display = 'block';
-                });
+            if (this.attempts[q.id] === 1) {
+                this.score += 1;
             } else {
-                // Second attempt - show full solution
-                let solutionText;
-                let visualization;
-                
-                if (question.type === 'perimeter') {
-                    const lengths = this.getSideLengths(question.polygon);
-                    const sum = lengths.join(' + ');
-                    solutionText = `Dit is niet juist.<br>De omtrek is de afstand die je aflegt als je volledig rond de figuur wandelt.<br>Het juiste antwoord is ${sum} = ${question.correctAnswer}.`;
-                    visualization = this.renderFeedbackPolygon(question.polygon, question.type, true);
-                } else {
-                    solutionText = `Dit is niet juist.<br>De oppervlakte is de plaats die de figuur inneemt in het vlak.<br>Het juiste antwoord is ${question.correctAnswer}.`;
-                    visualization = this.renderFeedbackPolygon(question.polygon, question.type, true);
-                }
-                
-                this.showFeedback(solutionText, false, visualization, () => {
-                    this.nextQuestion();
-                });
+                this.score += 0.5;
+            }
+            this.showFeedback(true, q);
+        } else {
+            if (this.attempts[q.id] === 1) {
+                this.showFeedback(false, q, true); // Can try again
+            } else {
+                this.showFeedback(false, q, false); // No more attempts
             }
         }
-        
-        this.updateProgress();
     }
     
-    showFeedback(message, isCorrect, visualization, onOK) {
+    showFeedback(correct, question, canRetry = false) {
         const feedbackArea = document.getElementById('feedbackArea');
-        const className = isCorrect ? 'feedback-correct' : 'feedback-incorrect';
+        const input = document.getElementById('answerInput');
         
-        feedbackArea.innerHTML = `
-            <div class="feedback-message ${className}">
-                <div class="feedback-text">${message}</div>
-                ${visualization ? `<div class="feedback-visualization">${visualization}</div>` : ''}
-                <button class="btn btn-primary" onclick="roosterExerciseInstance.handleFeedbackOK()">OK</button>
-            </div>
-        `;
-        
-        feedbackArea.classList.remove('hidden');
-        
-        // Store callback
-        this.feedbackCallback = onOK;
-        
-        // Hide submit button
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) submitBtn.style.display = 'none';
-    }
-    
-    handleFeedbackOK() {
-        if (this.feedbackCallback) {
-            this.feedbackCallback();
-            this.feedbackCallback = null;
-        }
-    }
-    
-    updateProgress() {
-        const progressFill = document.querySelector('.progress-fill');
-        const progressScore = document.querySelector('.progress-score strong');
-        const progressText = document.querySelector('.progress-text');
-        
-        if (progressFill) {
-            progressFill.style.width = `${((this.currentQuestion + 1) / this.questions.length) * 100}%`;
-        }
-        if (progressScore) {
-            progressScore.textContent = this.score.toFixed(1).replace('.', ',');
-        }
-        if (progressText) {
-            progressText.textContent = `Vraag ${this.currentQuestion + 1} van ${this.questions.length}`;
+        if (correct) {
+            const message = this.attempts[question.id] === 1 ? 
+                'Correct!' : 'Correct bij de tweede poging.';
+            
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-correct">
+                    <p class="feedback-text">${message}</p>
+                    <button class="btn btn-primary" onclick="window.nextQuestion()">OK</button>
+                </div>
+            `;
+            
+            input.disabled = true;
+            document.getElementById('checkBtn').disabled = true;
+        } else if (canRetry) {
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Dit antwoord is niet juist. Probeer het nog een keer.</p>
+                </div>
+            `;
+        } else {
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Dit is niet juist. Het juiste antwoord is ${question.correctAnswer}.</p>
+                    <div class="feedback-visualization">
+                        ${this.drawRooster(question.polygon, true, question.type)}
+                    </div>
+                    <button class="btn btn-primary" onclick="window.nextQuestion()">OK</button>
+                </div>
+            `;
+            
+            input.disabled = true;
+            document.getElementById('checkBtn').disabled = true;
         }
     }
     
     nextQuestion() {
         this.currentQuestion++;
         
-        if (this.currentQuestion < this.questions.length) {
-            this.render();
+        if (this.currentQuestion >= this.maxScore) {
+            this.finish();
         } else {
-            this.finishExercise();
+            this.render();
         }
     }
     
-    finishExercise() {
-        // Calculate letter score
-        let letterScore = 'C';
-        
-        if (this.score >= 5) {
-            letterScore = 'A';
-        } else if (this.score >= 4) {
-            letterScore = 'B';
-        }
-        
-        // Calculate XP: score * 10 (minimum 0)
+    finish() {
+        const percentage = (this.score / this.maxScore) * 100;
         const xpEarned = Math.max(0, Math.round(this.score * 10));
         
-        // Call completion callback
-        if (this.onComplete) {
-            this.onComplete({
-                score: (this.score / this.maxScore) * 100,
-                correctAnswers: this.score,
-                totalQuestions: this.maxScore,
-                xpEarned: xpEarned,
-                letterScore: letterScore
-            });
-        }
+        this.onComplete({
+            score: percentage,
+            correctAnswers: this.score,
+            totalQuestions: this.maxScore,
+            xpEarned: xpEarned
+        });
     }
 }
 
-// Make instance globally accessible
-let roosterExerciseInstance = null;
+// Initialize function
+function initRoosterBerekening(container, onComplete) {
+    window.nextQuestion = function() {
+        if (window.roosterExercise) {
+            window.roosterExercise.nextQuestion();
+        }
+    };
+    
+    window.roosterExercise = new RoosterBerekeningExercise(container, onComplete);
+}
 
-function initRoosterBerekening(containerEl, onComplete) {
-    roosterExerciseInstance = new RoosterBerekeningExercise(containerEl, onComplete);
+// Export
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { initRoosterBerekening };
 }
