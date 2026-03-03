@@ -2,13 +2,16 @@
 // OEFENING 2-2: EENHEDEN EN VOORVOEGSELS
 // ============================================
 // 8 vragen:
-// - Vraag 1: Verbindingsoefening (matching met lijnen)
+// - Vraag 1: Verbindingsoefening (drag & drop matching)
 // - Vraag 2: Ladder drag & drop
 // - Vraag 3-4: 1 missende eenheid invullen
 // - Vraag 5-8: 3 missende eenheden invullen
 // ============================================
 
 function initEenhedenVoorvoegsels(container, onComplete) {
+    // Add custom CSS for this exercise
+    addCustomCSS();
+    
     const UNITS = ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'];
     const UNITS_FULL = {
         'km': 'kilometer',
@@ -24,6 +27,258 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     let score = 0;
     let attempts = {}; // Track attempts per question
     let questions = [];
+    
+    // Add custom CSS for this exercise
+    function addCustomCSS() {
+        if (document.getElementById('eenheden-voorvoegsels-css')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'eenheden-voorvoegsels-css';
+        style.textContent = `
+            /* Matching Drag & Drop */
+            .matching-dragdrop-container {
+                display: flex;
+                gap: 3rem;
+                margin: 2rem 0;
+            }
+            
+            .matching-targets {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .matching-target {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .target-drop-zone {
+                width: 80px;
+                height: 50px;
+                border: 3px dashed var(--color-gray);
+                border-radius: var(--radius-md);
+                background: var(--color-light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all var(--transition-fast);
+            }
+            
+            .target-drop-zone.drag-over {
+                border-color: var(--color-primary);
+                background: #e3f2fd;
+                transform: scale(1.05);
+            }
+            
+            .drop-placeholder {
+                font-size: 12px;
+                color: #999;
+            }
+            
+            .target-label {
+                font-size: var(--font-size-large);
+                color: var(--color-dark);
+                font-weight: 500;
+            }
+            
+            .matching-units-pool {
+                width: 200px;
+                flex-shrink: 0;
+            }
+            
+            .matching-units-pool h4 {
+                margin-bottom: 1rem;
+                color: var(--color-primary);
+            }
+            
+            .units-pool {
+                border: 2px solid var(--color-gray);
+                border-radius: var(--radius-lg);
+                padding: 1rem;
+                min-height: 300px;
+                background: var(--color-light);
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .matching-unit {
+                background: white;
+                border: 2px solid var(--color-gray);
+                border-radius: var(--radius-md);
+                padding: 0.75rem;
+                text-align: center;
+                cursor: move;
+                font-weight: 600;
+                font-size: var(--font-size-base);
+                transition: all var(--transition-fast);
+                user-select: none;
+            }
+            
+            .matching-unit:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+                border-color: var(--color-primary);
+            }
+            
+            .matching-unit.dragging {
+                opacity: 0.5;
+            }
+            
+            /* Ladder Container */
+            .ladder-exercise-container {
+                display: flex;
+                gap: 3rem;
+                margin: 2rem 0;
+                align-items: flex-start;
+                justify-content: center;
+            }
+            
+            .ladder-with-overlay {
+                position: relative;
+                width: 200px;
+                height: 350px;
+                flex-shrink: 0;
+            }
+            
+            .ladder-with-overlay svg {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            .ladder-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200px;
+                height: 350px;
+                pointer-events: none;
+            }
+            
+            .ladder-dropzone {
+                pointer-events: auto;
+                border: 2px dashed transparent;
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all var(--transition-fast);
+            }
+            
+            .ladder-dropzone.drag-over {
+                background: rgba(107, 155, 209, 0.2);
+                border-color: var(--color-primary);
+            }
+            
+            .dropzone-placeholder {
+                color: #999;
+                font-size: 18px;
+                pointer-events: none;
+            }
+            
+            .ladder-dropzone .ladder-unit {
+                margin: 0;
+                font-size: 14px;
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .ladder-units-pool {
+                flex: 1;
+            }
+            
+            .ladder-units-pool h4 {
+                margin-bottom: 1rem;
+                color: var(--color-primary);
+            }
+            
+            .draggable-unit {
+                background: white;
+                border: 2px solid var(--color-gray);
+                border-radius: var(--radius-md);
+                padding: 0.75rem 1.5rem;
+                cursor: move;
+                font-weight: 600;
+                font-size: var(--font-size-base);
+                transition: all var(--transition-fast);
+                user-select: none;
+                display: inline-block;
+                margin: 0.25rem;
+            }
+            
+            .draggable-unit:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+                border-color: var(--color-primary);
+            }
+            
+            .draggable-unit.dragging {
+                opacity: 0.5;
+            }
+            
+            /* Unit Sequence */
+            .unit-sequence {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+                font-size: var(--font-size-large);
+                margin: 2rem 0;
+            }
+            
+            .sequence-item {
+                font-weight: 600;
+                color: var(--color-dark);
+            }
+            
+            .sequence-missing {
+                font-size: 2rem;
+            }
+            
+            .sequence-separator {
+                color: #666;
+            }
+            
+            .sequence-input {
+                padding: 0.5rem;
+                text-align: center;
+                border: 2px solid var(--color-gray);
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                font-weight: 600;
+                transition: border-color var(--transition-fast);
+            }
+            
+            .sequence-input:focus {
+                outline: none;
+                border-color: var(--color-primary);
+                box-shadow: 0 0 0 3px rgba(107, 155, 209, 0.1);
+            }
+            
+            .sequence-input:disabled {
+                background-color: var(--color-light);
+                cursor: not-allowed;
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                .matching-dragdrop-container,
+                .ladder-container {
+                    flex-direction: column;
+                }
+                
+                .matching-units-pool,
+                .ladder-units-pool {
+                    width: 100%;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
     // Generate questions
     function generateQuestions() {
@@ -154,34 +409,35 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     }
     
     // ============================================
-    // VRAAG 1: MATCHING (lijnen trekken)
+    // VRAAG 1: MATCHING (drag & drop)
     // ============================================
     
     function renderMatchingQuestion() {
-        // Shuffle both columns
-        const leftItems = [...UNITS].sort(() => Math.random() - 0.5);
-        const rightItems = Object.keys(UNITS_FULL).map(k => UNITS_FULL[k]).sort(() => Math.random() - 0.5);
+        // Shuffle units (draggable items)
+        const shuffledUnits = [...UNITS].sort(() => Math.random() - 0.5);
         
         return `
             <h3 class="question-title">Verbind wat bij elkaar hoort</h3>
-            <p class="question-text">Trek lijnen tussen de eenheid en de volledige naam.</p>
+            <p class="question-text">Sleep elke eenheid naar de juiste volledige naam.</p>
             
-            <div class="matching-container">
-                <canvas id="matchingCanvas" width="600" height="400"></canvas>
-                <div class="matching-columns">
-                    <div class="matching-column matching-left">
-                        ${leftItems.map((unit, i) => `
-                            <div class="matching-item" data-value="${unit}" data-side="left" data-index="${i}">
-                                <span class="matching-text">${unit}</span>
-                                <div class="matching-connector"></div>
+            <div class="matching-dragdrop-container">
+                <div class="matching-targets">
+                    ${UNITS.map(unit => `
+                        <div class="matching-target" data-correct="${unit}">
+                            <div class="target-drop-zone" data-accepts="${unit}">
+                                <span class="drop-placeholder">Sleep hier</span>
                             </div>
-                        `).join('')}
-                    </div>
-                    <div class="matching-column matching-right">
-                        ${rightItems.map((full, i) => `
-                            <div class="matching-item" data-value="${full}" data-side="right" data-index="${i}">
-                                <div class="matching-connector"></div>
-                                <span class="matching-text">${full}</span>
+                            <span class="target-label">${UNITS_FULL[unit]}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="matching-units-pool">
+                    <h4>Eenheden:</h4>
+                    <div class="units-pool">
+                        ${shuffledUnits.map(unit => `
+                            <div class="draggable-unit matching-unit" draggable="true" data-unit="${unit}">
+                                ${unit}
                             </div>
                         `).join('')}
                     </div>
@@ -197,20 +453,97 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     }
     
     function initMatchingListeners() {
-        // TODO: Implement line drawing between items
-        // This is complex - need canvas drawing, click handlers, etc.
+        const draggables = document.querySelectorAll('.matching-unit');
+        const dropZones = document.querySelectorAll('.target-drop-zone');
+        const pool = document.querySelector('.units-pool');
         
+        // Drag start
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', e.target.dataset.unit);
+                e.target.classList.add('dragging');
+            });
+            
+            draggable.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+        });
+        
+        // Drop zones
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.classList.add('drag-over');
+            });
+            
+            zone.addEventListener('dragleave', (e) => {
+                zone.classList.remove('drag-over');
+            });
+            
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                
+                const unit = e.dataTransfer.getData('text/plain');
+                const draggable = document.querySelector(`.matching-unit[data-unit="${unit}"]`);
+                
+                // Check if zone already has a unit
+                const existing = zone.querySelector('.matching-unit');
+                if (existing) {
+                    // Return to pool
+                    pool.appendChild(existing);
+                }
+                
+                // Add draggable to zone
+                zone.innerHTML = '';
+                zone.appendChild(draggable);
+            });
+        });
+        
+        // Pool drop zone (return items)
+        pool.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        
+        pool.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const unit = e.dataTransfer.getData('text/plain');
+            const draggable = document.querySelector(`.matching-unit[data-unit="${unit}"]`);
+            
+            if (draggable && !pool.contains(draggable)) {
+                pool.appendChild(draggable);
+            }
+        });
+        
+        // Check button
         const checkBtn = document.getElementById('checkBtn');
         checkBtn.addEventListener('click', () => {
-            // Placeholder - check matching
             checkMatching();
         });
     }
     
     function checkMatching() {
-        // TODO: Implement matching validation
-        // For now, just move to next question
-        showFeedback(true, 'matching');
+        const dropZones = document.querySelectorAll('.target-drop-zone');
+        let allCorrect = true;
+        
+        dropZones.forEach(zone => {
+            const correctUnit = zone.dataset.accepts;
+            const placedUnit = zone.querySelector('.matching-unit');
+            
+            if (!placedUnit || placedUnit.dataset.unit !== correctUnit) {
+                allCorrect = false;
+            }
+        });
+        
+        if (allCorrect) {
+            score += 1;
+            showFeedback(true, 'matching');
+        } else {
+            showFeedback(false, 'matching');
+        }
     }
     
     // ============================================
@@ -224,15 +557,33 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             <h3 class="question-title">Zet de eenheden op de juiste sport van de ladder</h3>
             <p class="question-text">Sleep elke eenheid naar de juiste plaats op de ladder.</p>
             
-            <div class="ladder-container">
-                <div class="ladder-svg-container">
+            <div class="ladder-exercise-container">
+                <div class="ladder-with-overlay">
+                    <!-- Ladder SVG -->
                     ${createLadderSVG()}
+                    
+                    <!-- Overlay met dropzones -->
+                    <div class="ladder-overlay">
+                        ${UNITS.map((unit, i) => `
+                            <div class="ladder-dropzone" 
+                                 data-correct="${unit}"
+                                 data-index="${i}"
+                                 style="position: absolute; 
+                                        left: 35px; 
+                                        top: ${19 + 48 * i}px; 
+                                        width: 130px; 
+                                        height: 24px;">
+                                <span class="dropzone-placeholder">⬇</span>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
+                
                 <div class="ladder-units-pool">
                     <h4>Eenheden:</h4>
-                    <div class="units-pool">
+                    <div class="units-pool" id="ladderPool">
                         ${shuffledUnits.map(unit => `
-                            <div class="draggable-unit" draggable="true" data-unit="${unit}">
+                            <div class="draggable-unit ladder-unit" draggable="true" data-unit="${unit}">
                                 ${unit}
                             </div>
                         `).join('')}
@@ -249,8 +600,83 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     }
     
     function initLadderDragListeners() {
-        // TODO: Implement ladder drag & drop
+        const draggables = document.querySelectorAll('.ladder-unit');
+        const dropZones = document.querySelectorAll('.ladder-dropzone');
+        const pool = document.getElementById('ladderPool');
         
+        // Drag start
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', e.target.dataset.unit);
+                e.target.classList.add('dragging');
+            });
+            
+            draggable.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+        });
+        
+        // Drop zones on ladder
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.classList.add('drag-over');
+            });
+            
+            zone.addEventListener('dragleave', (e) => {
+                zone.classList.remove('drag-over');
+            });
+            
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                
+                const unit = e.dataTransfer.getData('text/plain');
+                const draggable = document.querySelector(`.ladder-unit[data-unit="${unit}"]`);
+                
+                // Check if zone already has a unit
+                const existing = zone.querySelector('.ladder-unit');
+                if (existing) {
+                    // Return to pool
+                    pool.appendChild(existing);
+                }
+                
+                // Add draggable to zone
+                const placeholder = zone.querySelector('.dropzone-placeholder');
+                if (placeholder) placeholder.style.display = 'none';
+                
+                zone.appendChild(draggable);
+            });
+        });
+        
+        // Pool drop zone (return items)
+        pool.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        
+        pool.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const unit = e.dataTransfer.getData('text/plain');
+            const draggable = document.querySelector(`.ladder-unit[data-unit="${unit}"]`);
+            
+            if (draggable && !pool.contains(draggable)) {
+                pool.appendChild(draggable);
+                
+                // Show placeholder again in the zone it came from
+                const zones = document.querySelectorAll('.ladder-dropzone');
+                zones.forEach(zone => {
+                    if (!zone.querySelector('.ladder-unit')) {
+                        const placeholder = zone.querySelector('.dropzone-placeholder');
+                        if (placeholder) placeholder.style.display = 'block';
+                    }
+                });
+            }
+        });
+        
+        // Check button
         const checkBtn = document.getElementById('checkBtn');
         checkBtn.addEventListener('click', () => {
             checkLadder();
@@ -258,8 +684,24 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     }
     
     function checkLadder() {
-        // TODO: Implement ladder validation
-        showFeedback(true, 'ladder');
+        const dropZones = document.querySelectorAll('.ladder-dropzone');
+        let allCorrect = true;
+        
+        dropZones.forEach(zone => {
+            const correctUnit = zone.dataset.correct;
+            const placedUnit = zone.querySelector('.ladder-unit');
+            
+            if (!placedUnit || placedUnit.dataset.unit !== correctUnit) {
+                allCorrect = false;
+            }
+        });
+        
+        if (allCorrect) {
+            score += 1;
+            showFeedback(true, 'ladder');
+        } else {
+            showFeedback(false, 'ladder');
+        }
     }
     
     // ============================================
@@ -492,14 +934,24 @@ function initEenhedenVoorvoegsels(container, onComplete) {
         
         // Disable check button if moving to next
         if (correct || (variant !== 'first' && variant !== 'uppercase-first')) {
-            document.getElementById('checkBtn').disabled = true;
+            const checkBtn = document.getElementById('checkBtn');
+            if (checkBtn) checkBtn.disabled = true;
         }
     }
     
     function showCorrectAnswer(q) {
         let html = '<p><strong>Juiste oplossing:</strong></p>';
         
-        if (q.type === 'fill-one') {
+        if (q.type === 'matching') {
+            html += '<div style="margin-top: 1rem;"><p>De juiste koppelingen zijn:</p><ul style="list-style: none; padding-left: 0;">';
+            UNITS.forEach(unit => {
+                html += `<li style="margin-bottom: 0.5rem;"><strong>${unit}</strong> → ${UNITS_FULL[unit]}</li>`;
+            });
+            html += '</ul></div>';
+        } else if (q.type === 'ladder-drag') {
+            html += '<p>De ladder van boven naar beneden:</p>';
+            html += `<div style="margin-top: 1rem;">${createLadderSVG()}</div>`;
+        } else if (q.type === 'fill-one') {
             html += '<div class="unit-sequence">';
             q.units.sequence.forEach((unit, i) => {
                 if (i === q.units.missingIndex) {
@@ -527,7 +979,10 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             html += '</div>';
         }
         
-        html += `<div style="margin-top: 1rem;">${createLadderSVG()}</div>`;
+        // Add ladder for fill questions too
+        if (q.type === 'fill-one' || q.type === 'fill-three') {
+            html += `<div style="margin-top: 1rem;">${createLadderSVG()}</div>`;
+        }
         
         return html;
     }
