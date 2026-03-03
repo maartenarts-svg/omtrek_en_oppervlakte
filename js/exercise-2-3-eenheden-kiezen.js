@@ -153,7 +153,7 @@ function initEenhedenKiezen(container, onComplete) {
                 <div class="modal-content" style="max-width: 800px;">
                     <h2>Referentie-eenheden</h2>
                     <div class="reference-image">
-                        <img src="https://drive.google.com/file/d/1SU6ObheKQieggH96268x0mPEhuXk5-yP/view?usp=drive_link" alt="Referentie-eenheden" style="width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px;">
+                        <img src="https://drive.google.com/uc?export=view&id=1SU6ObheKQieggH96268x0mPEhuXk5-yP" alt="Referentie-eenheden" style="width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px;">
                     </div>
                     <div class="modal-actions" style="margin-top: 1.5rem;">
                         <button class="btn btn-primary" id="closeModalBtn">Terug naar oefening</button>
