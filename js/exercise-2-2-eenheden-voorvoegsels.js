@@ -366,7 +366,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
                 <div class="exercise-progress">
                     <div class="progress-header">
                         <span class="progress-label">Vraag ${currentQuestion + 1} van ${questions.length}</span>
-                        <span class="progress-score">Score: <strong>${score}</strong>/${currentQuestion}</span>
+                        <span class="progress-score">Score: <strong>${score}</strong>/8</span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${(currentQuestion / questions.length) * 100}%"></div>
@@ -709,7 +709,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             
             <div class="input-area" style="margin-top: 2rem;">
                 <label>Jouw antwoord:</label>
-                <input type="text" id="answerInput" class="answer-input" style="width: 100px;" autofocus>
+                <input type="text" id="answerInput" class="answer-input" style="width: 100px;" autocomplete="off" autofocus>
             </div>
             
             <div id="feedbackArea" class="feedback-area"></div>
@@ -734,7 +734,7 @@ function initEenhedenVoorvoegsels(container, onComplete) {
             <div class="unit-sequence">
                 ${sequence.map((unit, i) => {
                     if (missing[i]) {
-                        return `<input type="text" class="sequence-input" data-index="${i}" style="width: 90px;">`;
+                        return `<input type="text" class="sequence-input" data-index="${i}" style="width: 90px;" autocomplete="off">`;
                     } else {
                         return `<span class="sequence-item">${unit}</span>`;
                     }
