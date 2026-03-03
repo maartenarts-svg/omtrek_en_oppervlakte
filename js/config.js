@@ -83,12 +83,11 @@ const LESSONS_CONFIG = {
         id: 'part-3',
         type: 'exercise',
         title: 'Juiste eenheid in concrete situaties',
-        exerciseType: 'eenheden-kiezen',
-        xpReward: 40,
+        exerciseType: '2-3-eenheden-kiezen',
+        xpReward: 0,
         passingCriteria: {
-          minCorrect: 7,
-          scoreA: 85,
-          scoreB: 70
+          scoreA: 87.5,
+          scoreB: 68.75
         }
       },
       {
