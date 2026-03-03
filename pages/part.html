@@ -339,6 +339,7 @@
     <script src="../js/exercise-rooster-berekening.js"></script>
     <script src="../js/exercise-keuze-vraag.js"></script>
     <script src="../js/exercise-2-2-eenheden-voorvoegsels.js"></script>
+    <script src="../js/exercise-2-3-eenheden-kiezen.js"></script>
     
     <script>
         let userData = null;
@@ -577,6 +578,8 @@
             } else if (part.exerciseType === 'keuze-vraag') {
                 initKeuzeVraag(container, handleExerciseComplete);
             } else if (part.exerciseType === '2-2-eenheden-voorvoegsels') {
+                initEenhedenVoorvoegsels(container, handleExerciseComplete);
+            } else if (part.exerciseType === '2-3-eenheden-kiezen') {
                 initEenhedenVoorvoegsels(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
