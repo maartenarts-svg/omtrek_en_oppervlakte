@@ -340,6 +340,7 @@
     <script src="../js/exercise-keuze-vraag.js"></script>
     <script src="../js/exercise-2-2-eenheden-voorvoegsels.js"></script>
     <script src="../js/exercise-2-3-eenheden-kiezen.js"></script>
+    <script src="../js/exercise-2-5-eenheden-omzetten.js"></script>
     
     <script>
         let userData = null;
@@ -581,6 +582,8 @@
                 initEenhedenVoorvoegsels(container, handleExerciseComplete);
             } else if (part.exerciseType === '2-3-eenheden-kiezen') {
                 initEenhedenKiezen(container, handleExerciseComplete);
+            } else if (part.exerciseType === '2-5-eenheden-omzetten') {
+                initEenhedenOmzetten(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
