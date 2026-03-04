@@ -113,18 +113,7 @@ const LESSONS_CONFIG = {
         type: 'exercise',
         title: 'Eenheden omzetten oefenen',
         exerciseType: '2-6-eenheden-omzetten-oefenen',
-        xpReward: 0
-        passingCriteria: {
-          scoreA: 81.25,
-          scoreB: 62.5
-        }          
-      },
-      {
-        id: 'part-7',
-        type: 'exercise',
-        title: 'Eenheden omzetten oefenen',
-        exerciseType: '2-6-eenheden-omzetten-oefenen',
-        xpReward: 0
+        xpReward: 0,
         passingCriteria: {
           scoreA: 81.25,
           scoreB: 62.5
