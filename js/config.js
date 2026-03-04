@@ -110,22 +110,14 @@ const LESSONS_CONFIG = {
       },
       {
         id: 'part-6',
-        type: 'video',
-        title: 'Omtrek berekenen met eenheden',
-        videoUrl: '',
-        xpReward: 20
-      },
-      {
-        id: 'part-7',
         type: 'exercise',
-        title: 'Omtrek in rooster met eenheden',
-        exerciseType: 'rooster-met-eenheden',
-        xpReward: 50,
+        title: 'Eenheden omzetten oefenen',
+        exerciseType: '2-6-eenheden-omzetten-oefenen',
+        xpReward: 0
         passingCriteria: {
-          minCorrect: 7,
-          scoreA: 85,
-          scoreB: 70
-        }
+          scoreA: 81.25,
+          scoreB: 62.5
+        }          
       }
     ]
   },
@@ -138,7 +130,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Formules voor rechthoek, vierkant en ruit',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
         xpReward: 20
       },
       {
