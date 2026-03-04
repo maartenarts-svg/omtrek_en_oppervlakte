@@ -94,19 +94,18 @@ const LESSONS_CONFIG = {
         id: 'part-4',
         type: 'video',
         title: 'Eenheden omzetten',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
         xpReward: 20
       },
       {
         id: 'part-5',
         type: 'exercise',
         title: 'Eenheden omzetten oefenen',
-        exerciseType: 'eenheden-omzetten',
-        xpReward: 50,
+        exerciseType: '2-5-eenheden-omzetten',
+        xpReward: 0,
         passingCriteria: {
-          minCorrect: 8,
-          scoreA: 90,
-          scoreB: 75
+          scoreA: 85,
+          scoreB: 0
         }
       },
       {
