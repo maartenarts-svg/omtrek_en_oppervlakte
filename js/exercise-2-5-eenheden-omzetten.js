@@ -398,13 +398,14 @@ function initEenhedenOmzetten(container, onComplete) {
             .inline-select {
                 display: inline-block;
                 padding: 0.25rem 0.5rem;
-                font-size: var(--font-size-large);
+                font-size: 18px;
                 font-weight: 600;
                 border: 2px solid var(--color-primary);
                 border-radius: var(--radius-sm);
                 background: white;
                 cursor: pointer;
                 margin: 0 0.25rem;
+                max-width: 100px;
             }
             
             .inline-select:focus {
