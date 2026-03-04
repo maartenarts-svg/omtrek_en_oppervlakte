@@ -153,7 +153,7 @@ function initEenhedenKiezen(container, onComplete) {
                 <div class="modal-content" style="max-width: 800px;">
                     <h2>Referentie-eenheden</h2>
                     <div class="reference-image">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2Y4ZjlmYSIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjI0IiBmaWxsPSIjNjY2Ij4KICAgIFJlZmVyZW50aWUtZWVuaGVkZW4gYWZiZWVsZGluZwogIDwvdGV4dD4KICA8dGV4dCB4PSI0MDAiIHk9IjI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzk5OSI+CiAgICAoUGxhYXRzaG91ZGVyIC0gdXBsb2FkIGpvdXcgZWlnZW4gYWZiZWVsZGluZykKICA8L3RleHQ+Cjwvc3ZnPg==" alt="Referentie-eenheden" style="width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px;">
+                        <img src="https://drive.google.com/uc?export=view&id=1SU6ObheKQieggH96268x0mPEhuXk5-yP" alt="Referentie-eenheden" style="width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px;">
                     </div>
                     <div class="modal-actions" style="margin-top: 1.5rem;">
                         <button class="btn btn-primary" id="closeModalBtn">Terug naar oefening</button>
