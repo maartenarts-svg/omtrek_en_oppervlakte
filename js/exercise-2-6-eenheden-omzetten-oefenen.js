@@ -414,23 +414,24 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
         style.id = 'eenheden-omzetten-oefenen-css';
         style.textContent = `
             .conversion-question {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                font-size: 20px !important;
+                display: block;
+                text-align: center;
+                font-size: 18px !important;
                 margin: 2rem 0;
             }
             
             .conversion-input {
-                width: 70px;
+                display: inline-block;
+                width: 70px !important;
+                max-width: 70px !important;
                 padding: 0.4rem;
-                font-size: 18px;
+                font-size: 14px;
                 font-weight: 600;
                 text-align: center;
                 border: 3px solid var(--color-primary);
                 border-radius: var(--radius-md);
                 background: white;
+                box-sizing: border-box;
             }
             
             .conversion-input:focus {
