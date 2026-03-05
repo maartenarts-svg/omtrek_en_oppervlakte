@@ -94,6 +94,16 @@ function initEenhedenOmzetten(container, onComplete) {
         }
     }
     
+    // Show validation error
+    function showValidationError(message) {
+        const feedbackArea = document.getElementById('feedbackArea');
+        feedbackArea.innerHTML = `
+            <div class="feedback-message feedback-incorrect">
+                <p class="feedback-text">${message}</p>
+            </div>
+        `;
+    }
+    
     // Render question based on phase
     function render() {
         currentQuestion = generateQuestion();
@@ -202,8 +212,37 @@ function initEenhedenOmzetten(container, onComplete) {
     }
     
     function checkAnswer() {
-        attempts++;
         const q = currentQuestion;
+        
+        // Validate input based on phase
+        if (currentPhase === 1) {
+            const dirSelect = document.getElementById('directionSelect');
+            if (!dirSelect.value) {
+                showValidationError('Kies eerst een optie uit de lijst.');
+                return;
+            }
+        } else if (currentPhase === 2) {
+            const powerSelect = document.getElementById('powerSelect');
+            if (!powerSelect.value) {
+                showValidationError('Kies eerst een macht uit de lijst.');
+                return;
+            }
+        } else if (currentPhase === 3) {
+            const dirSelect = document.getElementById('directionSelect');
+            const powerSelect = document.getElementById('powerSelect');
+            if (!dirSelect.value || !powerSelect.value) {
+                showValidationError('Kies eerst beide opties uit de lijsten.');
+                return;
+            }
+        } else if (currentPhase === 4) {
+            const unitSelect = document.getElementById('unitSelect');
+            if (!unitSelect.value) {
+                showValidationError('Kies eerst een eenheid uit de lijst.');
+                return;
+            }
+        }
+        
+        attempts++;
         let isCorrect = false;
         let wrongDirection = false;
         let wrongPower = false;
@@ -315,9 +354,9 @@ function initEenhedenOmzetten(container, onComplete) {
                 
             } else {
                 const dir1 = q.direction === 'kleiner' ? 'kleiner' : 'groter';
-                const pos1 = q.direction === 'kleiner' ? 'boven' : 'onder';
-                const pos2 = q.direction === 'kleiner' ? 'boven' : 'onder';
-                feedback = `In de opgave staat dat 1 ${q.A} ${dir1} is dan de eenheid die je moet antwoorden. Die nieuwe eenheid ligt dus ${pos1} de eenheid 1 ${q.A}.<br>In de opgave staat ook dat 1 ${q.A} ${q.power} keer ${q.direction} is dan de eenheid die we zoeken. Je moet dus op de ladder ${q.C} stap${q.C > 1 ? 'pen' : ''} naar ${pos2}.`;
+                const pos1 = q.direction === 'kleiner' ? 'onder' : 'boven';
+                const pos2 = q.direction === 'kleiner' ? 'onder' : 'boven';
+                feedback = `In de opgave staat dat 1 ${q.A} ${dir1} is dan de eenheid die je moet antwoorden. Die eenheid ligt dus op de ladder ${pos1} de eenheid 1 ${q.A}.<br>In de opgave staat ook dat 1 ${q.A} ${q.power} keer ${q.direction} is dan de eenheid die we zoeken. Je moet dus op de ladder ${q.C} stap${q.C > 1 ? 'pen' : ''} naar ${pos2}.`;
             }
             
             const correctSentence = `1 ${q.A} is <span style="color: var(--color-primary); font-weight: 700;">${q.power}</span> keer <span style="color: var(--color-primary); font-weight: 700;">${q.direction}</span> dan 1 <span style="color: var(--color-primary); font-weight: 700;">${q.B}</span>.`;
