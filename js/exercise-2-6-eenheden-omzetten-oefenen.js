@@ -409,15 +409,14 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
                 align-items: center;
                 justify-content: center;
                 gap: 0.5rem;
-                font-size: 22px !important;
+                font-size: 20px !important;
                 margin: 2rem 0;
-                flex-wrap: wrap;
             }
             
             .conversion-input {
-                width: 120px;
-                padding: 0.5rem;
-                font-size: 20px;
+                width: 80px;
+                padding: 0.4rem;
+                font-size: 18px;
                 font-weight: 600;
                 text-align: center;
                 border: 3px solid var(--color-primary);
