@@ -282,7 +282,7 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
             const absC = Math.abs(q.C);
             const unitDirection = q.C > 0 ? 'kleiner' : 'groter'; // FIXED: C>0 = kleiner
             const numberDirection = q.C > 0 ? 'groter' : 'kleiner'; // FIXED: C>0 = groter
-            const operation = q.C < 0 ? '÷' : '×'; // FIXED: C<0 = delen
+            const operation = q.C < 0 ? ':' : '·'; // FIXED: C<0 = delen
             const powerText = absC === 1 ? '10' : `10${getSuperscript(absC)}`;
             const expandedPower = Math.pow(10, absC);
             
