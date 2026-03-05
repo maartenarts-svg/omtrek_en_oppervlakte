@@ -356,7 +356,7 @@ function initEenhedenOmzetten(container, onComplete) {
                 const dir1 = q.direction === 'kleiner' ? 'kleiner' : 'groter';
                 const pos1 = q.direction === 'kleiner' ? 'boven' : 'onder';
                 const pos2 = q.direction === 'kleiner' ? 'boven' : 'onder';
-                feedback = `In de opgave staat dat 1 ${q.A} ${dir1} is dan de eenheid die je moet antwoorden. Die eenheid ligt dus op de ladder ${pos1} de eenheid 1 ${q.A}.<br>In de opgave staat ook dat 1 ${q.A} ${q.power} keer ${q.direction} is dan de eenheid die we zoeken. Je moet dus op de ladder ${q.C} stap${q.C > 1 ? 'pen' : ''} naar ${pos2}.`;
+                feedback = `In de opgave staat dat 1 ${q.A} ${dir1} is dan de eenheid die je moet antwoorden. Die nieuwe eenheid ligt dus ${pos1} de eenheid 1 ${q.A}.<br>In de opgave staat ook dat 1 ${q.A} ${q.power} keer ${q.direction} is dan de eenheid die we zoeken. Je moet dus op de ladder ${q.C} stap${q.C > 1 ? 'pen' : ''} naar ${pos2}.`;
             }
             
             const correctSentence = `1 ${q.A} is <span style="color: var(--color-primary); font-weight: 700;">${q.power}</span> keer <span style="color: var(--color-primary); font-weight: 700;">${q.direction}</span> dan 1 <span style="color: var(--color-primary); font-weight: 700;">${q.B}</span>.`;
