@@ -658,72 +658,49 @@
     <script src="../js/progress.js"></script>
     <script src="../js/deadlines.js"></script>
     
-    <script>
-        // Check progress and show appropriate theory sections
-        async function loadTheory() {
-            const user = firebase.auth().currentUser;
-            if (!user) {
-                window.location.href = 'index.html';
-                return;
+<script>
+    // Check auth
+    let currentUser = checkAuth();
+    if (!currentUser) {
+        window.location.href = 'index.html';
+    }
+    
+    // Load theory sections
+    async function loadTheory() {
+        try {
+            const progressDoc = await firebase.firestore()
+                .collection('progress')
+                .doc(currentUser.uid)
+                .get();
+            
+            if (!progressDoc.exists) return;
+            
+            const progress = progressDoc.data();
+            
+            // Check completions and show sections
+            if (progress['les-1']?.['part-1']?.completed) {
+                document.getElementById('theory-1').classList.add('visible');
             }
             
-            try {
-                const progressDoc = await firebase.firestore()
-                    .collection('progress')
-                    .doc(user.uid)
-                    .get();
-                
-                if (!progressDoc.exists) {
-                    return;
-                }
-                
-                const progress = progressDoc.data();
-                
-                // Determine which sections to show based on completed parts
-                let showTheory1 = false;
-                let showTheory21 = false;
-                let showTheory22 = false;
-                
-                // Check Les 1, Part 1 completion
-                if (progress['les-1'] && progress['les-1']['part-1'] && progress['les-1']['part-1'].completed) {
-                    showTheory1 = true;
-                }
-                
-                // Check Les 2, Part 2 completion
-                if (progress['les-2'] && progress['les-2']['part-2'] && progress['les-2']['part-2'].completed) {
-                    showTheory21 = true;
-                }
-                
-                // Check Les 2, Part 4 completion
-                if (progress['les-2'] && progress['les-2']['part-4'] && progress['les-2']['part-4'].completed) {
-                    showTheory22 = true;
-                }
-                
-                // Show sections
-                if (showTheory1) {
-                    document.getElementById('theory-1').classList.add('visible');
-                }
-                if (showTheory21) {
-                    document.getElementById('theory-2-1').classList.add('visible');
-                }
-                if (showTheory22) {
-                    document.getElementById('theory-2-2').classList.add('visible');
-                }
-                
-            } catch (error) {
-                console.error('Error loading theory:', error);
+            if (progress['les-2']?.['part-2']?.completed) {
+                document.getElementById('theory-2-1').classList.add('visible');
             }
+            
+            if (progress['les-2']?.['part-4']?.completed) {
+                document.getElementById('theory-2-2').classList.add('visible');
+            }
+            
+        } catch (error) {
+            console.error('Error loading theory:', error);
         }
-        
-        // Initialize
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                loadTheory();
-                updateUserDisplay();
-            } else {
-                window.location.href = 'index.html';
-            }
-        });
-    </script>
+    }
+    
+    // Set user display
+    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    document.getElementById('userAvatar').textContent = initials;
+    
+    // Load theory
+    loadTheory();
+</script>
 </body>
 </html>
