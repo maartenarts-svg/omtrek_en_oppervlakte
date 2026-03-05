@@ -422,7 +422,7 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
             
             .conversion-input {
                 display: inline-block;
-                width: 70px !important;
+                width: 140px !important;
                 max-width: 70px !important;
                 padding: 0.4rem;
                 font-size: 14px;
