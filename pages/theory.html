@@ -668,14 +668,14 @@
     // Load theory sections
     async function loadTheory() {
         try {
-            const progressDoc = await firebase.firestore()
-                .collection('progress')
-                .doc(currentUser.uid)
+            const userDoc = await firebase.firestore()
+                .collection('users')
+                .doc(currentUser.email)
                 .get();
             
-            if (!progressDoc.exists) return;
+            if (!userDoc.exists) return;
             
-            const progress = progressDoc.data();
+            const progress = userDoc.data().progress || {};
             
             // Check completions and show sections
             if (progress['les-1']?.['part-1']?.completed) {
