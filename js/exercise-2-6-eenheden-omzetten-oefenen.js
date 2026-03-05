@@ -84,8 +84,17 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
         
         D = Q / R;
         
-        // Calculate E = D * 10^C
-        const E = D * Math.pow(10, C);
+        // Determine decimal places based on R
+        let decimalsD = 0;
+        if (R === 10) decimalsD = 1;
+        else if (R === 100) decimalsD = 2;
+        
+        // Round D to correct precision
+        D = Math.round(D * Math.pow(10, decimalsD)) / Math.pow(10, decimalsD);
+        
+        // Calculate E = D * 10^C with correct precision
+        const decimalsE = C < 0 ? decimalsD + Math.abs(C) : Math.max(0, decimalsD - C);
+        const E = Math.round(D * Math.pow(10, C) * Math.pow(10, decimalsE)) / Math.pow(10, decimalsE);
         
         return { A, B, An, Bn, C, D, E };
     }
@@ -414,7 +423,7 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
             }
             
             .conversion-input {
-                width: 80px;
+                width: 70px;
                 padding: 0.4rem;
                 font-size: 18px;
                 font-weight: 600;
