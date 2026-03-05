@@ -354,8 +354,8 @@ function initEenhedenOmzetten(container, onComplete) {
                 
             } else {
                 const dir1 = q.direction === 'kleiner' ? 'kleiner' : 'groter';
-                const pos1 = q.direction === 'kleiner' ? 'onder' : 'boven';
-                const pos2 = q.direction === 'kleiner' ? 'onder' : 'boven';
+                const pos1 = q.direction === 'kleiner' ? 'boven' : 'onder';
+                const pos2 = q.direction === 'kleiner' ? 'boven' : 'onder';
                 feedback = `In de opgave staat dat 1 ${q.A} ${dir1} is dan de eenheid die je moet antwoorden. Die eenheid ligt dus op de ladder ${pos1} de eenheid 1 ${q.A}.<br>In de opgave staat ook dat 1 ${q.A} ${q.power} keer ${q.direction} is dan de eenheid die we zoeken. Je moet dus op de ladder ${q.C} stap${q.C > 1 ? 'pen' : ''} naar ${pos2}.`;
             }
             
