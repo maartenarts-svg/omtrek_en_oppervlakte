@@ -522,6 +522,25 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     
     function checkMatching() {
         const dropZones = document.querySelectorAll('.target-drop-zone');
+        
+        // Validate all zones filled
+        let allFilled = true;
+        dropZones.forEach(zone => {
+            if (!zone.querySelector('.matching-unit')) {
+                allFilled = false;
+            }
+        });
+        
+        if (!allFilled) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Sleep eerst alle eenheden naar een plaats.</p>
+                </div>
+            `;
+            return;
+        }
+        
         let allCorrect = true;
         
         dropZones.forEach(zone => {
@@ -667,6 +686,25 @@ function initEenhedenVoorvoegsels(container, onComplete) {
     
     function checkLadder() {
         const dropZones = document.querySelectorAll('.ladder-dropzone');
+        
+        // Validate all zones filled
+        let allFilled = true;
+        dropZones.forEach(zone => {
+            if (!zone.querySelector('.ladder-unit')) {
+                allFilled = false;
+            }
+        });
+        
+        if (!allFilled) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Sleep eerst alle eenheden naar een plaats op de ladder.</p>
+                </div>
+            `;
+            return;
+        }
+        
         let allCorrect = true;
         
         dropZones.forEach(zone => {
@@ -761,6 +799,9 @@ function initEenhedenVoorvoegsels(container, onComplete) {
         if (q.type === 'fill-three') {
             const firstInput = document.querySelector('.sequence-input');
             if (firstInput) firstInput.focus();
+        } else if (q.type === 'fill-one') {
+            const input = document.getElementById('answerInput');
+            if (input) input.focus();
         }
         
         checkBtn.addEventListener('click', () => {
@@ -776,6 +817,18 @@ function initEenhedenVoorvoegsels(container, onComplete) {
         const q = questions[currentQuestion];
         const input = document.getElementById('answerInput');
         const userAnswer = input.value.trim();
+        
+        // Validate input
+        if (!userAnswer) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Vul eerst een antwoord in.</p>
+                </div>
+            `;
+            return;
+        }
+        
         const correctAnswer = q.units.answer;
         
         // Check for uppercase
@@ -798,6 +851,17 @@ function initEenhedenVoorvoegsels(container, onComplete) {
         const inputs = document.querySelectorAll('.sequence-input');
         const userAnswers = Array.from(inputs).map(inp => inp.value.trim());
         const correctAnswers = q.units.answers;
+        
+        // Validate all inputs filled
+        if (userAnswers.some(ans => !ans)) {
+            const feedbackArea = document.getElementById('feedbackArea');
+            feedbackArea.innerHTML = `
+                <div class="feedback-message feedback-incorrect">
+                    <p class="feedback-text">Vul eerst alle antwoorden in.</p>
+                </div>
+            `;
+            return;
+        }
         
         attempts[currentQuestion] = attempts[currentQuestion] || 0;
         
