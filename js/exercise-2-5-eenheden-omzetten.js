@@ -12,9 +12,9 @@ function initEenhedenOmzetten(container, onComplete) {
     
     let currentPhase = 1; // 1, 2, 3, or 4
     let phaseStreak = 0; // Count of consecutive correct answers in current phase
-    let totalQuestions = 0;
-    let correctAnswers = 0;
-    let minRemainingQuestions = 12; // Start with minimum 12
+    let correctAnswers = 0; // x - aantal juiste antwoorden
+    let totalRequired = 12; // y - totaal aantal oefeningen dat nodig is
+    let totalQuestions = 0; // Totaal aantal gemaakte oefeningen (voor statistiek)
     let currentQuestion = null;
     let attempts = 0;
     
@@ -85,13 +85,22 @@ function initEenhedenOmzetten(container, onComplete) {
         return svg;
     }
     
+    // Update progress bar
+    function updateProgressBar() {
+        const progress = Math.max(0, Math.min(100, (correctAnswers / totalRequired) * 100));
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            progressFill.style.width = `${progress}%`;
+        }
+    }
+    
     // Render question based on phase
     function render() {
         currentQuestion = generateQuestion();
         attempts = 0;
         totalQuestions++;
         
-        const progress = Math.max(0, Math.min(100, ((totalQuestions - minRemainingQuestions) / totalQuestions) * 100));
+        const progress = Math.max(0, Math.min(100, (correctAnswers / totalRequired) * 100));
         
         let questionHTML = '';
         let dropdowns = '';
@@ -228,6 +237,7 @@ function initEenhedenOmzetten(container, onComplete) {
         if (isCorrect) {
             correctAnswers++;
             phaseStreak++;
+            updateProgressBar();
             
             if (phaseStreak >= 3) {
                 if (currentPhase === 4) {
@@ -247,11 +257,9 @@ function initEenhedenOmzetten(container, onComplete) {
             if (attempts < maxAttempts) {
                 showFeedback(false, attempts, true, wrongDirection, wrongPower, wrongUnit);
             } else {
-                // Update progress calculation
-                const n = 3 - phaseStreak; // Remaining in phase
-                if (n > 3) {
-                    minRemainingQuestions += (n - 3);
-                }
+                // Update y: add (phaseStreak + 1)
+                totalRequired += (phaseStreak + 1);
+                updateProgressBar();
                 
                 phaseStreak = 0; // Reset streak
                 showFeedback(false, attempts, false, wrongDirection, wrongPower, wrongUnit);
@@ -349,7 +357,6 @@ function initEenhedenOmzetten(container, onComplete) {
     window.nextPhase = function() {
         currentPhase++;
         phaseStreak = 0;
-        minRemainingQuestions = Math.max(minRemainingQuestions, totalQuestions + 3);
         render();
     };
     
