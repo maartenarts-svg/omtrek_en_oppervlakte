@@ -215,6 +215,11 @@
     <header class="main-header">
         <div class="header-left">
             <a href="overview.html" class="logo">📐 Wiskunde</a>
+            <nav class="nav-menu">
+                <a href="overview.html">Lessen</a>
+                <a href="theory.html" class="active">Theorie</a>
+                <a href="drill.html">Oefenen</a>
+            </nav>
         </div>
         <div class="header-right">
             <div class="xp-display">
@@ -677,17 +682,28 @@
             
             const progress = userDoc.data().progress || {};
             
-            // Check completions and show sections
-            if (progress['les-1']?.['part-1']?.completed) {
+            // Theory-1: zichtbaar zodra les-1/part-1 voltooid is
+            if (progress['les-1']?.parts?.['part-1']?.completed) {
                 document.getElementById('theory-1').classList.add('visible');
             }
             
-            if (progress['les-2']?.['part-2']?.completed) {
+            // Theory-2-1: zichtbaar zodra les-2/part-1 (video) voltooid is
+            if (progress['les-2']?.parts?.['part-1']?.completed) {
                 document.getElementById('theory-2-1').classList.add('visible');
             }
             
-            if (progress['les-2']?.['part-4']?.completed) {
+            // Theory-2-2: zichtbaar zodra les-2/part-4 (video eenheden omzetten) voltooid is
+            if (progress['les-2']?.parts?.['part-4']?.completed) {
                 document.getElementById('theory-2-2').classList.add('visible');
+            }
+            
+            // Scroll naar de meest recente zichtbare sectie
+            const visibleSections = document.querySelectorAll('.theory-section.visible');
+            if (visibleSections.length > 0) {
+                const lastVisible = visibleSections[visibleSections.length - 1];
+                setTimeout(() => {
+                    lastVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             }
             
         } catch (error) {
