@@ -5,17 +5,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Theorie - Wiskunde Leerplatform</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        /* Theory specific styles */
+        .theory-content {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        /* Headings */
+        h1 {
+            color: #2d5016;
+            font-size: 2rem;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 3px solid #2d5016;
+            padding-bottom: 0.5rem;
+        }
+        
+        h2 {
+            color: #3d6b1f;
+            font-size: 1.6rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        h3 {
+            color: #4d7e28;
+            font-size: 1.3rem;
+            margin: 1.2rem 0 0.8rem 0;
+        }
+        
+        /* Table of contents */
+        .toc {
+            background: #f0f7ed;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #2d5016;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 0.5rem 0;
+        }
+        
+        .toc a {
+            color: #3d6b1f;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .toc ul ul {
+            padding-left: 1.5rem;
+        }
+        
+        /* Theory box */
+        .theory-box {
+            background: #e8f5e3;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin: 1rem 0;
+            border: none;
+        }
+        
+        /* Example box */
+        .example-box {
+            background: #f0f9ec;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin: 1rem 0;
+            border: none;
+        }
+        
+        .example-box .example-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Tables */
+        .theory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .theory-table th,
+        .theory-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #c5e1b5;
+        }
+        
+        .theory-table th {
+            background: #d4ecc8;
+            font-weight: 600;
+        }
+        
+        .theory-table td {
+            background: white;
+        }
+        
+        /* Two column layout */
+        .two-col-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .two-col-table td {
+            padding: 1rem;
+            vertical-align: top;
+            border: none;
+            background: transparent;
+        }
+        
+        .two-col-table td:first-child {
+            width: 50%;
+        }
+        
+        /* Reference table */
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .reference-table td {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #c5e1b5;
+            background: white;
+            width: 25%;
+        }
+        
+        .reference-table td.empty {
+            border: none;
+            background: transparent;
+        }
+        
+        .reference-table img {
+            width: 100%;
+            max-width: 150px;
+            height: 120px;
+            background: #f0f0f0;
+            border: 1px dashed #999;
+            display: block;
+            margin: 0.5rem auto;
+        }
+        
+        /* Colors for maatgetal and eenheid */
+        .maatgetal {
+            color: #9B59B6;
+            font-weight: 600;
+        }
+        
+        .eenheid {
+            color: #E67E22;
+            font-weight: 600;
+        }
+        
+        /* Ladder container */
+        .ladder-with-arrows {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+            gap: 1rem;
+        }
+        
+        .arrow-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 14px;
+            color: #3d6b1f;
+            max-width: 120px;
+            text-align: center;
+        }
+        
+        .arrow-up, .arrow-down {
+            font-size: 48px;
+            color: #4d7e28;
+        }
+        
+        /* Hidden sections */
+        .theory-section {
+            display: none;
+        }
+        
+        .theory-section.visible {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
     <header class="main-header">
         <div class="header-left">
             <a href="overview.html" class="logo">📐 Wiskunde</a>
-            <nav class="nav-menu">
-                <a href="overview.html">Lessen</a>
-                <a href="theory.html" class="active">Theorie</a>
-                <a href="drill.html">Oefenen</a>
-            </nav>
         </div>
         <div class="header-right">
             <div class="xp-display">
@@ -33,56 +232,142 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="content-section">
-            <h1>📚 Theorie</h1>
-            <p class="text-muted">Hier vind je alle theorie die je tot nu toe gezien hebt.</p>
+        <div class="theory-content">
+            <h1 style="border-bottom: none; margin-bottom: 2rem;">Theorie</h1>
             
             <!-- Table of Contents -->
-            <div id="theoryTOC" class="theory-toc">
-                <!-- Wordt via JS gegenereerd op basis van progressie -->
+            <div class="toc">
+                <h2>Inhoudstafel</h2>
+                <ul>
+                    <li><a href="#theory-1">1 Wat is omtrek en oppervlakte?</a></li>
+                    <li><a href="#theory-2">2 Omtrek</a>
+                        <ul>
+                            <li><a href="#theory-2-1">2.1 Eenheden voor omtrek</a>
+                                <ul>
+                                    <li><a href="#theory-2-1-1">2.1.1 Lengte-eenheden</a></li>
+                                    <li><a href="#theory-2-1-2">2.1.2 Referentie-eenheden voor lengte</a></li>
+                                    <li><a href="#theory-2-1-3">2.1.3 Lengte-eenheden omzetten</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-            
-            <hr style="margin: 2rem 0;">
-            
-            <!-- Theory Content -->
-            <div id="theoryContent">
-                <!-- THEORIE LES 1 -->
-                <section class="theory-section" data-section="theorie-1">
-                    <h2>Les 1: Wat is omtrek en oppervlakte?</h2>
-                    
-                    <h3>Omtrek</h3>
-                    <p>
-                        De <strong>omtrek</strong> van een figuur is de lengte van de rand rondom die figuur.
-                        Je berekent de omtrek door alle zijden bij elkaar op te tellen.
-                    </p>
-                    <p>
-                        <strong>Voorbeeld:</strong> Een rechthoek met lengte 5 cm en breedte 3 cm heeft een omtrek van:
-                        <br>Omtrek = 5 + 3 + 5 + 3 = 16 cm
-                    </p>
-                    
-                    <h3>Oppervlakte</h3>
-                    <p>
-                        De <strong>oppervlakte</strong> van een figuur is de grootte van het vlak dat de figuur beslaat.
-                        Je meet oppervlakte in vierkante eenheden (cm², m², enz.)
-                    </p>
-                    <p>
-                        <strong>Voorbeeld:</strong> Een rechthoek met lengte 5 cm en breedte 3 cm heeft een oppervlakte van:
-                        <br>Oppervlakte = 5 × 3 = 15 cm²
-                    </p>
-                    
-                    <h3>Wanneer gebruik je wat?</h3>
-                    <ul>
-                        <li><strong>Omtrek:</strong> Als je een hek rond een tuin plaatst, een kader om een foto maakt, of een rand om iets legt</li>
-                        <li><strong>Oppervlakte:</strong> Als je tegels legt op een vloer, een muur schildert, of gras zaait in een tuin</li>
-                    </ul>
-                </section>
 
-                <!-- THEORIE LES 2 -->
-                <section class="theory-section hidden" data-section="theorie-2">
-                    <h2>Les 2: Eenheden bij omtrek</h2>
+            <!-- Theory Section 1 -->
+            <div id="theory-1" class="theory-section">
+                <h1>1 Wat is omtrek en oppervlakte?</h1>
+                
+                <div class="theory-box">
+                    <table class="two-col-table">
+                        <tr>
+                            <td>
+                                <strong>Omtrek</strong>
+                                <ul>
+                                    <li>De omtrek van een figuur is de afstand die je aflegt als je volledig rond de figuur wandelt.</li>
+                                    <li>Symbool: <em>P</em></li>
+                                </ul>
+                            </td>
+                            <td style="text-align: center;">
+                                <svg width="180" height="180" viewBox="0 0 180 180">
+                                    <rect x="20" y="20" width="140" height="90" fill="rgba(224, 224, 224, 0.6)" stroke="#FF8C42" stroke-width="4" rx="4"/>
+                                </svg>
+                            </td>
+                        </tr>
+                    </table>
                     
-                    <h3>Lengte-eenheden</h3>
-                    <p>We gebruiken verschillende eenheden om lengte te meten:</p>
+                    <div style="height: 1rem;"></div>
+                    
+                    <table class="two-col-table">
+                        <tr>
+                            <td>
+                                <strong>Oppervlakte</strong>
+                                <ul>
+                                    <li>De oppervlakte van een figuur is de plaats die de figuur inneemt in het vlak.</li>
+                                    <li>Symbool: <em>A</em></li>
+                                </ul>
+                            </td>
+                            <td style="text-align: center;">
+                                <svg width="180" height="180" viewBox="0 0 180 180">
+                                    <rect x="20" y="20" width="140" height="90" fill="rgba(168, 216, 229, 0.6)" stroke="#6B9BD1" stroke-width="3" rx="4"/>
+                                </svg>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">Voorbeeld</div>
+                    <p>Bereken de omtrek en de oppervlakte van de figuur.</p>
+                    
+                    <div style="text-align: center; margin: 1rem 0;">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <polygon points="40,160 40,60 100,60 100,100 140,100 140,140 80,140 80,160" 
+                                     fill="rgba(224, 224, 224, 0.6)" stroke="#333" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    
+                    <table class="two-col-table">
+                        <tr>
+                            <td>
+                                <strong>Omtrek</strong><br>
+                                <svg width="180" height="200" viewBox="0 0 200 200">
+                                    <polygon points="40,160 40,60 100,60 100,100 140,100 140,140 80,140 80,160" 
+                                             fill="rgba(224, 224, 224, 0.6)" stroke="#FF8C42" stroke-width="3"/>
+                                    <text x="70" y="50" font-size="14" fill="#FF8C42" font-weight="600">3</text>
+                                    <text x="110" y="80" font-size="14" fill="#FF8C42" font-weight="600">2</text>
+                                    <text x="150" y="120" font-size="14" fill="#FF8C42" font-weight="600">2</text>
+                                    <text x="110" y="150" font-size="14" fill="#FF8C42" font-weight="600">1</text>
+                                    <text x="90" y="170" font-size="14" fill="#FF8C42" font-weight="600">1</text>
+                                    <text x="50" y="150" font-size="14" fill="#FF8C42" font-weight="600">2</text>
+                                    <text x="30" y="110" font-size="14" fill="#FF8C42" font-weight="600">5</text>
+                                    <text x="70" y="70" font-size="14" fill="#FF8C42" font-weight="600">3</text>
+                                </svg>
+                                <div style="margin-top: 1rem;">
+                                    <em>P</em> = 3 + 2 + 2 + 1 + 1 + 2 + 5 + 3<br>
+                                    &nbsp;&nbsp;= 19
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Oppervlakte</strong><br>
+                                <svg width="180" height="200" viewBox="0 0 200 200">
+                                    <polygon points="40,160 40,60 100,60 100,100 140,100 140,140 80,140 80,160" 
+                                             fill="rgba(168, 216, 229, 0.6)" stroke="#6B9BD1" stroke-width="3"/>
+                                    <text x="65" y="95" font-size="12" fill="#2C3E50" font-weight="600">1</text>
+                                    <text x="65" y="115" font-size="12" fill="#2C3E50" font-weight="600">2</text>
+                                    <text x="65" y="135" font-size="12" fill="#2C3E50" font-weight="600">3</text>
+                                    <text x="65" y="155" font-size="12" fill="#2C3E50" font-weight="600">4</text>
+                                    <text x="85" y="95" font-size="12" fill="#2C3E50" font-weight="600">5</text>
+                                    <text x="85" y="115" font-size="12" fill="#2C3E50" font-weight="600">6</text>
+                                    <text x="85" y="135" font-size="12" fill="#2C3E50" font-weight="600">7</text>
+                                    <text x="105" y="75" font-size="12" fill="#2C3E50" font-weight="600">8</text>
+                                    <text x="105" y="95" font-size="12" fill="#2C3E50" font-weight="600">9</text>
+                                    <text x="105" y="115" font-size="12" fill="#2C3E50" font-weight="600">10</text>
+                                    <text x="125" y="115" font-size="12" fill="#2C3E50" font-weight="600">11</text>
+                                    <text x="125" y="135" font-size="12" fill="#2C3E50" font-weight="600">12</text>
+                                </svg>
+                                <div style="margin-top: 1rem;">
+                                    <em>A</em> = 12
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Theory Section 2.1 -->
+            <div id="theory-2-1" class="theory-section">
+                <h1 id="theory-2">2 Omtrek</h1>
+                <h2 id="theory-2-1">2.1 Eenheden voor omtrek</h2>
+                <h3 id="theory-2-1-1">2.1.1 Lengte-eenheden</h3>
+                
+                <div class="theory-box">
+                    <p>De omtrek is een afstand. Daarom gebruiken we voor omtrek de lengte-eenheden.</p>
+                    <p>De standaardeenheid daarbij is 1 meter.</p>
+                    <p>Omdat sommige afstanden veel groter of veel kleiner zijn dan 1 meter, gebruiken we extra onderverdelingen.</p>
+                    
+                    <div style="height: 1rem;"></div>
+                    
                     <table class="theory-table">
                         <tr>
                             <th>Eenheid</th>
@@ -92,7 +377,7 @@
                         <tr>
                             <td>kilometer</td>
                             <td>km</td>
-                            <td>1 km = 1000 m</td>
+                            <td>1 km = 1 000 m</td>
                         </tr>
                         <tr>
                             <td>hectometer</td>
@@ -112,60 +397,252 @@
                         <tr>
                             <td>decimeter</td>
                             <td>dm</td>
-                            <td>1 m = 10 dm</td>
+                            <td>1 dm = 0,1 m</td>
                         </tr>
                         <tr>
                             <td>centimeter</td>
                             <td>cm</td>
-                            <td>1 m = 100 cm</td>
+                            <td>1 cm = 0,01 m</td>
                         </tr>
                         <tr>
                             <td>millimeter</td>
                             <td>mm</td>
-                            <td>1 m = 1000 mm</td>
+                            <td>1 mm = 0,001 m</td>
                         </tr>
                     </table>
                     
-                    <h3>Eenheden omzetten</h3>
-                    <p>
-                        Om van een grote eenheid naar een kleine eenheid om te zetten, <strong>vermenigvuldig</strong> je.<br>
-                        Om van een kleine eenheid naar een grote eenheid om te zetten, <strong>deel</strong> je.
-                    </p>
-                    <p><strong>Voorbeelden:</strong></p>
+                    <div style="height: 1rem;"></div>
+                    
+                    <p>Je kunt dit onthouden met behulp van de eenhedenladder.</p>
+                    
+                    <div class="ladder-with-arrows">
+                        <div class="arrow-label">
+                            <div class="arrow-up">↑</div>
+                            <div>Bij elke stap omhoog wordt de eenheid 10 keer groter.</div>
+                        </div>
+                        
+                        <svg width="200" height="350" viewBox="0 0 200 350">
+                            <rect x="20" y="10" width="15" height="330" fill="#A8D8A8" stroke="#8BC68B" stroke-width="2" rx="5"/>
+                            <rect x="165" y="10" width="15" height="330" fill="#A8D8A8" stroke="#8BC68B" stroke-width="2" rx="5"/>
+                            <rect x="35" y="25" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="47" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">km</text>
+                            <rect x="35" y="73" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="95" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">hm</text>
+                            <rect x="35" y="121" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="143" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">dam</text>
+                            <rect x="35" y="169" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="191" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">m</text>
+                            <rect x="35" y="217" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="239" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">dm</text>
+                            <rect x="35" y="265" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="287" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">cm</text>
+                            <rect x="35" y="313" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
+                            <text x="100" y="335" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">mm</text>
+                        </svg>
+                        
+                        <div class="arrow-label">
+                            <div class="arrow-down">↓</div>
+                            <div>Bij elke stap omlaag wordt de eenheid 10 keer kleiner.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-title">Voorbeeld</div>
+                    
+                    <table class="two-col-table">
+                        <tr>
+                            <td>
+                                <p>1 dam is 10² keer groter dan 1 cm.</p>
+                                <svg width="380" height="200" viewBox="0 0 380 200">
+                                    <defs>
+                                        <marker id="arrow1" markerWidth="8" markerHeight="4" refX="6" refY="2" orient="auto">
+                                            <polygon points="0 0, 8 2, 0 4" fill="#A8C8E5" />
+                                        </marker>
+                                    </defs>
+                                    <path d="M 80 80 Q 110 65, 140 60 Q 170 65, 200 80" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                                    <path d="M 135 60 L 145 60" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow1)" />
+                                    <text x="140" y="45" text-anchor="middle" font-size="12" font-weight="600" fill="#A8C8E5">
+                                        de eenheid wordt 10² keer groter
+                                    </text>
+                                    <text x="30" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">1</text>
+                                    <text x="85" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">dam</text>
+                                    <text x="120" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">=</text>
+                                    <text x="165" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#6B9BD1">100</text>
+                                    <text x="220" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">cm</text>
+                                    <path d="M 30 110 Q 60 125, 90 130 Q 120 125, 150 110" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                                    <path d="M 85 130 L 95 130" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow1)" />
+                                    <text x="90" y="160" text-anchor="middle" font-size="12" font-weight="600" fill="#A8C8E5">
+                                        het maatgetal wordt 10² keer kleiner
+                                    </text>
+                                </svg>
+                            </td>
+                            <td>
+                                <p>1 dm is 10³ keer kleiner dan 1 km.</p>
+                                <svg width="380" height="200" viewBox="0 0 380 200">
+                                    <defs>
+                                        <marker id="arrow2" markerWidth="8" markerHeight="4" refX="6" refY="2" orient="auto">
+                                            <polygon points="0 0, 8 2, 0 4" fill="#A8C8E5" />
+                                        </marker>
+                                    </defs>
+                                    <path d="M 80 80 Q 110 65, 140 60 Q 170 65, 200 80" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                                    <path d="M 135 60 L 145 60" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow2)" />
+                                    <text x="140" y="45" text-anchor="middle" font-size="12" font-weight="600" fill="#A8C8E5">
+                                        de eenheid wordt 10³ keer kleiner
+                                    </text>
+                                    <text x="30" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">1</text>
+                                    <text x="85" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">dm</text>
+                                    <text x="120" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">=</text>
+                                    <text x="165" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#6B9BD1">0,001</text>
+                                    <text x="220" y="95" text-anchor="middle" font-size="20" font-weight="600" fill="#2C3E50">km</text>
+                                    <path d="M 30 110 Q 60 125, 90 130 Q 120 125, 150 110" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                                    <path d="M 85 130 L 95 130" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow2)" />
+                                    <text x="90" y="160" text-anchor="middle" font-size="12" font-weight="600" fill="#A8C8E5">
+                                        het maatgetal wordt 10³ keer groter
+                                    </text>
+                                </svg>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 id="theory-2-1-2">2.1.2 Referentie-eenheden voor lengte</h3>
+                
+                <div class="theory-box">
+                    <p>Om in te schatten hoe lang een eenheid is, kun je die eenheid linken aan afmetingen die je kent.</p>
+                    
+                    <div style="height: 1rem;"></div>
+                    
+                    <table class="reference-table">
+                        <tr>
+                            <td>
+                                <strong>1 km</strong>
+                                <img src="../pictures/km-reference.png" alt="1 kilometer referentie">
+                                van LAB tot aan de spoorwegbrug
+                            </td>
+                            <td>
+                                <strong>1 hm</strong>
+                                <img src="../pictures/hm-reference.png" alt="1 hectometer referentie">
+                                lengte van een voetbalveld
+                            </td>
+                            <td>
+                                <strong>1 dam</strong>
+                                <img src="../pictures/dam-reference.png" alt="1 decameter referentie">
+                                hoogte van een standaard huis
+                            </td>
+                            <td>
+                                <strong>1 m</strong>
+                                <img src="../pictures/m-reference.png" alt="1 meter referentie">
+                                breedte van een deur
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div style="height: 1rem;"></div>
+                    
+                    <table class="reference-table">
+                        <tr>
+                            <td>
+                                <strong>1 dm</strong>
+                                <img src="../pictures/dm-reference.png" alt="1 decimeter referentie">
+                                breedte van een boterham
+                            </td>
+                            <td>
+                                <strong>1 cm</strong>
+                                <img src="../pictures/cm-reference.png" alt="1 centimeter referentie">
+                                breedte van een vingernagel
+                            </td>
+                            <td>
+                                <strong>1 mm</strong>
+                                <img src="../pictures/mm-reference.png" alt="1 millimeter referentie">
+                                dikte van een bankkaart
+                            </td>
+                            <td class="empty">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Theory Section 2.2 -->
+            <div id="theory-2-2" class="theory-section">
+                <h3 id="theory-2-1-3">2.1.3 Lengte-eenheden omzetten</h3>
+                
+                <div class="theory-box">
+                    <p>Meet je lengtes en afstanden, dan gebruik je daarvoor eenheden.</p>
+                    <p>Zo is de omtrek van een voetbalveld ongeveer <span class="maatgetal">300</span> <span class="eenheid">m</span>.</p>
+                    <p>Hierbij is 1 m <strong class="eenheid">de eenheid</strong> en 300 <strong class="maatgetal">het maatgetal</strong>.</p>
+                    
+                    <div style="height: 1rem;"></div>
+                    
+                    <p>Wil je een afstand omzetten in een andere eenheid,</p>
                     <ul>
-                        <li>5 m = 500 cm (× 100)</li>
-                        <li>3000 mm = 3 m (÷ 1000)</li>
-                        <li>2,5 km = 2500 m (× 1000)</li>
+                        <li>dan onderzoek je eerst hoeveel keer de eenheid groter of kleiner wordt;
+                            <div style="margin-left: 2rem; font-size: 0.9rem;">
+                                Gebruik daarvoor de eenhedenladder:
+                                <ul style="list-style-type: '- ';">
+                                    <li>één trap naar boven is 10 keer groter, twee trappen naar boven is 10² keer groter, 3 trappen naar boven is 10³ keer groter ...;</li>
+                                    <li>één trap naar onder is 10 keer kleiner, twee trappen naar onder is 10² keer kleiner, 3 trappen naar onder is 10³ keer kleiner ...</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>doe daarna het omgekeerde met het maatgetal.</li>
                     </ul>
-                </section>
+                </div>
 
-                <!-- THEORIE LES 3 -->
-                <section class="theory-section hidden" data-section="theorie-3">
-                    <h2>Les 3: Speciale omtrekken</h2>
+                <div class="example-box">
+                    <div class="example-title">Voorbeeld</div>
                     
-                    <h3>Formules voor omtrek</h3>
+                    <div style="margin: 1.5rem 0;">
+                        <svg width="500" height="250" viewBox="0 0 500 250">
+                            <defs>
+                                <marker id="arrow3" markerWidth="8" markerHeight="4" refX="6" refY="2" orient="auto">
+                                    <polygon points="0 0, 8 2, 0 4" fill="#A8C8E5" />
+                                </marker>
+                            </defs>
+                            <path d="M 160 100 Q 220 85, 280 80 Q 340 85, 400 100" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                            <path d="M 275 80 L 285 80" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow3)" />
+                            <text x="280" y="65" text-anchor="middle" font-size="14" font-weight="600" fill="#A8C8E5">
+                                de eenheid wordt 10² keer groter
+                            </text>
+                            <text x="60" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">12,3</text>
+                            <text x="170" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">mm</text>
+                            <text x="240" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">=</text>
+                            <text x="330" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#6B9BD1">0,123</text>
+                            <text x="440" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">dm</text>
+                            <path d="M 60 150 Q 120 165, 180 170 Q 240 165, 300 150" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                            <path d="M 175 170 L 185 170" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow3)" />
+                            <text x="180" y="200" text-anchor="middle" font-size="14" font-weight="600" fill="#A8C8E5">
+                                het maatgetal wordt 10² keer kleiner
+                            </text>
+                        </svg>
+                    </div>
                     
-                    <h4>Rechthoek</h4>
-                    <p><strong>Omtrek = 2 × lengte + 2 × breedte</strong></p>
-                    <p>Of: <strong>O = 2l + 2b</strong></p>
-                    
-                    <h4>Vierkant</h4>
-                    <p><strong>Omtrek = 4 × zijde</strong></p>
-                    <p>Of: <strong>O = 4z</strong></p>
-                    
-                    <h4>Ruit</h4>
-                    <p>Een ruit heeft 4 gelijke zijden, dus:</p>
-                    <p><strong>Omtrek = 4 × zijde</strong></p>
-                    <p>Of: <strong>O = 4z</strong></p>
-                    
-                    <h4>Cirkel</h4>
-                    <p><strong>Omtrek = 2 × π × straal</strong></p>
-                    <p>Of: <strong>O = 2πr</strong></p>
-                    <p>Ook: <strong>O = π × diameter</strong> (want diameter = 2 × straal)</p>
-                    <p><em>π (pi) ≈ 3,14</em></p>
-                </section>
-
-                <!-- Meer theorie-secties worden hier toegevoegd naarmate lessen worden gemaakt -->
+                    <div style="margin: 1.5rem 0;">
+                        <svg width="500" height="250" viewBox="0 0 500 250">
+                            <defs>
+                                <marker id="arrow4" markerWidth="8" markerHeight="4" refX="6" refY="2" orient="auto">
+                                    <polygon points="0 0, 8 2, 0 4" fill="#A8C8E5" />
+                                </marker>
+                            </defs>
+                            <path d="M 160 100 Q 220 85, 280 80 Q 340 85, 400 100" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                            <path d="M 275 80 L 285 80" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow4)" />
+                            <text x="280" y="65" text-anchor="middle" font-size="14" font-weight="600" fill="#A8C8E5">
+                                de eenheid wordt 10³ keer kleiner
+                            </text>
+                            <text x="60" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">0,068</text>
+                            <text x="170" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">dam</text>
+                            <text x="240" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">=</text>
+                            <text x="330" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#6B9BD1">68</text>
+                            <text x="440" y="125" text-anchor="middle" font-size="24" font-weight="600" fill="#2C3E50">cm</text>
+                            <path d="M 60 150 Q 120 165, 180 170 Q 240 165, 300 150" stroke="#A8C8E5" stroke-width="3" fill="none" />
+                            <path d="M 175 170 L 185 170" stroke="#A8C8E5" stroke-width="3" marker-end="url(#arrow4)" />
+                            <text x="180" y="200" text-anchor="middle" font-size="14" font-weight="600" fill="#A8C8E5">
+                                het maatgetal wordt 10³ keer groter
+                            </text>
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -175,146 +652,76 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- App Scripts -->
     <script src="../js/firebase-config.js"></script>
-    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/config.js"></script>
     
     <script>
-        let userData = null;
-        let currentUser = null;
-
-        async function initTheory() {
-            currentUser = checkAuth();
-            if (!currentUser) return;
-
-            // Set user avatar
-            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            document.getElementById('userAvatar').textContent = initials;
-
-            // Load user data
-            userData = await DB.getUser(currentUser.email);
-            if (!userData) return;
-
-            // Update XP
-            document.getElementById('totalXP').textContent = userData.totalXP || 0;
-
-            // Show theory based on progress
-            showRelevantTheory();
-            generateTOC();
-        }
-
-        function showRelevantTheory() {
-            // Get all lessons the student has started
-            const progress = userData.progress || {};
-            const accessedLessons = Object.keys(progress);
-
-            // Show theory for all accessed lessons
-            accessedLessons.forEach(lessonId => {
-                const lesson = getLessonById(lessonId);
-                if (!lesson || !lesson.theorySection) return;
-
-                const section = document.querySelector(`[data-section="${lesson.theorySection}"]`);
-                if (section) {
-                    section.classList.remove('hidden');
-                }
-            });
-        }
-
-        function generateTOC() {
-            const toc = document.getElementById('theoryTOC');
-            const visibleSections = document.querySelectorAll('.theory-section:not(.hidden)');
-
-            if (visibleSections.length === 0) {
-                toc.innerHTML = '<p class="text-muted">Je hebt nog geen theorie gezien. Start een les om theorie te ontgrendelen!</p>';
+        // Check progress and show appropriate theory sections
+        async function loadTheory() {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
                 return;
             }
-
-            let html = '<h3>Inhoud</h3><ul class="toc-list">';
-            visibleSections.forEach(section => {
-                const title = section.querySelector('h2').textContent;
-                const sectionId = section.getAttribute('data-section');
-                html += `<li><a href="#${sectionId}" onclick="scrollToSection('${sectionId}')">${title}</a></li>`;
-            });
-            html += '</ul>';
-
-            toc.innerHTML = html;
-        }
-
-        function scrollToSection(sectionId) {
-            const section = document.querySelector(`[data-section="${sectionId}"]`);
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            try {
+                const progressDoc = await firebase.firestore()
+                    .collection('progress')
+                    .doc(user.uid)
+                    .get();
+                
+                if (!progressDoc.exists) {
+                    return;
+                }
+                
+                const progress = progressDoc.data();
+                
+                // Determine which sections to show based on completed parts
+                let showTheory1 = false;
+                let showTheory21 = false;
+                let showTheory22 = false;
+                
+                // Check Les 1, Part 1 completion
+                if (progress['les-1'] && progress['les-1']['part-1'] && progress['les-1']['part-1'].completed) {
+                    showTheory1 = true;
+                }
+                
+                // Check Les 2, Part 2 completion
+                if (progress['les-2'] && progress['les-2']['part-2'] && progress['les-2']['part-2'].completed) {
+                    showTheory21 = true;
+                }
+                
+                // Check Les 2, Part 4 completion
+                if (progress['les-2'] && progress['les-2']['part-4'] && progress['les-2']['part-4'].completed) {
+                    showTheory22 = true;
+                }
+                
+                // Show sections
+                if (showTheory1) {
+                    document.getElementById('theory-1').classList.add('visible');
+                }
+                if (showTheory21) {
+                    document.getElementById('theory-2-1').classList.add('visible');
+                }
+                if (showTheory22) {
+                    document.getElementById('theory-2-2').classList.add('visible');
+                }
+                
+            } catch (error) {
+                console.error('Error loading theory:', error);
             }
         }
-
-        document.addEventListener('DOMContentLoaded', initTheory);
+        
+        // Initialize
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                loadTheory();
+                updateUserDisplay();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
     </script>
-
-    <style>
-        .theory-section {
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid var(--color-gray);
-        }
-
-        .theory-section:last-child {
-            border-bottom: none;
-        }
-
-        .theory-section h2 {
-            color: var(--color-primary);
-            margin-top: 2rem;
-        }
-
-        .theory-section h3 {
-            color: var(--color-dark);
-            margin-top: 1.5rem;
-        }
-
-        .theory-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        .theory-table th,
-        .theory-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border: 1px solid var(--color-gray);
-        }
-
-        .theory-table th {
-            background: var(--color-light);
-            font-weight: 600;
-        }
-
-        .theory-toc {
-            background: var(--color-light);
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
-        }
-
-        .toc-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .toc-list li {
-            margin-bottom: 0.5rem;
-        }
-
-        .toc-list a {
-            color: var(--color-primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .toc-list a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </body>
 </html>
