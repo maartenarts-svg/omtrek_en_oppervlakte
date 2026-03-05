@@ -55,24 +55,36 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
         const Bn = B_idx;
         const C = Bn - An; // NOT absolute value
         
-        // Step 2: Generate D
-        let D;
+        // Step 2: Generate D using Q/R system
+        // Q = integer from 1 to 999
+        // R = one of {1, 10, 100}
+        // D = Q / R
+        
+        let Q, R, D;
         
         if (A === 'km' && B === 'cm') {
-            // D < 10
-            D = Math.random() * 9.99;
+            // D < 10, so Q/R < 10
+            // Choose R=10 or R=100
+            R = Math.random() < 0.5 ? 10 : 100;
+            if (R === 10) {
+                Q = Math.floor(Math.random() * 89) + 10; // 10-98
+            } else {
+                Q = Math.floor(Math.random() * 999) + 1; // 1-999
+            }
         } else if (A === 'cm' && B === 'km') {
-            // D must be integer
-            D = Math.floor(Math.random() * 900) + 1;
+            // D must be integer, so R = 1
+            R = 1;
+            Q = Math.floor(Math.random() * 999) + 1;
         } else {
-            // Max 3 digits, can be decimal
-            D = Math.random() * 999 + 0.01;
+            // Normal case
+            Q = Math.floor(Math.random() * 999) + 1;
+            const rOptions = [1, 10, 100];
+            R = rOptions[Math.floor(Math.random() * 3)];
         }
         
-        // Round to reasonable precision
-        D = Math.round(D * 100) / 100;
+        D = Q / R;
         
-        // Calculate E
+        // Calculate E = D * 10^C
         const E = D * Math.pow(10, C);
         
         return { A, B, An, Bn, C, D, E };
@@ -259,9 +271,9 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
         } else {
             // Show full feedback with visualization
             const absC = Math.abs(q.C);
-            const unitDirection = q.C < 0 ? 'kleiner' : 'groter';
-            const numberDirection = q.C < 0 ? 'groter' : 'kleiner';
-            const operation = q.C > 0 ? '÷' : '×';
+            const unitDirection = q.C > 0 ? 'kleiner' : 'groter'; // FIXED: C>0 = kleiner
+            const numberDirection = q.C > 0 ? 'groter' : 'kleiner'; // FIXED: C>0 = groter
+            const operation = q.C < 0 ? '÷' : '×'; // FIXED: C<0 = delen
             const powerText = absC === 1 ? '10' : `10${getSuperscript(absC)}`;
             const expandedPower = Math.pow(10, absC);
             
@@ -397,14 +409,15 @@ function initEenhedenOmzettenOefenen(container, onComplete) {
                 align-items: center;
                 justify-content: center;
                 gap: 0.5rem;
-                font-size: 28px !important;
+                font-size: 22px !important;
                 margin: 2rem 0;
+                flex-wrap: wrap;
             }
             
             .conversion-input {
-                width: 180px;
+                width: 120px;
                 padding: 0.5rem;
-                font-size: 24px;
+                font-size: 20px;
                 font-weight: 600;
                 text-align: center;
                 border: 3px solid var(--color-primary);
