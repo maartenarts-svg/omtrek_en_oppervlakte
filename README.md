@@ -1,6 +1,6 @@
 # Wiskunde Leerplatform - Omtrek & Oppervlakte
 
-Een volledig digitaal leerplatform voor het eerste middelbaar, A-stroom, met Duolingo-achtige progressie-visualisatie en meer.
+Een volledig digitaal leerplatform voor het eerste middelbaar, A-stroom, met Duolingo-achtige progressie-visualisatie.
 
 ## 📋 Overzicht
 
