@@ -1,10 +1,44 @@
 // ============================================
-// AUTHENTICATIE LOGICA — Google OAuth
+// AUTHENTICATIE LOGICA
 // ============================================
 
-// Inloggen via Google
+// ── Leerlingen: inloggen via e-mail ──────────
+async function loginWithEmail(email) {
+  const btn     = document.getElementById('emailLoginBtn');
+  const errorEl = document.getElementById('loginError');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Bezig met inloggen…'; }
+  if (errorEl) errorEl.classList.add('hidden');
+
+  email = email.toLowerCase().trim();
+
+  try {
+    const userData = await DB.getUser(email);
+
+    if (!userData) {
+      showLoginError('Dit e-mailadres is niet geregistreerd. Vraag je leerkracht om je toe te voegen.');
+      return;
+    }
+
+    localStorage.setItem('currentUser', JSON.stringify({
+      email: userData.email,
+      name:  userData.name,
+      isAdmin: false
+    }));
+
+    window.location.href = './pages/overview.html';
+
+  } catch (error) {
+    console.error('Login error:', error);
+    showLoginError('Er ging iets mis. Probeer opnieuw.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Inloggen'; }
+  }
+}
+
+// ── Leerkrachten: inloggen via Google ────────
 async function loginWithGoogle() {
-  const btn = document.getElementById('googleLoginBtn');
+  const btn     = document.getElementById('googleLoginBtn');
   const errorEl = document.getElementById('loginError');
 
   if (btn) { btn.disabled = true; btn.textContent = 'Bezig met inloggen…'; }
@@ -14,43 +48,27 @@ async function loginWithGoogle() {
 
   try {
     const result = await auth.signInWithPopup(provider);
-    const email = result.user.email.toLowerCase().trim();
+    const email  = result.user.email.toLowerCase().trim();
 
-    // 1. Beheerder?
     const adminFound = await DB.isAdmin(email);
     if (adminFound) {
       localStorage.setItem('currentUser', JSON.stringify({
-        email: email,
-        name: result.user.displayName || email,
+        email:   email,
+        name:    result.user.displayName || email,
         isAdmin: true
       }));
       window.location.href = './pages/dashboard.html';
       return;
     }
 
-    // 2. Leerling?
-    const userData = await DB.getUser(email);
-    if (userData) {
-      localStorage.setItem('currentUser', JSON.stringify({
-        email: email,
-        name: userData.name,
-        isAdmin: false
-      }));
-      window.location.href = './pages/overview.html';
-      return;
-    }
-
-    // 3. Niet geregistreerd
+    // Geen beheerdersaccount gevonden
     await auth.signOut();
-    showLoginError('Je e-mailadres is niet geregistreerd. Vraag je leerkracht om je toe te voegen.');
+    showLoginError('Je Google-account is niet geregistreerd als leerkracht.');
 
   } catch (error) {
-    if (error.code === 'auth/popup-closed-by-user') {
-      // Gebruiker sloot popup — geen foutmelding nodig
-    } else {
-      console.error('Google login error:', error);
-      showLoginError('Inloggen mislukt. Probeer het opnieuw.');
-    }
+    if (error.code === 'auth/popup-closed-by-user') return;
+    console.error('Google login error:', error);
+    showLoginError('Inloggen mislukt. Probeer opnieuw.');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'Inloggen met Google'; }
   }
@@ -64,7 +82,7 @@ function showLoginError(message) {
   }
 }
 
-// Uitloggen
+// ── Uitloggen ─────────────────────────────────
 function logout() {
   auth.signOut();
   localStorage.removeItem('currentUser');
@@ -78,13 +96,12 @@ function logout() {
   }
 }
 
-// Huidige gebruiker ophalen uit localStorage
+// ── Hulpfuncties ──────────────────────────────
 function getCurrentUser() {
   const userStr = localStorage.getItem('currentUser');
   return userStr ? JSON.parse(userStr) : null;
 }
 
-// Controleer of gebruiker ingelogd is; stuur terug naar login als dat niet zo is
 function checkAuth() {
   const currentUser = localStorage.getItem('currentUser');
   if (!currentUser) {
@@ -98,13 +115,12 @@ function checkAuth() {
   return JSON.parse(currentUser);
 }
 
-// Controleer of huidige gebruiker beheerder is
 function isAdmin() {
   const user = checkAuth();
   return user && user.isAdmin;
 }
 
-// Toon gebruikersnaam + beveilig beheerderspagina's bij laden
+// ── Init bij paginalading ─────────────────────
 if (!window.location.pathname.endsWith('index.html') &&
     window.location.pathname !== '/' &&
     !window.location.pathname.endsWith('/')) {

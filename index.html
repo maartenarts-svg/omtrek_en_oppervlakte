@@ -14,7 +14,31 @@
                 <p class="subtitle">Omtrek & Oppervlakte</p>
             </div>
 
-            <button id="googleLoginBtn" class="btn btn-google btn-large" onclick="loginWithGoogle()">
+            <!-- Leerlingen -->
+            <form id="loginForm" class="login-form" onsubmit="handleEmailLogin(event)">
+                <div class="form-group">
+                    <label for="email">Schoolmailadres</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="voornaam.achternaam@labsintniklaas.be"
+                        required
+                        autocomplete="email">
+                </div>
+                <button type="submit" id="emailLoginBtn" class="btn btn-primary btn-large">
+                    Inloggen
+                </button>
+            </form>
+
+            <p id="loginError" class="login-error hidden"></p>
+
+            <!-- Scheiding -->
+            <div class="login-divider">
+                <span>Leerkracht?</span>
+            </div>
+
+            <!-- Leerkrachten -->
+            <button id="googleLoginBtn" class="btn btn-google" onclick="loginWithGoogle()">
                 <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
                     <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -25,12 +49,8 @@
                 Inloggen met Google
             </button>
 
-            <p id="loginError" class="login-error hidden"></p>
-
             <div class="login-footer">
-                <p class="help-text">
-                    Problemen met inloggen? Vraag hulp aan je leerkracht.
-                </p>
+                <p class="help-text">Problemen met inloggen? Vraag hulp aan je leerkracht.</p>
             </div>
         </div>
     </div>
@@ -45,14 +65,17 @@
     <script src="./js/auth.js"></script>
 
     <script>
-        // Stuur al ingelogde gebruiker meteen door
+        function handleEmailLogin(e) {
+            e.preventDefault();
+            loginWithEmail(document.getElementById('email').value);
+        }
+
+        // Al ingelogd? Meteen doorsturen.
         const currentUser = getCurrentUser();
         if (currentUser) {
-            if (currentUser.isAdmin) {
-                window.location.href = 'pages/dashboard.html';
-            } else {
-                window.location.href = 'pages/overview.html';
-            }
+            window.location.href = currentUser.isAdmin
+                ? 'pages/dashboard.html'
+                : 'pages/overview.html';
         }
     </script>
 </body>

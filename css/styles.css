@@ -225,6 +225,23 @@ select:focus {
     margin-bottom: var(--spacing-lg);
 }
 
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: #999;
+    font-size: var(--font-size-small);
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-gray);
+}
+
 .btn-google {
     background: white;
     color: #3c4043;
