@@ -24,102 +24,117 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Quick Stats -->
-        <div class="dashboard-stats">
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="totalStudents">0</div>
-                    <div class="stat-label">Leerlingen</div>
-                </div>
+
+        <!-- Navigatietegels -->
+        <div class="nav-tiles">
+            <div class="nav-tile" data-section="overview" onclick="showSection('overview')">
+                <div class="nav-tile-icon">📊</div>
+                <div class="nav-tile-title">Overzicht</div>
+                <div class="nav-tile-sub" id="stat-students"></div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">⚠️</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="activeAlerts">0</div>
-                    <div class="stat-label">Actieve Alerts</div>
-                </div>
+            <div class="nav-tile" data-section="students" onclick="showSection('students')">
+                <div class="nav-tile-icon">👥</div>
+                <div class="nav-tile-title">Leerlingen</div>
+                <div class="nav-tile-sub" id="stat-leerlingen"></div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="completedThisWeek">0</div>
-                    <div class="stat-label">Deadlines gehaald</div>
-                </div>
+            <div class="nav-tile" data-section="deadlines" onclick="showSection('deadlines')">
+                <div class="nav-tile-icon">📅</div>
+                <div class="nav-tile-title">Deadlines</div>
+                <div class="nav-tile-sub" id="stat-deadlines"></div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">📈</div>
-                <div class="stat-info">
-                    <div class="stat-value" id="avgProgress">0%</div>
-                    <div class="stat-label">Gem. Voortgang</div>
-                </div>
+            <div class="nav-tile" data-section="settings" onclick="showSection('settings')">
+                <div class="nav-tile-icon">⚙️</div>
+                <div class="nav-tile-title">Instellingen</div>
+                <div class="nav-tile-sub"></div>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="dashboard-tabs">
-            <button class="tab-btn active" data-tab="overview">Overzicht</button>
-            <button class="tab-btn" data-tab="alerts">Alerts</button>
-            <button class="tab-btn" data-tab="students">Leerlingen</button>
-            <button class="tab-btn" data-tab="deadlines">Deadlines</button>
-            <button class="tab-btn" data-tab="settings">Instellingen</button>
-        </div>
+        <!-- Sectie-inhoud (verborgen tot een tegel wordt aangeklikt) -->
+        <div id="sectionContent" class="hidden">
 
-        <!-- Tab Content -->
-        <div class="tab-content">
-            <!-- OVERVIEW TAB -->
-            <div class="tab-panel active" id="tab-overview">
+            <!-- OVERZICHT -->
+            <div class="section-panel" id="panel-overview">
                 <div class="content-section">
                     <h2>Klas Overzicht</h2>
-                    
                     <div class="students-grid" id="studentsGrid">
                         <!-- Wordt via JS ingevuld -->
                     </div>
                 </div>
             </div>
 
-            <!-- ALERTS TAB -->
-            <div class="tab-panel" id="tab-alerts">
+            <!-- LEERLINGEN -->
+            <div class="section-panel" id="panel-students">
+
+                <!-- Enkelvoudig toevoegen -->
                 <div class="content-section">
-                    <h2>Actieve Alerts</h2>
-                    <p class="text-muted">Leerlingen die aandacht nodig hebben</p>
-                    
-                    <div id="alertsList">
-                        <!-- Wordt via JS ingevuld -->
+                    <h2>Leerling toevoegen</h2>
+                    <div class="add-student-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newStudentName">Naam</label>
+                                <input type="text" id="newStudentName" placeholder="Jan Janssen">
+                            </div>
+                            <div class="form-group">
+                                <label for="newStudentEmail">E-mailadres</label>
+                                <input type="email" id="newStudentEmail" placeholder="jan.janssen@labsintniklaas.be">
+                            </div>
+                            <div class="form-group form-group-btn">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-primary" onclick="addSingleStudent(this)">+ Toevoegen</button>
+                            </div>
+                        </div>
+                        <p id="addStudentMsg" class="hidden"></p>
                     </div>
                 </div>
-            </div>
 
-            <!-- STUDENTS TAB -->
-            <div class="tab-panel" id="tab-students">
+                <!-- CSV upload -->
                 <div class="content-section">
-                    <div class="section-header">
-                        <h2>Leerlingen Beheer</h2>
-                        <button class="btn btn-primary" onclick="showUploadModal()">
-                            📤 CSV Uploaden
-                        </button>
+                    <h2>Meerdere leerlingen uploaden via CSV</h2>
+                    <p class="text-muted">Upload een CSV-bestand met kolommen <code>email,naam</code> (eerste rij = koptekst).</p>
+                    <button class="btn btn-secondary" onclick="downloadExampleCSV()">⬇ Voorbeeld CSV downloaden</button>
+                    <div class="form-group mt-lg">
+                        <label for="csvFile">CSV-bestand selecteren:</label>
+                        <input type="file" id="csvFile" accept=".csv" onchange="handleCSVFile(event)">
                     </div>
-                    
+                    <div id="csvPreview" class="csv-preview hidden"></div>
+                    <button id="csvUploadBtn" class="btn btn-primary mt-md hidden" onclick="uploadStudents()">Uploaden</button>
+                </div>
+
+                <!-- Leerling bekijken -->
+                <div class="content-section">
+                    <h2>Leerling bekijken</h2>
                     <div class="student-selector">
                         <label for="studentSelect">Selecteer leerling:</label>
                         <select id="studentSelect" class="student-select">
                             <option value="">-- Kies een leerling --</option>
                         </select>
                     </div>
-                    
                     <div id="studentDetails" class="hidden">
                         <!-- Wordt via JS ingevuld -->
                     </div>
                 </div>
+
             </div>
 
-            <!-- DEADLINES TAB -->
-            <div class="tab-panel" id="tab-deadlines">
+            <!-- DEADLINES -->
+            <div class="section-panel" id="panel-deadlines">
+
+                <!-- Editor -->
                 <div class="content-section">
-                    <div class="section-header">
-                        <h2>Deadline Beheer</h2>
+                    <h2>Deadlines instellen</h2>
+                    <div id="deadlineEditor">
+                        <!-- Wordt via JS ingevuld -->
                     </div>
-                    
+                    <div class="deadline-editor-actions">
+                        <button class="btn btn-secondary" onclick="addDeadlineWeek()">+ Week toevoegen</button>
+                        <button class="btn btn-primary" id="saveDeadlinesBtn" onclick="saveDashboardDeadlines()">Opslaan</button>
+                    </div>
+                    <p id="deadlineSaveMsg" class="hidden"></p>
+                </div>
+
+                <!-- Scores -->
+                <div class="content-section">
+                    <h2>Scores bekijken</h2>
                     <div class="deadline-selector">
                         <label for="weekSelect">Selecteer week:</label>
                         <select id="weekSelect" class="week-select">
@@ -129,81 +144,35 @@
                             📥 Export naar CSV
                         </button>
                     </div>
-                    
                     <div id="weekScores" class="hidden">
                         <!-- Wordt via JS ingevuld -->
                     </div>
                 </div>
+
             </div>
 
-            <!-- SETTINGS TAB -->
-            <div class="tab-panel" id="tab-settings">
+            <!-- INSTELLINGEN -->
+            <div class="section-panel" id="panel-settings">
                 <div class="content-section">
                     <h2>Instellingen</h2>
-                    
-                    <div class="settings-section">
-                        <h3>Extra Opdrachten Toewijzen</h3>
-                        <div class="form-group">
-                            <label for="extraAssignStudent">Leerling:</label>
-                            <select id="extraAssignStudent" class="student-select">
-                                <option value="">-- Kies een leerling --</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="extraAssignLesson">Extra Les:</label>
-                            <select id="extraAssignLesson">
-                                <option value="">-- Kies een les --</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="extraAssignDeadline">Deadline (optioneel):</label>
-                            <input type="date" id="extraAssignDeadline">
-                        </div>
-                        <button class="btn btn-primary" onclick="assignExtraLesson()">
-                            Toewijzen
-                        </button>
-                    </div>
-                    
                     <div class="settings-section">
                         <h3>Badges Beheer</h3>
                         <p class="text-muted">
-                            Badges worden beheerd via <code>js/config.js</code><br>
-                            Voeg nieuwe badges toe aan <code>BADGES_CONFIG</code>
+                            Badges worden beheerd via <code>js/config.js</code>.<br>
+                            Voeg nieuwe badges toe aan <code>BADGES_CONFIG</code>.
                         </p>
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
-
-    <!-- CSV Upload Modal -->
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal-content">
-            <h2>CSV Uploaden</h2>
-            <p>Upload een CSV-bestand met de volgende kolommen: <code>email,naam</code></p>
-            
-            <div class="form-group">
-                <label for="csvFile">Selecteer CSV:</label>
-                <input type="file" id="csvFile" accept=".csv">
-            </div>
-            
-            <div class="form-group">
-                <label>Preview:</label>
-                <div id="csvPreview" class="csv-preview"></div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeUploadModal()">Annuleren</button>
-                <button class="btn btn-primary" onclick="uploadStudents()">Uploaden</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- App Scripts -->
     <script src="../js/firebase-config.js"></script>
     <script src="../js/config.js"></script>

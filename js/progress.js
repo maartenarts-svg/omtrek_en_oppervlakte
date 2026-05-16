@@ -80,11 +80,6 @@ async function completePart(lessonId, partId, result) {
             newConsecutiveCScores = previousCScores + 1;
         }
         
-        // Check if we need to create alert
-        if (newConsecutiveCScores >= 3) {
-            await createAlert(user.email, lessonId, partId, 'consecutive-c-scores');
-        }
-        
         // Prepare progress data
         const progressData = {
             attempts: previousAttempts + 1,
@@ -210,48 +205,6 @@ async function checkLessonCompletion(lessonId) {
         
     } catch (error) {
         console.error('Error checking lesson completion:', error);
-        return false;
-    }
-}
-
-// ============================================
-// ALERTS
-// ============================================
-
-async function createAlert(studentEmail, lessonId, partId, type) {
-    try {
-        const alertId = `${studentEmail}-${lessonId}-${partId}-${Date.now()}`;
-        
-        await db.collection('alerts').doc(alertId).set({
-            studentEmail: studentEmail,
-            lessonId: lessonId,
-            partId: partId,
-            type: type,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            resolved: false
-        });
-        
-        // Update summary
-        await db.collection('summary').doc(studentEmail).update({
-            hasActiveAlerts: true
-        });
-        
-        return true;
-    } catch (error) {
-        console.error('Error creating alert:', error);
-        return false;
-    }
-}
-
-async function resolveAlert(alertId) {
-    try {
-        await db.collection('alerts').doc(alertId).update({
-            resolved: true,
-            resolvedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        return true;
-    } catch (error) {
-        console.error('Error resolving alert:', error);
         return false;
     }
 }
@@ -400,8 +353,6 @@ if (typeof module !== 'undefined' && module.exports) {
         completePart,
         calculateLetterScore,
         checkLessonCompletion,
-        createAlert,
-        resolveAlert,
         checkBadges,
         animateXPGain
     };

@@ -247,8 +247,8 @@ const LESSONS_CONFIG = {
 };
 
 // DEADLINES CONFIGURATIE
-// Pas deze aan per schooljaar/periode
-const DEADLINES = [
+// Standaardwaarden — worden overschreven door Firestore zodra loadDeadlines() is aangeroepen
+let DEADLINES = [
   { 
     weekNumber: 1, 
     startDate: '2026-02-23',  // maandag
@@ -326,6 +326,18 @@ const EXTRA_LESSONS_CONFIG = {
     ]
   }
 };
+
+// Laad deadlines uit Firestore (overschrijft de standaardwaarden hierboven)
+async function loadDeadlines() {
+  try {
+    const fromDb = await DB.getDeadlines();
+    if (fromDb && fromDb.length > 0) {
+      DEADLINES = fromDb;
+    }
+  } catch (error) {
+    console.warn('Kon deadlines niet laden uit Firestore, standaardwaarden worden gebruikt.');
+  }
+}
 
 // HELPER FUNCTIES
 function getLessonById(lessonId) {

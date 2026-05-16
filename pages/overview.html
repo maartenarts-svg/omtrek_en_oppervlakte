@@ -73,7 +73,7 @@
             <span>📚</span>
             <div class="fab-tooltip">Theorie</div>
         </button>
-        <button class="fab fab-drill" id="btnDrill" title="Oefenen">
+        <button class="fab fab-drill" id="btnDrill" title="Oefenen" disabled>
             <span>💪</span>
             <div class="fab-tooltip">Formules & Eenheden</div>
         </button>
@@ -118,6 +118,9 @@
             // Check auth
             currentUser = checkAuth();
             if (!currentUser) return;
+
+            // Laad deadlines uit Firestore
+            await loadDeadlines();
 
             // Set user avatar
             const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -447,14 +450,6 @@
             
             // Show deadline notification if needed
             showDeadlineNotification(currentWeek);
-        }
-
-        async function evaluateLastWeek() {
-            // Implementatie in deadlines.js
-        }
-
-        function showDeadlineNotification(deadline) {
-            // Implementatie in deadlines.js
         }
 
         // Initialize on load

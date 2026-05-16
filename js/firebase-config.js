@@ -11,14 +11,13 @@
 // 7. Zet Storage aan (voor video's indien nodig)
 // ============================================
 
-// FIREBASE CONFIG - VERVANG DIT MET JOUW EIGEN CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyBzhjpGSnJiQ8Dz995pvVBT9EqnICqZ69Y",
-  authDomain: "omtrek-en-oppervlakte.firebaseapp.com",
-  projectId: "omtrek-en-oppervlakte",
-  storageBucket: "omtrek-en-oppervlakte.firebasestorage.app",
-  messagingSenderId: "295491045961",
-  appId: "1:295491045961:web:3469783256e6b121d48d98"
+  apiKey: "AIzaSyDWVS3zIuVWs4BDf2ZMYyMLaD5Wf8OWeu8",
+  authDomain: "omtrek-en-oppervlakte-b0677.firebaseapp.com",
+  projectId: "omtrek-en-oppervlakte-b0677",
+  storageBucket: "omtrek-en-oppervlakte-b0677.firebasestorage.app",
+  messagingSenderId: "567757574073",
+  appId: "1:567757574073:web:f59bdd39fae281ce91b068"
 };
 
 // Initialize Firebase
@@ -169,6 +168,36 @@ const DB = {
     }
   },
 
+  async getDeadlines() {
+    try {
+      const doc = await db.collection('settings').doc('deadlines').get();
+      return doc.exists ? doc.data().list : null;
+    } catch (error) {
+      console.error('Error getting deadlines:', error);
+      return null;
+    }
+  },
+
+  async saveDeadlines(list) {
+    try {
+      await db.collection('settings').doc('deadlines').set({ list });
+      return true;
+    } catch (error) {
+      console.error('Error saving deadlines:', error);
+      return false;
+    }
+  },
+
+  async isAdmin(email) {
+    try {
+      const doc = await db.collection('admins').doc(email).get();
+      return doc.exists;
+    } catch (error) {
+      console.error('Error checking admin:', error);
+      return false;
+    }
+  },
+
   async updateCurrentLesson(email, lessonId) {
     try {
       await db.collection('users').doc(email).update({
@@ -293,31 +322,6 @@ const DB = {
     }
   },
 
-  async getExtraAssignments(email) {
-    try {
-      const doc = await db.collection('extraAssignments').doc(email).get();
-      return doc.exists ? doc.data() : {};
-    } catch (error) {
-      console.error('Error getting extra assignments:', error);
-      return {};
-    }
-  },
-
-  async setExtraAssignment(email, lessonId, enabled, deadline = null) {
-    try {
-      const data = { enabled: enabled };
-      if (deadline) data.deadline = deadline;
-      
-      await db.collection('extraAssignments').doc(email).set({
-        [lessonId]: data
-      }, { merge: true });
-      
-      return true;
-    } catch (error) {
-      console.error('Error setting extra assignment:', error);
-      return false;
-    }
-  }
 };
 
 // Export

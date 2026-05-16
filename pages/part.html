@@ -358,6 +358,9 @@
             currentUser = checkAuth();
             if (!currentUser) return;
 
+            // Laad deadlines uit Firestore
+            await loadDeadlines();
+
             // Set user avatar
             const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('userAvatar').textContent = initials;
