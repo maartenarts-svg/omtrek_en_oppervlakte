@@ -18,7 +18,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Onderscheid tussen omtrek en oppervlakte',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link', // Vul later in
+        videoUrl: 'https://drive.google.com/file/d/1HPX3nL7WQTONeg70IiWc5ECFi_-zO_Jz/view?usp=drive_link', // Vul later in
         xpReward: 20
       },
       {
@@ -65,7 +65,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Eenheden gebruiken bij omtrek',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/1OJdcpEnGE4R4RzuyUtl2mj1yqo7wCoeV/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -94,7 +94,7 @@ const LESSONS_CONFIG = {
         id: 'part-4',
         type: 'video',
         title: 'Eenheden omzetten',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/15_pvDFXe5kwFVyR49gNuu_Kme3BIi2mF/view?usp=drive_link',
         xpReward: 20
       },
       {
