@@ -23,7 +23,8 @@ async function loginWithEmail(email) {
     localStorage.setItem('currentUser', JSON.stringify({
       email: userData.email,
       name:  userData.name,
-      isAdmin: false
+      isAdmin: false,
+      isTestUser: userData.isTestUser || false
     }));
 
     window.location.href = './pages/overview.html';

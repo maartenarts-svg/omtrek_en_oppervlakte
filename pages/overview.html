@@ -126,6 +126,14 @@
             const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('userAvatar').textContent = initials;
 
+            // Toon testgebruiker-badge
+            if (currentUser.isTestUser) {
+                const testBadge = document.createElement('span');
+                testBadge.textContent = 'TESTMODUS';
+                testBadge.style.cssText = 'background:#ff9800;color:#fff;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:8px;';
+                document.querySelector('.user-info').appendChild(testBadge);
+            }
+
             // Load user data
             userData = await DB.getUser(currentUser.email);
             if (!userData) {
@@ -188,9 +196,10 @@
         function renderLessonPath() {
             const pathContainer = document.getElementById('lessonPath');
             pathContainer.innerHTML = '';
-            
+
             const allLessons = getAllLessons();
             const currentWeek = getCurrentWeekDeadline();
+            const maxAllowedOrder = currentUser.isTestUser ? Infinity : getMaxAllowedLessonOrder();
             
             console.log('Current week deadline:', currentWeek);
             console.log('Today:', new Date().toISOString().split('T')[0]);
@@ -201,7 +210,7 @@
                 
                 const isCompleted = lessonProgress.completed || false;
                 const isCurrent = userData.currentLesson === lesson.id;
-                const isLocked = !isCurrent; // Only current lesson is clickable
+                const isLocked = lesson.order > maxAllowedOrder;
                 
                 // Check for deadline AFTER this lesson
                 const deadline = getDeadlineForLesson(lesson.id);

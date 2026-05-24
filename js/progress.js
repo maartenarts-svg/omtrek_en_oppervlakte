@@ -106,11 +106,11 @@ async function completePart(lessonId, partId, result) {
         // Check if lesson is complete
         await checkLessonCompletion(lessonId);
         
-        // Update weekly progress
+        // Update weekly progress (overgeslagen voor testgebruikers)
         const currentWeek = getCurrentWeekDeadline();
-        if (currentWeek) {
+        if (currentWeek && !user.isTestUser) {
             await DB.incrementWeeklyParts(user.email, currentWeek.weekNumber);
-            
+
             // Check if deadline reached
             if (lessonId === currentWeek.targetLesson && progressData.completed) {
                 await checkDeadlineReached(currentWeek);

@@ -5,7 +5,7 @@
 // Check if we need to evaluate last week's deadline
 async function evaluateLastWeek() {
     const user = getCurrentUser();
-    if (!user) return;
+    if (!user || user.isTestUser) return;
     
     try {
         const userData = await DB.getUser(user.email);

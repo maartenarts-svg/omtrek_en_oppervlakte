@@ -385,6 +385,30 @@ function getHoursUntilDeadline(deadline) {
   return diffHours;
 }
 
+function getMaxAllowedLessonOrder() {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Actieve deadline: gebruik het doelnummer van deze periode
+  const active = DEADLINES.find(d => today >= d.startDate && today <= d.endDate);
+  if (active) {
+    const lesson = getLessonById(active.targetLesson);
+    return lesson ? lesson.order : 0;
+  }
+
+  // Geen actieve deadline: gebruik de meest recente verstreken deadline
+  const past = DEADLINES
+    .filter(d => d.endDate < today)
+    .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))[0];
+
+  if (past) {
+    const lesson = getLessonById(past.targetLesson);
+    return lesson ? lesson.order : 0;
+  }
+
+  // Nog geen enkele deadline gepasseerd: alles vergrendeld
+  return 0;
+}
+
 // Export voor gebruik in andere bestanden
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -398,6 +422,7 @@ if (typeof module !== 'undefined' && module.exports) {
     getCurrentWeekDeadline,
     getDeadlineForLesson,
     getDaysUntilDeadline,
-    getHoursUntilDeadline
+    getHoursUntilDeadline,
+    getMaxAllowedLessonOrder
   };
 }
