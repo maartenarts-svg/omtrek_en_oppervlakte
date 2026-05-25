@@ -256,19 +256,47 @@ function formatDeadlineCountdown(deadline) {
 async function getWeeklyScoresForAllStudents(weekNumber) {
     try {
         const summaries = await DB.getAllSummaries();
-        
-        return summaries.map(summary => {
-            const weekKey = `week-${weekNumber}`;
-            const score = summary.deadlineStatus?.[weekKey] || 'Nog niet beoordeeld';
-            
+        const weekKey = `week-${weekNumber}`;
+        const deadline = DEADLINES.find(d => d.weekNumber === weekNumber);
+        const deadlinePassed = deadline && new Date().toISOString().split('T')[0] > deadline.endDate;
+
+        const results = await Promise.all(summaries.map(async summary => {
+            let score = summary.deadlineStatus?.[weekKey];
+
+            if (!score && deadlinePassed && deadline) {
+                // Bereken score op basis van volledige gebruikersdata
+                const userData = await DB.getUser(summary.email);
+                const lessonProgress = userData?.progress?.[deadline.targetLesson];
+                const weekProgress = userData?.weeklyProgress?.[weekKey];
+                const partsCompleted = weekProgress?.partsCompletedDuringWeek || 0;
+
+                if (lessonProgress?.completed) {
+                    score = 'A';
+                } else if (partsCompleted === 0) {
+                    score = 'NI';
+                } else {
+                    score = 'C';
+                }
+
+                // Sla op zodat volgende keer direct beschikbaar
+                await DB.updateWeeklyProgress(summary.email, weekNumber, {
+                    targetLesson: deadline.targetLesson,
+                    deadlineReached: score === 'A',
+                    letterScore: score,
+                    partsCompletedDuringWeek: partsCompleted
+                });
+            }
+
             return {
                 email: summary.email,
                 name: summary.name,
-                score: score,
+                score: score || 'Nog niet beoordeeld',
                 currentLesson: summary.currentLesson
             };
-        });
-        
+        }));
+
+        return results;
+
     } catch (error) {
         console.error('Error getting weekly scores:', error);
         return [];
