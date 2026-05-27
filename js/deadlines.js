@@ -188,33 +188,40 @@ function showDeadlineNotification(deadline) {
 async function checkEarlyCompletionBadge(deadline) {
     const user = getCurrentUser();
     if (!user) return;
-    
+
     try {
         const now = new Date();
+        const today = now.toISOString().split('T')[0];
         const dayOfWeek = now.getDay(); // 0 = Sunday, 3 = Wednesday
-        
+
         // Check badges for this week
         const weekBadges = Object.entries(BADGES_CONFIG)
-            .filter(([id, badge]) => 
-                badge.weekNumber === deadline.weekNumber && 
+            .filter(([id, badge]) =>
+                badge.weekNumber === deadline.weekNumber &&
                 badge.criteria?.type === 'deadline-early'
             );
-        
+
         for (let [badgeId, badgeConfig] of weekBadges) {
-            const targetDay = badgeConfig.criteria.beforeDay;
-            let targetDayNum = 3; // Default Wednesday
-            
-            if (targetDay === 'monday') targetDayNum = 1;
-            if (targetDay === 'tuesday') targetDayNum = 2;
-            if (targetDay === 'wednesday') targetDayNum = 3;
-            if (targetDay === 'thursday') targetDayNum = 4;
-            
-            if (dayOfWeek <= targetDayNum) {
+            const criteria = badgeConfig.criteria;
+            let earned = false;
+
+            if (criteria.beforeDate) {
+                earned = today < criteria.beforeDate;
+            } else if (criteria.beforeDay) {
+                let targetDayNum = 3; // Default Wednesday
+                if (criteria.beforeDay === 'monday') targetDayNum = 1;
+                if (criteria.beforeDay === 'tuesday') targetDayNum = 2;
+                if (criteria.beforeDay === 'wednesday') targetDayNum = 3;
+                if (criteria.beforeDay === 'thursday') targetDayNum = 4;
+                earned = dayOfWeek <= targetDayNum;
+            }
+
+            if (earned) {
                 await DB.addBadge(user.email, badgeId);
                 showBadgeEarnedNotification(badgeConfig);
             }
         }
-        
+
     } catch (error) {
         console.error('Error checking early completion badge:', error);
     }

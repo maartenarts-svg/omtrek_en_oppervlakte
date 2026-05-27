@@ -130,7 +130,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Formules voor rechthoek, vierkant en ruit',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/1V3mf1gJVTE4-lDC858sSw7x1KcNzoBud/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -159,7 +159,7 @@ const LESSONS_CONFIG = {
         id: 'part-4',
         type: 'video',
         title: 'Omtrek van een cirkel',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/1AHO0qsDX-wYQo4-bpiKfjJ96-jDCBtcp/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -195,7 +195,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Eenheden gebruiken bij oppervlakte',
-        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/1TCZB9upNzj9bSi-J0qNk4nOol3JgNplh/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -224,7 +224,7 @@ const LESSONS_CONFIG = {
         id: 'part-4',
         type: 'video',
         title: 'Eenheden omzetten',
-        videoUrl: '', // Vul later in
+        videoUrl: 'https://drive.google.com/file/d/1gfc4KzKKMpX9R4JhqmoZ621wO0A23goJ/view?usp=drive_link', // Vul later in
         xpReward: 20
       },
       {
@@ -358,6 +358,17 @@ const BADGES_CONFIG = {
     criteria: {
       type: 'all-A-scores',
       weekNumber: 1
+    }
+  },
+  'week-2-speedster': {
+    weekNumber: 2,
+    title: 'Snelheidsduivel Week 2',
+    description: 'Deadline gehaald vóór 29 mei 2026',
+    icon: '⚡',
+    criteria: {
+      type: 'deadline-early',
+      weekNumber: 2,
+      beforeDate: '2026-05-29'
     }
   }
   // Voeg wekelijks badges toe
