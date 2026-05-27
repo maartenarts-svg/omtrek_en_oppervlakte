@@ -137,39 +137,38 @@ const LESSONS_CONFIG = {
         id: 'part-2',
         type: 'exercise',
         title: 'Formules inprenten',
-        exerciseType: 'formules-drill',
+        exerciseType: '3-2-formules-drill',
         xpReward: 30,
         passingCriteria: {
-          allCorrect: true
+          scoreA: 85,
+          scoreB: 70
         }
       },
       {
         id: 'part-3',
         type: 'exercise',
         title: 'Formules gebruiken',
-        exerciseType: 'formules-toepassen',
+        exerciseType: '3-3-formules-gebruiken',
         xpReward: 50,
         passingCriteria: {
-          minCorrect: 7,
-          scoreA: 90,
-          scoreB: 75
+          scoreA: 80,
+          scoreB: 60
         }
       },
       {
         id: 'part-4',
         type: 'video',
         title: 'Omtrek van een cirkel',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
         xpReward: 20
       },
       {
         id: 'part-5',
         type: 'exercise',
-        title: 'Omtrek van cirkel oefenen',
-        exerciseType: 'cirkel-omtrek',
+        title: 'Formules inprenten: cirkelomtrek',
+        exerciseType: '3-5-cirkel-omtrek',
         xpReward: 50,
         passingCriteria: {
-          minCorrect: 7,
           scoreA: 85,
           scoreB: 70
         }
@@ -178,12 +177,11 @@ const LESSONS_CONFIG = {
         id: 'part-6',
         type: 'exercise',
         title: 'Omtrek van vlakke figuren',
-        exerciseType: 'gemengd-omtrek',
+        exerciseType: '3-6-gemengd-omtrek',
         xpReward: 60,
         passingCriteria: {
-          minCorrect: 8,
-          scoreA: 90,
-          scoreB: 75
+          scoreA: 80,
+          scoreB: 60
         }
       }
     ]
@@ -193,7 +191,64 @@ const LESSONS_CONFIG = {
     order: 4,
     theorySection: "theorie-4",
     parts: [
-      // Voeg later toe
+      {
+        id: 'part-1',
+        type: 'video',
+        title: 'Eenheden gebruiken bij oppervlakte',
+        videoUrl: 'https://drive.google.com/file/d/1m3-Wj6J785Wk4wR6POz5G_2MPYkPoEsu/view?usp=drive_link',
+        xpReward: 20
+      },
+      {
+        id: 'part-2',
+        type: 'exercise',
+        title: 'Oefenen op eenheden en voorvoegsels',
+        exerciseType: '4-2-eenheden-voorvoegsels',
+        xpReward: 0,
+        passingCriteria: {
+          scoreA: 87.5,
+          scoreB: 75
+        }
+      },
+      {
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Juiste eenheid in concrete situaties',
+        exerciseType: '4-3-eenheden-kiezen',
+        xpReward: 0,
+        passingCriteria: {
+          scoreA: 87.5,
+          scoreB: 68.75
+        }
+      },
+      {
+        id: 'part-4',
+        type: 'video',
+        title: 'Eenheden omzetten',
+        videoUrl: '', // Vul later in
+        xpReward: 20
+      },
+      {
+        id: 'part-5',
+        type: 'exercise',
+        title: 'Eenheden omzetten oefenen',
+        exerciseType: '4-5-eenheden-omzetten',
+        xpReward: 0,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 0
+        }
+      },
+      {
+        id: 'part-6',
+        type: 'exercise',
+        title: 'Eenheden omzetten oefenen',
+        exerciseType: '4-6-eenheden-omzetten-oefenen',
+        xpReward: 0,
+        passingCriteria: {
+          scoreA: 81.25,
+          scoreB: 62.5
+        }
+      }
     ]
   },
   'les-5': {

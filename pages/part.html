@@ -335,6 +335,7 @@
     <script src="../js/deadlines.js"></script>
     
     <!-- Exercise Scripts -->
+    <script src="../js/figures.js"></script>
     <script src="../js/exercise-formules-drill.js"></script>
     <script src="../js/exercise-rooster-berekening.js"></script>
     <script src="../js/exercise-keuze-vraag.js"></script>
@@ -342,7 +343,15 @@
     <script src="../js/exercise-2-3-eenheden-kiezen.js"></script>
     <script src="../js/exercise-2-5-eenheden-omzetten.js"></script>
     <script src="../js/exercise-2-6-eenheden-omzetten-oefenen.js"></script>
-    
+    <script src="../js/exercise-3-2-formules-drill.js"></script>
+    <script src="../js/exercise-3-3-formules-gebruiken.js"></script>
+    <script src="../js/exercise-3-5-cirkel-omtrek.js"></script>
+    <script src="../js/exercise-3-6-gemengd-omtrek.js"></script>
+    <script src="../js/exercise-4-2-eenheden-voorvoegsels.js"></script>
+    <script src="../js/exercise-4-3-eenheden-kiezen.js"></script>
+    <script src="../js/exercise-4-5-eenheden-omzetten.js"></script>
+    <script src="../js/exercise-4-6-eenheden-omzetten-oefenen.js"></script>
+
     <script>
         let userData = null;
         let currentUser = null;
@@ -590,6 +599,22 @@
                 initEenhedenOmzetten(container, handleExerciseComplete);
             } else if (part.exerciseType === '2-6-eenheden-omzetten-oefenen') {
                 initEenhedenOmzettenOefenen(container, handleExerciseComplete);
+            } else if (part.exerciseType === '3-2-formules-drill') {
+                init32FormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === '3-3-formules-gebruiken') {
+                init33FormulasGebruiken(container, handleExerciseComplete);
+            } else if (part.exerciseType === '3-5-cirkel-omtrek') {
+                init35CirkelOmtrek(container, handleExerciseComplete);
+            } else if (part.exerciseType === '3-6-gemengd-omtrek') {
+                init36GemengdOmtrek(container, handleExerciseComplete);
+            } else if (part.exerciseType === '4-2-eenheden-voorvoegsels') {
+                initOppervlakteEenhedenVoorvoegsels(container, handleExerciseComplete);
+            } else if (part.exerciseType === '4-3-eenheden-kiezen') {
+                initOppervlakteEenhedenKiezen(container, handleExerciseComplete);
+            } else if (part.exerciseType === '4-5-eenheden-omzetten') {
+                initOppervlakteEenhedenOmzetten(container, handleExerciseComplete);
+            } else if (part.exerciseType === '4-6-eenheden-omzetten-oefenen') {
+                initOppervlakteEenhedenOmzettenOefenen(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
