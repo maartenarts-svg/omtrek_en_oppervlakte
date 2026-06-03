@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo – drawParallellogramHoogte</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1100px; margin: 0 auto; padding: 24px; background: #f5f5f5; }
+    h1 { color: #333; margin-bottom: 4px; }
+    .intro { color: #666; font-size: 14px; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .kaart { background: white; border-radius: 10px; padding: 16px 16px 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); text-align: center; }
+    .kaart h3 { margin: 0 0 10px; font-size: 12px; color: #555; text-align: left; }
+  </style>
+</head>
+<body>
+<h1>Demo – parallellogram-hoogte (figures.js)</h1>
+<p class="intro">
+  Tekeningen via <code>drawFiguur(el, 'parallellogram-hoogte', opts)</code>.
+  <button id="newBtn" style="margin-left:16px;padding:6px 16px;background:#4a7a10;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;">Nieuwe rotaties</button>
+</p>
+
+<div class="grid">
+  <div class="kaart"><h3>links – rotation 0</h3><div id="f1"></div></div>
+  <div class="kaart"><h3>rechts – rotation 0</h3><div id="f2"></div></div>
+  <div class="kaart"><h3>links – rotation 30</h3><div id="f3"></div></div>
+  <div class="kaart"><h3>rechts – rotation 30</h3><div id="f4"></div></div>
+  <div class="kaart"><h3>links – rotation 90</h3><div id="f5"></div></div>
+  <div class="kaart"><h3>rechts – rotation 90</h3><div id="f6"></div></div>
+  <div class="kaart"><h3>links – rotation 150</h3><div id="f7"></div></div>
+  <div class="kaart"><h3>rechts – rotation 150</h3><div id="f8"></div></div>
+  <div class="kaart"><h3>random – rotation 0</h3><div id="f9"></div></div>
+  <div class="kaart"><h3>random – rotation 45</h3><div id="f10"></div></div>
+  <div class="kaart"><h3>random – rotation 180</h3><div id="f11"></div></div>
+  <div class="kaart"><h3>random – rotation 270</h3><div id="f12"></div></div>
+</div>
+
+<script src="../js/figures.js"></script>
+<script>
+  const cases = [
+    { id: 'f1',  welkeHoogte: 'links',   rotation: 0   },
+    { id: 'f2',  welkeHoogte: 'rechts',  rotation: 0   },
+    { id: 'f3',  welkeHoogte: 'links',   rotation: 30  },
+    { id: 'f4',  welkeHoogte: 'rechts',  rotation: 30  },
+    { id: 'f5',  welkeHoogte: 'links',   rotation: 90  },
+    { id: 'f6',  welkeHoogte: 'rechts',  rotation: 90  },
+    { id: 'f7',  welkeHoogte: 'links',   rotation: 150 },
+    { id: 'f8',  welkeHoogte: 'rechts',  rotation: 150 },
+    { id: 'f9',  welkeHoogte: undefined, rotation: 0   },
+    { id: 'f10', welkeHoogte: undefined, rotation: 45  },
+    { id: 'f11', welkeHoogte: undefined, rotation: 180 },
+    { id: 'f12', welkeHoogte: undefined, rotation: 270 },
+  ];
+
+  function render() {
+    cases.forEach(({ id, welkeHoogte, rotation }) => {
+      drawFiguur(document.getElementById(id), 'parallellogram-hoogte', {
+        basis: { value: 3, unit: 'cm' },
+        zijde: { value: 2.2, unit: 'cm' },
+        rotation,
+        welkeHoogte,
+      });
+    });
+  }
+
+  document.getElementById('newBtn').addEventListener('click', render);
+  render();
+</script>
+</body>
+</html>

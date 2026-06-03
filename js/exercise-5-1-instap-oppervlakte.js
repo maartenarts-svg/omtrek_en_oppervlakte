@@ -79,7 +79,14 @@ function init51InstapOppervlakte(container, onComplete) {
         if (vraag.fase === 'rooster') {
             vraagHTML = `
                 <h3 class="question-title">Bereken de oppervlakte.</h3>
-                <div class="ex51-fig">${svgRooster(vraag.fig, false)}</div>`;
+                <div class="rooster-container">
+                    <div class="rooster-canvas">${svgRooster(vraag.fig, false)}</div>
+                    <div class="rooster-input-area">
+                        <span class="rooster-label"><i>A</i> =</span>
+                        <input id="ex51-input" type="number" class="rooster-answer-input" style="width:120px"
+                               min="1" step="1" autocomplete="off" autofocus>
+                    </div>
+                </div>`;
         } else {
             const tekst = vraag.type === 'rechthoek'
                 ? `Een rechthoek heeft een zijde van <strong>${vraag.fig.w}</strong> roostervakjes
@@ -89,7 +96,12 @@ function init51InstapOppervlakte(container, onComplete) {
                    Bereken de oppervlakte van het vierkant.`;
             vraagHTML = `
                 <h3 class="question-title">Bereken de oppervlakte.</h3>
-                <p class="ex51-tekstvraag">${tekst}</p>`;
+                <p class="ex51-tekstvraag">${tekst}</p>
+                <div class="rooster-input-area ex51-invoer-tekst">
+                    <span class="rooster-label"><i>A</i> =</span>
+                    <input id="ex51-input" type="number" class="rooster-answer-input" style="width:120px"
+                           min="1" step="1" autocomplete="off" autofocus>
+                </div>`;
         }
 
         container.innerHTML = `
@@ -97,12 +109,6 @@ function init51InstapOppervlakte(container, onComplete) {
                 ${progressHTML()}
                 <div class="question-card">
                     ${vraagHTML}
-                    <div class="ex51-invoer">
-                        <span class="ex51-label"><i>A</i> =</span>
-                        <input id="ex51-input" type="number" class="ex51-input" min="1" step="1"
-                               autocomplete="off" autofocus>
-                        <span class="ex51-eenheid">roostervakjes²</span>
-                    </div>
                     <div id="feedbackArea" class="feedback-area"></div>
                     <div class="question-actions">
                         <button class="btn btn-primary" id="checkBtn">Controleer</button>
@@ -138,15 +144,15 @@ function init51InstapOppervlakte(container, onComplete) {
             document.getElementById('checkBtn').style.display = 'none';
             input.disabled = true;
             toonFeedback('incorrect',
-                `Niet correct. Het juiste antwoord is ${vraag.fig.w * vraag.fig.h} roostervakjes².`,
+                `Niet correct. Het juiste antwoord is ${vraag.fig.w * vraag.fig.h}.`,
                 vraag.fig, isLaatste, true);
         }
     }
 
     function toonFeedback(type, tekst, fig, isLaatste, metKnop) {
-        const figHTML  = fig ? `<div class="ex51-fig">${svgRooster(fig, true)}</div>` : '';
+        const figHTML  = fig ? `<div class="rooster-canvas" style="margin-top:var(--spacing-md,0.75rem)">${svgRooster(fig, true)}</div>` : '';
         const knopHTML = metKnop
-            ? `<button class="btn btn-primary" id="volgendeBtn">${isLaatste ? 'Afronden' : 'OK'}</button>`
+            ? `<button class="btn btn-primary" id="volgendeBtn">OK</button>`
             : '';
 
         document.getElementById('feedbackArea').innerHTML = `
@@ -171,7 +177,7 @@ function init51InstapOppervlakte(container, onComplete) {
         const fx = fig.x * CEL, fy = fig.y * CEL;
         const fw = fig.w * CEL, fh = fig.h * CEL;
 
-        let svg = `<svg class="ex51-svg" viewBox="0 0 ${size} ${size}">`;
+        let svg = `<svg class="rooster-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
 
         for (let i = 0; i <= GRID; i++) {
             const p = i * CEL;
@@ -226,24 +232,12 @@ function init51InstapOppervlakte(container, onComplete) {
         const s = document.createElement('style');
         s.id = 'ex51-style';
         s.textContent = `
-.ex51-fig { display: flex; justify-content: center; margin: var(--spacing-lg, 1rem) 0; }
-.ex51-svg { width: 100%; max-width: 440px; height: auto; }
 .ex51-tekstvraag {
     font-size: var(--font-size-base, 1rem); line-height: 1.6;
     background: var(--color-light, #f0f7e0); border-radius: var(--radius-md, 8px);
     padding: var(--spacing-lg, 1rem); margin: var(--spacing-lg, 1rem) 0;
 }
-.ex51-invoer {
-    display: flex; align-items: center; gap: 0.5rem;
-    margin: var(--spacing-lg, 1rem) 0; flex-wrap: wrap;
-}
-.ex51-label { font-size: 1.1rem; }
-.ex51-input {
-    width: 80px; padding: 0.35rem 0.5rem;
-    border: 2px solid var(--color-gray, #ccc); border-radius: var(--radius-md, 6px);
-    font-size: 1rem;
-}
-.ex51-eenheid { font-size: 0.9rem; color: #555; }
+.ex51-invoer-tekst { margin-top: var(--spacing-lg, 1rem); }
 `;
         document.head.appendChild(s);
     }

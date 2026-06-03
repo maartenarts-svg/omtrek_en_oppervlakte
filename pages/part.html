@@ -352,7 +352,14 @@
     <script src="../js/exercise-4-5-eenheden-omzetten.js"></script>
     <script src="../js/exercise-4-6-eenheden-omzetten-oefenen.js"></script>
     <script src="../js/exercise-5-1-instap-oppervlakte.js"></script>
+    <script src="../js/exercise-5-5-instap-parallellogram.js"></script>
+    <script src="../js/exercise-5-7-hoogte-parallellogram.js"></script>
     <script src="../js/exercise-5-3-formules-drill.js"></script>
+    <script src="../js/exercise-5-8-formules-drill.js"></script>
+    <script src="../js/exercise-5-4-oppervlakte-rechthoek.js"></script>
+    <script src="../js/exercise-5-9-oppervlakte-parallellogram.js"></script>
+    <script src="../js/exercise-5-10-parallellogram-gemengd.js"></script>
+    <script src="../js/exercise-5-11-alles-gemengd.js"></script>
 
     <script>
         let userData = null;
@@ -621,6 +628,20 @@
                 init51InstapOppervlakte(container, handleExerciseComplete);
             } else if (part.exerciseType === '5-3-formules-drill') {
                 init53FormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-4-oppervlakte-rechthoek') {
+                init54OppervlakteRechthoek(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-5-instap-parallellogram') {
+                init55InstapParallellogram(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-7-hoogte-parallellogram') {
+                init57HoogteParallellogram(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-8-formules-drill') {
+                init58FormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-9-oppervlakte-parallellogram') {
+                init59OppervlakteParallellogram(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-10-parallellogram-gemengd') {
+                init510ParallellogramGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-11-alles-gemengd') {
+                init511AllesGemengd(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Parallellogram rooster demo</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="../css/exercise-styles.css">
+<style>
+  body { font-family: Arial, sans-serif; padding: 24px; background: #f5f5f5; }
+  h1 { margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 960px; }
+  .item { background: #fff; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  h3 { margin: 0 0 12px; font-size: 15px; color: #333; }
+  .params { font-size: 12px; color: #666; margin-bottom: 8px; font-family: monospace; }
+</style>
+</head>
+<body>
+<h1>Parallellogram op rooster</h1>
+<div class="grid" id="demoGrid"></div>
+
+<script>
+const GRID = 10;
+const CEL  = 40;
+const SIZE = (GRID + 1) * CEL; // 440
+
+// ── LAAG 1: parallellogram ───────────────────────────────────
+
+// Type 1: P(a,b), Q(a+c,b), R(a+c+e,b+d), S(a+e,b+d)
+function parallPunten1(a, b, c, d, e) {
+    return [[a,b],[a+c,b],[a+c+e,b+d],[a+e,b+d]];
+}
+
+// Type 2: P(a,b), Q(a+c,b+e), R(a+c,b+e+d), S(a,b+d)
+function parallPunten2(a, b, c, d, e) {
+    return [[a,b],[a+c,b+e],[a+c,b+e+d],[a,b+d]];
+}
+
+function laag1SVG(punten) {
+    const pts = punten.map(([x,y]) => `${x*CEL},${y*CEL}`).join(' ');
+    return `<polygon points="${pts}" fill="rgba(224,224,224,0.6)" stroke="#333" stroke-width="2"/>`;
+}
+
+// ── LAAG 2: driehoeken ───────────────────────────────────────
+
+const DRIEHOEK_FILL   = 'rgba(255,160,70,0.55)';
+const DRIEHOEK_STROKE = '#cc6600';
+
+function driehoekPunten1(a, b, c, d, e) {
+    return [
+        [[a,b],[a+e,b],[a+e,b+d]],          // driehoek links
+        [[a+c,b],[a+c+e,b],[a+c+e,b+d]]     // driehoek rechts
+    ];
+}
+
+function driehoekPunten2(a, b, c, d, e) {
+    return [
+        [[a,b],[a+c,b+e],[a,b+e]],           // driehoek boven
+        [[a,b+d],[a+c,b+e+d],[a,b+e+d]]     // driehoek onder
+    ];
+}
+
+function laag2SVG(driehoeken, parallPunten, pijl) {
+    const triangles = driehoeken.map(pts => {
+        const p = pts.map(([x,y]) => `${x*CEL},${y*CEL}`).join(' ');
+        return `<polygon points="${p}" fill="${DRIEHOEK_FILL}" stroke="${DRIEHOEK_STROKE}" stroke-width="2"/>`;
+    }).join('');
+    const outline = parallPunten.map(([x,y]) => `${x*CEL},${y*CEL}`).join(' ');
+    const omtrek = `<polygon points="${outline}" fill="none" stroke="#111" stroke-width="3"/>`;
+    return triangles + omtrek + (pijl ? pijlSVG(pijl[0], pijl[1]) : '');
+}
+
+let _pijlId = 0;
+function pijlSVG(van, naar) {
+    const id = `pijl${_pijlId++}`;
+    const x1 = van[0] * CEL, y1 = van[1] * CEL;
+    const x2 = naar[0] * CEL, y2 = naar[1] * CEL;
+    return `
+        <defs>
+            <marker id="${id}" markerWidth="10" markerHeight="7" refX="9" refY="3.5"
+                    orient="auto" markerUnits="userSpaceOnUse">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+            </marker>
+        </defs>
+        <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+              stroke="#333" stroke-width="2.5" marker-end="url(#${id})"/>`;
+}
+
+// Pijlpunten type 1: A en B, richting afhankelijk van teken e
+function pijlType1(a, b, c, d, e) {
+    const ox = e > 0 ? 0.5 : -0.5;
+    const A = [(2*a + e) / 2 + ox,       (2*b + d) / 2];
+    const B = [(2*a + 2*c + e) / 2 + ox, (2*b + d) / 2];
+    return e > 0 ? [A, B] : [B, A];
+}
+
+// Pijlpunten type 2: richting en offset afhankelijk van teken e
+function pijlType2(a, b, c, d, e) {
+    const oy = e > 0 ? 0.5 : -0.5;
+    const C = [(2*a + c) / 2, (2*b + e) / 2 + oy];
+    const D = [(2*a + c) / 2, (2*b + 2*d + e) / 2 + oy];
+    return e > 0 ? [C, D] : [D, C];
+}
+
+// ── LAAG 3: getallen c en d ──────────────────────────────────
+
+function laag3SVG(type, a, b, c, d, e) {
+    function tekst(x, y, val, anchor) {
+        return `<text x="${x * CEL}" y="${y * CEL}" text-anchor="${anchor}"
+                      dominant-baseline="central" font-size="15" font-weight="bold" fill="#333">${val}</text>`;
+    }
+
+    if (type === 1) {
+        // c: midden van de onderste horizontale zijde, net eronder
+        const c_x = a + c / 2 + e;
+        const c_y = b + d + 0.6;
+        // d: rechts (e>0) of links (e<0) van de verticale lijn, verticaal gecentreerd
+        const d_x     = e > 0 ? a + c + e + 0.6 : a + e - 0.6;
+        const d_y     = b + d / 2;
+        const d_anker = e > 0 ? 'start' : 'end';
+        return tekst(c_x, c_y, c, 'middle') + tekst(d_x, d_y, d, d_anker);
+    }
+
+    if (type === 2) {
+        // d: rechts van de rechtse verticale lijn (x=a+c), midden van die zijde
+        const d_x = a + c + 0.6;
+        const d_y = b + e + d / 2;
+        // c: onder de onderste (e>0) of boven de bovenste (e<0) horizontale lijn
+        const c_x = a + c / 2;
+        const c_y = e > 0 ? b + e + d + 0.6 : b + e - 0.6;
+        return tekst(d_x, d_y, d, 'start') + tekst(c_x, c_y, c, 'middle');
+    }
+
+    return '';
+}
+
+// ── ROOSTER + LAGEN ──────────────────────────────────────────
+
+function roosterSVG(laag1, laag2 = '', laag3 = '') {
+    const unitY = GRID * CEL + 15;
+    let svg = `<svg class="rooster-svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}">`;
+
+    for (let i = 0; i <= GRID; i++) {
+        const p = i * CEL;
+        svg += `<line x1="${p}" y1="0" x2="${p}" y2="${SIZE}" stroke="#ddd" stroke-width="1"/>`;
+        svg += `<line x1="0" y1="${p}" x2="${SIZE}" y2="${p}" stroke="#ddd" stroke-width="1"/>`;
+    }
+
+    svg += laag1;
+    svg += laag2;
+    svg += laag3;
+
+    svg += `
+        <line x1="${CEL}" y1="${unitY}" x2="${CEL*2}" y2="${unitY}" stroke="#333" stroke-width="2"/>
+        <line x1="${CEL}" y1="${unitY-5}" x2="${CEL}" y2="${unitY+5}" stroke="#333" stroke-width="2"/>
+        <line x1="${CEL*2}" y1="${unitY-5}" x2="${CEL*2}" y2="${unitY+5}" stroke="#333" stroke-width="2"/>
+        <text x="${CEL*1.5}" y="${unitY+18}" text-anchor="middle" font-size="12" fill="#333">1 eenheid</text>`;
+
+    svg += `</svg>`;
+    return svg;
+}
+
+// ── DEMO ─────────────────────────────────────────────────────
+
+const voorbeelden = [
+    { label: 'Type 1 — e > 0', params: 'a=2  b=2  c=5  d=5  e=2',
+      l1: laag1SVG(parallPunten1(2,2,5,5, 2)),
+      l2: laag2SVG(driehoekPunten1(2,2,5,5, 2), parallPunten1(2,2,5,5, 2), pijlType1(2,2,5,5, 2)),
+      l3: laag3SVG(1, 2,2,5,5, 2) },
+    { label: 'Type 1 — e < 0', params: 'a=3  b=2  c=5  d=5  e=−2',
+      l1: laag1SVG(parallPunten1(3,2,5,5,-2)),
+      l2: laag2SVG(driehoekPunten1(3,2,5,5,-2), parallPunten1(3,2,5,5,-2), pijlType1(3,2,5,5,-2)),
+      l3: laag3SVG(1, 3,2,5,5,-2) },
+    { label: 'Type 2 — e > 0', params: 'a=1  b=1  c=5  d=4  e=2',
+      l1: laag1SVG(parallPunten2(1,1,5,4, 2)),
+      l2: laag2SVG(driehoekPunten2(1,1,5,4, 2), parallPunten2(1,1,5,4, 2), pijlType2(1,1,5,4, 2)),
+      l3: laag3SVG(2, 1,1,5,4, 2) },
+    { label: 'Type 2 — e < 0', params: 'a=1  b=5  c=5  d=4  e=−3',
+      l1: laag1SVG(parallPunten2(1,5,5,4,-3)),
+      l2: laag2SVG(driehoekPunten2(1,5,5,4,-3), parallPunten2(1,5,5,4,-3), pijlType2(1,5,5,4,-3)),
+      l3: laag3SVG(2, 1,5,5,4,-3) },
+];
+
+const demoGrid = document.getElementById('demoGrid');
+voorbeelden.forEach(v => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerHTML = `<h3>${v.label}</h3><p class="params">${v.params}</p>${roosterSVG(v.l1, v.l2, v.l3)}`;
+    demoGrid.appendChild(div);
+});
+</script>
+</body>
+</html>

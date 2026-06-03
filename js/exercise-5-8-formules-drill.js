@@ -1,7 +1,7 @@
 'use strict';
 
-function init53FormulasDrill(container, onComplete) {
-    addCSS53();
+function init58FormulasDrill(container, onComplete) {
+    addCSS58();
 
     // ── DATA ─────────────────────────────────────────────────
 
@@ -9,19 +9,21 @@ function init53FormulasDrill(container, onComplete) {
         { id: 'f1',  label: '4<i>z</i>',              correct: ['P_vierkant', 'P_ruit'] },
         { id: 'f2',  label: '2(<i>b</i> + <i>h</i>)', correct: ['P_rechthoek'] },
         { id: 'f4',  label: '2π<i>r</i>',             correct: ['P_cirkel'] },
-        { id: 'f3',  label: 'som van de zijden',        correct: ['P_driehoek'] },
-        { id: 'fA1', label: '<i>bh</i>',               correct: ['A_rechthoek'] },
+        { id: 'f3',  label: 'som van de zijden',        correct: ['P_driehoek', 'P_parallellogram'] },
+        { id: 'fA1', label: '<i>bh</i>',               correct: ['A_rechthoek', 'A_parallellogram'] },
         { id: 'fA2', label: '<i>z</i>²',               correct: ['A_vierkant'] }
     ];
 
     const DRAG_ITEMS = [
-        { id: 'P_vierkant',  label: '<i>P</i><sub>vierkant</sub>' },
-        { id: 'P_rechthoek', label: '<i>P</i><sub>rechthoek</sub>' },
-        { id: 'P_ruit',      label: '<i>P</i><sub>ruit</sub>' },
-        { id: 'P_cirkel',    label: '<i>P</i><sub>cirkel</sub>' },
-        { id: 'P_driehoek',  label: '<i>P</i><sub>driehoek</sub>' },
-        { id: 'A_vierkant',  label: '<i>A</i><sub>vierkant</sub>' },
-        { id: 'A_rechthoek', label: '<i>A</i><sub>rechthoek</sub>' }
+        { id: 'P_vierkant',       label: '<i>P</i><sub>vierkant</sub>' },
+        { id: 'P_rechthoek',      label: '<i>P</i><sub>rechthoek</sub>' },
+        { id: 'P_ruit',           label: '<i>P</i><sub>ruit</sub>' },
+        { id: 'P_cirkel',         label: '<i>P</i><sub>cirkel</sub>' },
+        { id: 'P_driehoek',       label: '<i>P</i><sub>driehoek</sub>' },
+        { id: 'P_parallellogram', label: '<i>P</i><sub>parallellogram</sub>' },
+        { id: 'A_vierkant',       label: '<i>A</i><sub>vierkant</sub>' },
+        { id: 'A_rechthoek',      label: '<i>A</i><sub>rechthoek</sub>' },
+        { id: 'A_parallellogram', label: '<i>A</i><sub>parallellogram</sub>' }
     ];
 
     const FORMULA_OPTIONS = [
@@ -35,41 +37,42 @@ function init53FormulasDrill(container, onComplete) {
     ];
 
     const VRAAG_SPECS = shuffle([
-        { type: 'vierkant',       letter: '<i>P</i>', correctId: 'f1' },
-        { type: 'vierkant',       letter: '<i>A</i>', correctId: 'fA2' },
-        { type: 'rechthoek',      letter: '<i>P</i>', correctId: 'f2' },
-        { type: 'rechthoek',      letter: '<i>A</i>', correctId: 'fA1' },
-        { type: 'ruit',           letter: '<i>P</i>', correctId: 'f1' },
-        { type: 'cirkel',         letter: '<i>P</i>', correctId: 'f4' },
-        { type: 'driehoek',       letter: '<i>P</i>', correctId: 'f3' },
-        { type: 'parallellogram', letter: '<i>P</i>', correctId: 'f3' },
-        { type: 'vierhoek',       letter: '<i>P</i>', correctId: 'f3' },
-        { type: 'trapezium',      letter: '<i>P</i>', correctId: 'f3' }
+        { type: 'vierkant',              letter: '<i>P</i>', correctId: 'f1'  },
+        { type: 'vierkant',              letter: '<i>A</i>', correctId: 'fA2' },
+        { type: 'rechthoek',             letter: '<i>P</i>', correctId: 'f2'  },
+        { type: 'rechthoek',             letter: '<i>A</i>', correctId: 'fA1' },
+        { type: 'ruit',                  letter: '<i>P</i>', correctId: 'f1'  },
+        { type: 'cirkel',                letter: '<i>P</i>', correctId: 'f4'  },
+        { type: 'driehoek',              letter: '<i>P</i>', correctId: 'f3'  },
+        { type: 'parallellogram',        letter: '<i>P</i>', correctId: 'f3'  },
+        { type: 'vierhoek',              letter: '<i>P</i>', correctId: 'f3'  },
+        { type: 'trapezium',             letter: '<i>P</i>', correctId: 'f3'  },
+        { type: 'parallellogram-hoogte', letter: '<i>A</i>', correctId: 'fA1' }
     ]);
 
-    const TOTAL_QUESTIONS = 14;
-    const MAX_POINTS      = 24;
+    const TOTAL_QUESTIONS = 15;
+    const MAX_POINTS      = 26;
 
     // ── STATE ────────────────────────────────────────────────
-    let currentQuestion      = 1;
-    let totalPoints          = 0;
-    let q1Attempts           = 0;
-    let dropdownAttempts     = 0;
-    let q12Attempt1Results   = null;
-    let q13Attempt1Results   = null;
-    let q14Attempt1Results   = null;
-    let docClickCleanup      = null;
+    let currentQuestion    = 1;
+    let totalPoints        = 0;
+    let q1Attempts         = 0;
+    let dropdownAttempts   = 0;
+    let q13Attempt1Results = null;
+    let q14Attempt1Results = null;
+    let q15Attempt1Results = null;
+    let docClickCleanup    = null;
 
     render();
 
     // ── NAVIGATIE ────────────────────────────────────────────
     function render() {
-        if      (currentQuestion === 1)       renderQ1();
-        else if (currentQuestion <= 11)       renderDropdownQ(currentQuestion - 2);
-        else if (currentQuestion === 12)      renderQ12();
-        else if (currentQuestion === 13)      renderQ13();
-        else if (currentQuestion === 14)      renderQ14();
-        else                                  finish();
+        if      (currentQuestion === 1)  renderQ1();
+        else if (currentQuestion <= 12)  renderDropdownQ(currentQuestion - 2);
+        else if (currentQuestion === 13) renderQ13();
+        else if (currentQuestion === 14) renderQ14();
+        else if (currentQuestion === 15) renderQ15();
+        else                             finish();
     }
 
     function next() { currentQuestion++; render(); }
@@ -138,9 +141,9 @@ function init53FormulasDrill(container, onComplete) {
                             ).join('')}
                         </div>
                     </div>
-                    <div class="ex53-zones-grid" style="margin-top: var(--spacing-xl);">
+                    <div class="ex58-zones-grid" style="margin-top: var(--spacing-xl);">
                         ${DRAG_ZONES.map(z => `
-                            <div class="drop-zone ex53-drop-zone" data-zone="${z.id}">
+                            <div class="drop-zone ex58-drop-zone" data-zone="${z.id}">
                                 <div class="zone-title formula-title">${z.label}</div>
                                 <div class="zone-items" id="zone-${z.id}"></div>
                             </div>`).join('')}
@@ -181,7 +184,7 @@ function init53FormulasDrill(container, onComplete) {
             });
         }
 
-        document.querySelectorAll('.ex53-drop-zone').forEach(zone =>
+        document.querySelectorAll('.ex58-drop-zone').forEach(zone =>
             setupDrop(zone, d => zone.querySelector('.zone-items').appendChild(d))
         );
         setupDrop(poolContainer, d => pool.appendChild(d));
@@ -228,7 +231,7 @@ function init53FormulasDrill(container, onComplete) {
             document.getElementById('feedbackArea').innerHTML = `
                 <div class="feedback-message feedback-incorrect">
                     <p class="feedback-text">Niet juist. Dit is de juiste oplossing:</p>
-                    <div class="ex53-zones-grid" style="margin-top: var(--spacing-md);">${cols}</div>
+                    <div class="ex58-zones-grid" style="margin-top: var(--spacing-md);">${cols}</div>
                     <button class="btn btn-primary" id="nextBtn" style="margin-top: var(--spacing-lg);">OK</button>
                 </div>`;
             document.getElementById('nextBtn').addEventListener('click', next);
@@ -244,7 +247,7 @@ function init53FormulasDrill(container, onComplete) {
         if (btn) btn.style.display = 'none';
     }
 
-    // ── Q2–11: FIGUUR + CUSTOM SELECT ────────────────────────
+    // ── Q2–Q12: FIGUUR + CUSTOM SELECT ──────────────────────
     function renderDropdownQ(idx) {
         dropdownAttempts = 0;
         const spec       = VRAAG_SPECS[idx];
@@ -252,7 +255,7 @@ function init53FormulasDrill(container, onComplete) {
         const correctOpt = FORMULA_OPTIONS.find(o => o.id === spec.correctId);
 
         const csOptsHtml = FORMULA_OPTIONS.map(o =>
-            `<div class="ex53-cs-opt" data-value="${o.id}">${o.label}</div>`
+            `<div class="ex58-cs-opt" data-value="${o.id}">${o.label}</div>`
         ).join('');
 
         container.innerHTML = `
@@ -261,11 +264,11 @@ function init53FormulasDrill(container, onComplete) {
                 <div class="question-card">
                     <h3 class="question-title">Kies de juiste formule.</h3>
                     <div id="figContainer" class="figure-container"></div>
-                    <div class="ex53-formula-row">
-                        <span class="ex53-letter">${spec.letter} =</span>
-                        <div class="ex53-cs" id="ex53-cs" data-value="">
-                            <div class="ex53-cs-display">—</div>
-                            <div class="ex53-cs-list" hidden>${csOptsHtml}</div>
+                    <div class="ex58-formula-row">
+                        <span class="ex58-letter">${spec.letter} =</span>
+                        <div class="ex58-cs" id="ex58-cs" data-value="">
+                            <div class="ex58-cs-display">—</div>
+                            <div class="ex58-cs-list" hidden>${csOptsHtml}</div>
                         </div>
                     </div>
                     <div id="feedbackArea" class="feedback-area"></div>
@@ -276,10 +279,10 @@ function init53FormulasDrill(container, onComplete) {
             </div>`;
 
         drawFiguur(document.getElementById('figContainer'), spec.type, figOpts);
-        initCS('ex53-cs');
+        initCS('ex58-cs');
 
         document.getElementById('checkBtn').addEventListener('click', () => {
-            const cs     = document.getElementById('ex53-cs');
+            const cs     = document.getElementById('ex58-cs');
             const chosen = cs.dataset.value;
             if (!chosen) { showFeedback('incorrect', 'Kies eerst een formule.'); return; }
 
@@ -292,7 +295,7 @@ function init53FormulasDrill(container, onComplete) {
             } else if (dropdownAttempts === 1) {
                 showFeedback('incorrect', 'Dit klopt niet helemaal. Probeer nog een keer.<br>Kijk zeker eens naar de opgave. Wat wordt gevraagd? De formule voor de omtrek (<i>P</i>) of voor de oppervlakte (<i>A</i>).');
                 cs.dataset.value = '';
-                cs.querySelector('.ex53-cs-display').innerHTML = '—';
+                cs.querySelector('.ex58-cs-display').innerHTML = '—';
             } else {
                 cs.style.pointerEvents = 'none';
                 document.getElementById('checkBtn').style.display = 'none';
@@ -301,9 +304,9 @@ function init53FormulasDrill(container, onComplete) {
         });
     }
 
-    // ── Q12: LETTERS OMTREK ──────────────────────────────────
-    function renderQ12() {
-        q12Attempt1Results = null;
+    // ── Q13: LETTERS OMTREK ──────────────────────────────────
+    function renderQ13() {
+        q13Attempt1Results = null;
         container.innerHTML = `
             <div class="exercise-container">
                 ${progressHTML()}
@@ -342,10 +345,10 @@ function init53FormulasDrill(container, onComplete) {
                     </div>
                 </div>
             </div>`;
-        document.getElementById('checkBtn').addEventListener('click', checkQ12);
+        document.getElementById('checkBtn').addEventListener('click', checkQ13);
     }
 
-    function checkQ12() {
+    function checkQ13() {
         const vals = {
             z: document.getElementById('inputZ').value.trim().toLowerCase(),
             b: document.getElementById('inputB').value.trim().toLowerCase(),
@@ -364,22 +367,22 @@ function init53FormulasDrill(container, onComplete) {
             r: vals.r === 'straal'
         };
 
-        if (q12Attempt1Results === null) {
+        if (q13Attempt1Results === null) {
             if (results.z && results.b && results.h && results.r) {
                 totalPoints += 4;
                 lockInputs(['inputZ', 'inputB', 'inputH', 'inputR']);
                 document.getElementById('checkBtn').style.display = 'none';
                 showFeedbackWithNext('correct', 'Correct!');
             } else {
-                q12Attempt1Results = { ...results };
+                q13Attempt1Results = { ...results };
                 showFeedback('incorrect', 'Dit klopt niet helemaal. Verbeter.');
             }
         } else {
             let points = 0;
-            if (q12Attempt1Results.z) points += 1; else if (results.z) points += 0.5;
-            if (q12Attempt1Results.b) points += 1; else if (results.b) points += 0.5;
-            if (q12Attempt1Results.h) points += 1; else if (results.h) points += 0.5;
-            if (q12Attempt1Results.r) points += 1; else if (results.r) points += 0.5;
+            if (q13Attempt1Results.z) points += 1; else if (results.z) points += 0.5;
+            if (q13Attempt1Results.b) points += 1; else if (results.b) points += 0.5;
+            if (q13Attempt1Results.h) points += 1; else if (results.h) points += 0.5;
+            if (q13Attempt1Results.r) points += 1; else if (results.r) points += 0.5;
             totalPoints += points;
 
             if (!results.z) document.getElementById('inputZ').value = 'zijde';
@@ -397,9 +400,9 @@ function init53FormulasDrill(container, onComplete) {
         }
     }
 
-    // ── Q13: LETTERS OPPERVLAKTE ─────────────────────────────
-    function renderQ13() {
-        q13Attempt1Results = null;
+    // ── Q14: LETTERS OPPERVLAKTE ─────────────────────────────
+    function renderQ14() {
+        q14Attempt1Results = null;
         container.innerHTML = `
             <div class="exercise-container">
                 ${progressHTML()}
@@ -434,10 +437,10 @@ function init53FormulasDrill(container, onComplete) {
                     </div>
                 </div>
             </div>`;
-        document.getElementById('checkBtn').addEventListener('click', checkQ13);
+        document.getElementById('checkBtn').addEventListener('click', checkQ14);
     }
 
-    function checkQ13() {
+    function checkQ14() {
         const vals = {
             b: document.getElementById('inputB').value.trim().toLowerCase(),
             h: document.getElementById('inputH').value.trim().toLowerCase(),
@@ -454,21 +457,21 @@ function init53FormulasDrill(container, onComplete) {
             z: vals.z === 'zijde'
         };
 
-        if (q13Attempt1Results === null) {
+        if (q14Attempt1Results === null) {
             if (results.b && results.h && results.z) {
                 totalPoints += 3;
                 lockInputs(['inputB', 'inputH', 'inputZ']);
                 document.getElementById('checkBtn').style.display = 'none';
                 showFeedbackWithNext('correct', 'Correct!');
             } else {
-                q13Attempt1Results = { ...results };
+                q14Attempt1Results = { ...results };
                 showFeedback('incorrect', 'Dit klopt niet helemaal. Verbeter.');
             }
         } else {
             let points = 0;
-            if (q13Attempt1Results.b) points += 1; else if (results.b) points += 0.5;
-            if (q13Attempt1Results.h) points += 1; else if (results.h) points += 0.5;
-            if (q13Attempt1Results.z) points += 1; else if (results.z) points += 0.5;
+            if (q14Attempt1Results.b) points += 1; else if (results.b) points += 0.5;
+            if (q14Attempt1Results.h) points += 1; else if (results.h) points += 0.5;
+            if (q14Attempt1Results.z) points += 1; else if (results.z) points += 0.5;
             totalPoints += points;
 
             if (!results.b) document.getElementById('inputB').value = 'basis';
@@ -485,16 +488,17 @@ function init53FormulasDrill(container, onComplete) {
         }
     }
 
-    // ── Q14: FORMULES AANVULLEN ──────────────────────────────
-    function renderQ14() {
-        q14Attempt1Results = null;
+    // ── Q15: FORMULES AANVULLEN ──────────────────────────────
+    function renderQ15() {
+        q15Attempt1Results = null;
         const FIELDS = [
-            { id: 'inVierkantP',  label: '<i>P</i><sub>vierkant</sub> =' },
-            { id: 'inRechthoekP', label: '<i>P</i><sub>rechthoek</sub> =' },
-            { id: 'inRuitP',      label: '<i>P</i><sub>ruit</sub> =' },
-            { id: 'inCirkelP',    label: '<i>P</i><sub>cirkel</sub> =' },
-            { id: 'inRechthoekA', label: '<i>A</i><sub>rechthoek</sub> =' },
-            { id: 'inVierkantA',  label: '<i>A</i><sub>vierkant</sub> =' }
+            { id: 'inVierkantP',       label: '<i>P</i><sub>vierkant</sub> =' },
+            { id: 'inRechthoekP',      label: '<i>P</i><sub>rechthoek</sub> =' },
+            { id: 'inRuitP',           label: '<i>P</i><sub>ruit</sub> =' },
+            { id: 'inCirkelP',         label: '<i>P</i><sub>cirkel</sub> =' },
+            { id: 'inRechthoekA',      label: '<i>A</i><sub>rechthoek</sub> =' },
+            { id: 'inVierkantA',       label: '<i>A</i><sub>vierkant</sub> =' },
+            { id: 'inParallellogramA', label: '<i>A</i><sub>parallellogram</sub> =' }
         ];
 
         container.innerHTML = `
@@ -555,7 +559,7 @@ function init53FormulasDrill(container, onComplete) {
             }
         });
 
-        document.getElementById('checkBtn').addEventListener('click', checkQ14);
+        document.getElementById('checkBtn').addEventListener('click', checkQ15);
     }
 
     function normalizeFormula(str) {
@@ -567,8 +571,8 @@ function init53FormulasDrill(container, onComplete) {
         return expected.some(e => n === e);
     }
 
-    function checkQ14() {
-        const IDS = ['inVierkantP', 'inRechthoekP', 'inRuitP', 'inCirkelP', 'inRechthoekA', 'inVierkantA'];
+    function checkQ15() {
+        const IDS = ['inVierkantP', 'inRechthoekP', 'inRuitP', 'inCirkelP', 'inRechthoekA', 'inVierkantA', 'inParallellogramA'];
         const vals = {};
         IDS.forEach(id => { vals[id] = document.getElementById(id).value; });
         if (IDS.some(id => !vals[id].trim())) {
@@ -577,36 +581,41 @@ function init53FormulasDrill(container, onComplete) {
         }
 
         const CORRECT_VALS = {
-            inVierkantP:  '4z',      inRechthoekP: '2(b+h)',
-            inRuitP:      '4z',      inCirkelP:    '2πr',
-            inRechthoekA: 'bh',      inVierkantA:  'z²'
+            inVierkantP:       '4z',
+            inRechthoekP:      '2(b+h)',
+            inRuitP:           '4z',
+            inCirkelP:         '2πr',
+            inRechthoekA:      'bh',
+            inVierkantA:       'z²',
+            inParallellogramA: 'bh'
         };
 
         const results = {
-            inVierkantP:  matchesFormula(vals.inVierkantP,  ['4z']),
-            inRechthoekP: matchesFormula(vals.inRechthoekP, ['2(b+h)', '2(h+b)']),
-            inRuitP:      matchesFormula(vals.inRuitP,      ['4z']),
-            inCirkelP:    matchesFormula(vals.inCirkelP,    ['2πr', '2rπ']),
-            inRechthoekA: matchesFormula(vals.inRechthoekA, ['bh', 'hb']),
-            inVierkantA:  matchesFormula(vals.inVierkantA,  ['z²'])
+            inVierkantP:       matchesFormula(vals.inVierkantP,       ['4z']),
+            inRechthoekP:      matchesFormula(vals.inRechthoekP,      ['2(b+h)', '2(h+b)']),
+            inRuitP:           matchesFormula(vals.inRuitP,           ['4z']),
+            inCirkelP:         matchesFormula(vals.inCirkelP,         ['2πr', '2rπ']),
+            inRechthoekA:      matchesFormula(vals.inRechthoekA,      ['bh', 'hb']),
+            inVierkantA:       matchesFormula(vals.inVierkantA,       ['z²']),
+            inParallellogramA: matchesFormula(vals.inParallellogramA, ['bh', 'hb'])
         };
 
-        if (q14Attempt1Results === null) {
+        if (q15Attempt1Results === null) {
             if (Object.values(results).every(Boolean)) {
-                totalPoints += 6;
+                totalPoints += 7;
                 lockInputs(IDS);
                 document.getElementById('checkBtn').style.display = 'none';
                 showFeedbackWithFinish('correct', 'Correct!');
             } else {
-                q14Attempt1Results = { ...results };
+                q15Attempt1Results = { ...results };
                 showFeedback('incorrect', 'Dit klopt niet helemaal. Verbeter.');
             }
         } else {
             let points = 0;
             IDS.forEach(id => {
-                if (q14Attempt1Results[id])  points += 1;
-                else if (results[id])         points += 0.5;
-                else                          document.getElementById(id).value = CORRECT_VALS[id];
+                if (q15Attempt1Results[id]) points += 1;
+                else if (results[id])        points += 0.5;
+                else                         document.getElementById(id).value = CORRECT_VALS[id];
             });
             totalPoints += points;
             lockInputs(IDS);
@@ -622,8 +631,8 @@ function init53FormulasDrill(container, onComplete) {
     // ── CUSTOM SELECT ────────────────────────────────────────
     function initCS(id) {
         const sel     = document.getElementById(id);
-        const display = sel.querySelector('.ex53-cs-display');
-        const list    = sel.querySelector('.ex53-cs-list');
+        const display = sel.querySelector('.ex58-cs-display');
+        const list    = sel.querySelector('.ex58-cs-list');
 
         if (docClickCleanup) document.removeEventListener('click', docClickCleanup);
         docClickCleanup = () => { if (list) list.hidden = true; };
@@ -631,7 +640,7 @@ function init53FormulasDrill(container, onComplete) {
 
         display.addEventListener('click', e => { e.stopPropagation(); list.hidden = !list.hidden; });
 
-        sel.querySelectorAll('.ex53-cs-opt').forEach(opt => {
+        sel.querySelectorAll('.ex58-cs-opt').forEach(opt => {
             opt.addEventListener('click', e => {
                 e.stopPropagation();
                 sel.dataset.value = opt.dataset.value;
@@ -656,7 +665,7 @@ function init53FormulasDrill(container, onComplete) {
                 return { factor: 1, rotation, zijde: { value: pick([2,3,4,5,6]), unit: 'cm' } };
             case 'rechthoek':
                 return { factor: 1, rotation,
-                    breedte: { value: pick([2,3,4,5]), unit: 'cm' },
+                    breedte: { value: pick([2,3,4,5]),   unit: 'cm' },
                     hoogte:  { value: pick([3,4,5,6,7]), unit: 'cm' } };
             case 'ruit':
                 return { factor: 1, rotation, zijde: { value: pick([2,3,4,5]), unit: 'cm' } };
@@ -668,7 +677,11 @@ function init53FormulasDrill(container, onComplete) {
             case 'parallellogram':
                 return { factor: 1, rotation,
                     basis: { value: pick([3,4,5,6]), unit: 'cm' },
-                    zijde: { value: pick([2,3,4]), unit: 'cm' } };
+                    zijde: { value: pick([2,3,4]),   unit: 'cm' } };
+            case 'parallellogram-hoogte':
+                return { factor: 1, rotation,
+                    basis: { value: pick([3,4,5,6]), unit: 'cm' },
+                    zijde: { value: pick([2,3,4]),   unit: 'cm' } };
             case 'driehoek':
                 return { factor: 1, rotation, zijden: pick(DRIEHOEKEN) };
             case 'vierhoek':
@@ -699,41 +712,41 @@ function init53FormulasDrill(container, onComplete) {
     }
 
     // ── CSS ──────────────────────────────────────────────────
-    function addCSS53() {
-        if (document.getElementById('ex53-style')) return;
+    function addCSS58() {
+        if (document.getElementById('ex58-style')) return;
         const s = document.createElement('style');
-        s.id = 'ex53-style';
+        s.id = 'ex58-style';
         s.textContent = `
-.ex53-zones-grid {
+.ex58-zones-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg);
 }
-.ex53-drop-zone {
+.ex58-drop-zone {
     min-height: 120px; border: 2px dashed var(--color-gray, #ccc);
     border-radius: var(--radius-md, 8px); padding: var(--spacing-md);
 }
-.ex53-formula-row {
+.ex58-formula-row {
     display: flex; align-items: center; gap: var(--spacing-md); margin: var(--spacing-lg) 0;
 }
-.ex53-letter { font-size: 1.1rem; white-space: nowrap; }
-.ex53-cs { position: relative; display: inline-block; min-width: 210px; }
-.ex53-cs-display {
+.ex58-letter { font-size: 1.1rem; white-space: nowrap; }
+.ex58-cs { position: relative; display: inline-block; min-width: 210px; }
+.ex58-cs-display {
     padding: 0.35rem 0.6rem; border: 2px solid var(--color-gray, #ccc);
     border-radius: var(--radius-md, 6px); cursor: pointer; background: #fff;
     font-size: var(--font-size-base, 0.95rem); min-height: 1.8rem;
     display: flex; align-items: center; user-select: none;
 }
-.ex53-cs-display:hover { border-color: var(--color-primary, #4a7a10); }
-.ex53-cs-list {
+.ex58-cs-display:hover { border-color: var(--color-primary, #4a7a10); }
+.ex58-cs-list {
     position: absolute; top: calc(100% + 2px); left: 0; right: 0; background: #fff;
     border: 2px solid var(--color-primary, #4a7a10); border-radius: var(--radius-md, 6px);
     z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,.15);
 }
-.ex53-cs-opt {
+.ex58-cs-opt {
     padding: 0.45rem 0.6rem; cursor: pointer;
     font-size: var(--font-size-base, 0.95rem); min-height: 1.8rem;
     display: flex; align-items: center;
 }
-.ex53-cs-opt:hover { background: var(--color-light, #f0f7e0); }
+.ex58-cs-opt:hover { background: var(--color-light, #f0f7e0); }
 .formula-title {
     font-size: var(--font-size-large); font-weight: 700;
     padding-bottom: var(--spacing-sm); border-bottom: 2px solid var(--color-gray);
@@ -746,7 +759,7 @@ function init53FormulasDrill(container, onComplete) {
 .letter-inputs { display: flex; flex-direction: column; gap: var(--spacing-md); margin: var(--spacing-lg) 0; max-width: 500px; }
 .letter-input-row { display: flex; align-items: center; gap: var(--spacing-md); }
 .letter-label { min-width: 40px; font-size: var(--font-size-large); font-weight: 600; text-align: right; white-space: nowrap; }
-.formula-label { min-width: 200px; }
+.formula-label { min-width: 220px; }
 .letter-input {
     flex: 1; padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-size-large); border: 2px solid var(--color-gray);
@@ -776,13 +789,13 @@ function init53FormulasDrill(container, onComplete) {
 .squared-insert-btn .key-bottom { font-size: 1rem; font-weight: 700; }
 .squared-insert-btn:hover { background: #3a3a3a; transform: translateY(1px); border-bottom-width: 2px; }
 .squared-insert-btn:active { transform: translateY(2px); border-bottom-width: 1px; box-shadow: none; }
-@media (max-width: 640px) { .ex53-zones-grid { grid-template-columns: repeat(2, 1fr); } .formula-label { min-width: 160px; } }
-@media (max-width: 400px) { .ex53-zones-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .ex58-zones-grid { grid-template-columns: repeat(2, 1fr); } .formula-label { min-width: 170px; } }
+@media (max-width: 400px) { .ex58-zones-grid { grid-template-columns: 1fr; } }
 `;
         document.head.appendChild(s);
     }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { init53FormulasDrill };
+    module.exports = { init58FormulasDrill };
 }

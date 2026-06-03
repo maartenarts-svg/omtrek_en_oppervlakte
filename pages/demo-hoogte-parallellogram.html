@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo – Hoogte Parallellogram</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #f5f5f5;
+    }
+    h1 { color: #333; margin-bottom: 4px; }
+    .intro { color: #666; font-size: 14px; margin-bottom: 24px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .kaart {
+      background: white;
+      border-radius: 10px;
+      padding: 18px 18px 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+    .kaart h3 {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: #555;
+      text-align: left;
+      line-height: 1.4;
+    }
+    .nr {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #4a7a10;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-right: 6px;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Demo – Hoogte van een parallellogram</h1>
+<p class="intro">
+  Willekeurige parallellogram, geen labels. De <strong>streeplijn</strong> is de basis.
+  De <strong style="color:#c0392b;">rode lijn</strong> is de te beoordelen lijn.
+  Variaties 5 en 6 zijn de echte hoogtes.
+  <button id="newBtn" style="margin-left:16px; padding:6px 16px; background:#4a7a10; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px;">Nieuwe figuur</button>
+</p>
+
+<div class="grid">
+  <div class="kaart">
+    <h3><span class="nr">1</span> Schuine zijde</h3>
+    <div id="fig1"></div>
+  </div>
+  <div class="kaart">
+    <h3><span class="nr">2</span> Korte diagonaal</h3>
+    <div id="fig2"></div>
+  </div>
+  <div class="kaart">
+    <h3><span class="nr">3</span> Lange diagonaal</h3>
+    <div id="fig3"></div>
+  </div>
+  <div class="kaart">
+    <h3><span class="nr">4</span> Niet-loodrecht lijnstuk (basis → overstaande zijde)</h3>
+    <div id="fig4"></div>
+  </div>
+  <div class="kaart">
+    <h3><span class="nr">5</span> Hoogte vanuit linker grenspunt (voet op zijde)</h3>
+    <div id="fig5"></div>
+  </div>
+  <div class="kaart">
+    <h3><span class="nr">6</span> Hoogte vanuit rechter grenspunt (voet buiten → drager)</h3>
+    <div id="fig6"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const SVG_W = 270;
+  const SVG_H = 255;
+
+  // ---- Stijlconstanten ----
+  const FILL   = 'rgba(168, 212, 85, 0.65)';
+  const STROKE = '#4a7a10';
+  const SW     = 2.5;
+  const HL_C   = '#c0392b';   // rood: gemarkeerde lijn
+  const HL_W   = 5.5;
+  const MK_C   = '#3a6a0e';   // donkergroen: winkelhaken
+  const MK_SZ  = 10;          // grootte winkelhaken (px)
+
+  // ---- Helpers ----
+  function f(p)  { return `${p.x.toFixed(1)},${p.y.toFixed(1)}`; }
+  function fx(n) { return n.toFixed(1); }
+
+  function unit(A, B) {
+    const dx = B.x - A.x, dy = B.y - A.y;
+    const l = Math.hypot(dx, dy) || 1;
+    return { x: dx / l, y: dy / l };
+  }
+
+  // Loodrechte voet van P op lijn A→B
+  // t < 0: voorbij A; t > 1: voorbij B; anders op segment
+  function voet(P, A, B) {
+    const dx = B.x - A.x, dy = B.y - A.y;
+    const t  = ((P.x - A.x) * dx + (P.y - A.y) * dy) / (dx * dx + dy * dy);
+    return { x: A.x + t * dx, y: A.y + t * dy, t };
+  }
+
+  // Winkelhaak (∟) – zelfde patroon als _svgHoekTeken in figures.js
+  // Open kant kijkt naar V; beentjes wijzen WEG van V
+  function hoek(V, A, B) {
+    const uA = unit(V, A);
+    const uB = unit(V, B);
+    const mA = { x: V.x + uA.x * MK_SZ, y: V.y + uA.y * MK_SZ };
+    const mB = { x: V.x + uB.x * MK_SZ, y: V.y + uB.y * MK_SZ };
+    const C  = { x: mA.x + uB.x * MK_SZ, y: mA.y + uB.y * MK_SZ };
+    const Ap = { x: 2 * C.x - mA.x, y: 2 * C.y - mA.y };
+    const Bp = { x: 2 * C.x - mB.x, y: 2 * C.y - mB.y };
+    return `<polyline points="${f(Ap)} ${f(C)} ${f(Bp)}"
+      fill="none" stroke="${MK_C}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  }
+
+  // ---- Willekeurige parallellogram genereren ----
+  // Leunt altijd naar links (slantX < 0):
+  //   • voet vanuit v0 valt altijd BINNEN de overstaande zijde
+  //   • voet vanuit v1 valt altijd BUITEN → drager nodig
+  function genPara() {
+    const cx = SVG_W / 2, cy = SVG_H / 2;
+    const basisLen = 120 + Math.floor(Math.random() * 40);   // 120–159 px
+    const slantX   = -(30 + Math.floor(Math.random() * 30)); // -30 tot -59 px
+    const figH     = 85  + Math.floor(Math.random() * 35);   // 85–119 px
+    const rot      = Math.floor(Math.random() * 72) * 5;     // 0–355°, stap 5
+
+    const half = basisLen / 2, halfH = figH / 2;
+    //   v3 ---- v2     (overstaande zijde)
+    //   /       /
+    //  v0 ---- v1      (basis, streeplijn)
+    const base = [
+      { x: cx - half,          y: cy + halfH },
+      { x: cx + half,          y: cy + halfH },
+      { x: cx + half + slantX, y: cy - halfH },
+      { x: cx - half + slantX, y: cy - halfH },
+    ];
+    const rad = rot * Math.PI / 180;
+    const cos = Math.cos(rad), sin = Math.sin(rad);
+    return base.map(v => ({
+      x: cx + (v.x - cx) * cos - (v.y - cy) * sin,
+      y: cy + (v.x - cx) * sin + (v.y - cy) * cos,
+    }));
+  }
+
+  // ---- SVG-bouwstenen ----
+  function lijnSVG(A, B, kleur, dikte, extra) {
+    return `<line x1="${fx(A.x)}" y1="${fx(A.y)}" x2="${fx(B.x)}" y2="${fx(B.y)}"
+      stroke="${kleur}" stroke-width="${dikte}" stroke-linecap="round"${extra ? ' ' + extra : ''}/>`;
+  }
+
+  function basisFig(v) {
+    const [v0, v1, v2, v3] = v;
+    const pts = v.map(f).join(' ');
+    let s = `<polygon points="${pts}" fill="${FILL}" stroke="none"/>`;
+    s += lijnSVG(v3, v0, STROKE, SW);
+    s += lijnSVG(v1, v2, STROKE, SW);
+    s += lijnSVG(v2, v3, STROKE, SW);
+    s += lijnSVG(v0, v1, STROKE, SW, 'stroke-dasharray="10,6"');
+    return s;
+  }
+
+  function hlLijn(A, B) { return lijnSVG(A, B, HL_C, HL_W); }
+
+  // Teken hoogte vanuit `vanPunt`, loodrecht op overstaande zijde v3→v2
+  function hoogteFig(v, vanPunt) {
+    const [v0, v1, v2, v3] = v;
+    const F = voet(vanPunt, v3, v2);
+    let s = basisFig(v);
+
+    // Drager als voet buiten segment valt
+    if (F.t < 0 || F.t > 1) {
+      const uitmunt = F.t < 0 ? v3 : v2;
+      const uD      = unit(uitmunt, F);
+      const draEnd  = { x: F.x + uD.x * 14, y: F.y + uD.y * 14 };
+      s += lijnSVG(uitmunt, draEnd, '#aaa', 1.5, 'stroke-dasharray="7,4"');
+    }
+
+    s += hlLijn(vanPunt, F);
+
+    // Winkelhaak op basis (bij vanPunt): armen naar F en naar het andere grenspunt
+    const anderPunt = vanPunt === v0 ? v1 : v0;
+    s += hoek(vanPunt, F, anderPunt);
+
+    // Winkelhaak op overstaande zijde/drager (bij F): armen naar vanPunt en naar v2
+    s += hoek(F, vanPunt, v2);
+
+    return s;
+  }
+
+  function svgWrap(inner) {
+    return `<svg width="${SVG_W}" height="${SVG_H}" overflow="visible"
+      xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  }
+
+  // ---- 6 variaties ----
+  function bouwVar(i, v) {
+    const [v0, v1, v2, v3] = v;
+
+    if (i === 1) return basisFig(v) + hlLijn(v1, v2);
+
+    if (i === 2 || i === 3) {
+      const d02 = Math.hypot(v2.x - v0.x, v2.y - v0.y);
+      const d13 = Math.hypot(v3.x - v1.x, v3.y - v1.y);
+      const kort = d02 < d13 ? [v0, v2] : [v1, v3];
+      const lang = d02 < d13 ? [v1, v3] : [v0, v2];
+      return basisFig(v) + hlLijn(...(i === 2 ? kort : lang));
+    }
+
+    if (i === 4) {
+      const P = { x: v0.x + 0.15 * (v1.x - v0.x), y: v0.y + 0.15 * (v1.y - v0.y) };
+      const Q = { x: v3.x + 0.85 * (v2.x - v3.x), y: v3.y + 0.85 * (v2.y - v3.y) };
+      return basisFig(v) + hlLijn(P, Q);
+    }
+
+    if (i === 5) return hoogteFig(v, v0);  // voet binnen segment
+    if (i === 6) return hoogteFig(v, v1);  // voet buiten segment → drager
+  }
+
+  // ---- Renderen ----
+  let verts = genPara();
+
+  function render() {
+    for (let i = 1; i <= 6; i++) {
+      document.getElementById(`fig${i}`).innerHTML = svgWrap(bouwVar(i, verts));
+    }
+  }
+
+  document.getElementById('newBtn').addEventListener('click', () => {
+    verts = genPara();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

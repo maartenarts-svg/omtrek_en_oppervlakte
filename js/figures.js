@@ -50,6 +50,7 @@ const FIGUUR_STIJL = {
   fontFamily:   'Arial, sans-serif',
   labelColor:   '#1a1a1a',
   markerColor:  '#3a6a0e',
+  hoogteColor:  '#1565c0',  // kleur voor hoogtelijnen en hun label
   markerSize:   9,      // px – hoekmarkering (rechthoekig teken)
   tickLength:   12,     // px – lengte van gelijkheidsteken
   tickSpacing:  5,      // px – afstand tussen dubbele teken
@@ -207,7 +208,7 @@ function _svgLabel(A, B, tekst, centroid, s) {
 function _buildPolygonSVG(verts, markeringen, labels, w, h, s) {
   const pts = verts.map(v => `${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' ');
   return [
-    `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">`,
+    `<svg width="${w}" height="${h}" overflow="visible" xmlns="http://www.w3.org/2000/svg">`,
     `<polygon points="${pts}" fill="${s.fill}" stroke="${s.stroke}"`,
     `  stroke-width="${s.strokeWidth}" stroke-linejoin="round"/>`,
     markeringen,
@@ -517,7 +518,7 @@ function drawCirkel(container, opts = {}) {
   const lbl = _fmt(str, factor);
 
   const svg = [
-    `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`,
+    `<svg width="${svgWidth}" height="${svgHeight}" overflow="visible" xmlns="http://www.w3.org/2000/svg">`,
     `<circle cx="${cx}" cy="${cy}" r="${r}"`,
     `  fill="${s.fill}" stroke="${s.stroke}" stroke-width="${s.strokeWidth}"/>`,
     // Straalstreep
@@ -578,6 +579,130 @@ function drawVierhoek(container, opts = {}) {
   container.innerHTML = _buildPolygonSVG(verts, '', l, svgWidth, svgHeight, s);
 }
 
+/**
+ * Parallellogram met hoogte-aanduiding
+ *
+ * @param {HTMLElement|string} container
+ * @param {Object} opts
+ *   factor       {number}
+ *   rotation     {number}  Rotatie in graden (default: 0)
+ *   basis        {{value, unit}}  Lange zijden (default: { value: 3,   unit: 'cm' })
+ *   zijde        {{value, unit}}  Schuine zijden (default: { value: 2.2, unit: 'cm' })
+ *   welkeHoogte  {'links'|'rechts'}  Vanuit welk basishoekpunt de hoogte getekend wordt.
+ *                  'rechts' → voet binnen segment (schone lijn)
+ *                  'links'  → voet buiten segment (met drager)
+ *                  Weggelaten of andere waarde → random
+ *   svgWidth     {number}  (default: 320)
+ *   svgHeight    {number}  (default: 260)
+ *
+ * De hoogte wordt loodrecht getekend vanuit een basishoekpunt op de overstaande zijde.
+ * De hoogte-waarde wordt berekend als zijde × sin(binnenhoek) en naast de lijn geplaatst.
+ */
+function drawParallellogramHoogte(container, opts = {}) {
+  container = _resolveContainer(container);
+  const { factor = 1, rotation = 0,
+    svgWidth = _WP, svgHeight = _H } = opts;
+  const s     = Object.assign({}, FIGUUR_STIJL, opts.stijl);
+  const basis = opts.basis || { value: 3,   unit: 'cm' };
+  const zij   = opts.zijde || { value: 2.2, unit: 'cm' };
+  const pad   = _PAD;
+
+  const base = [
+    { x: 45,  y: 0  },
+    { x: 215, y: 0  },
+    { x: 170, y: 90 },
+    { x: 0,   y: 90 },
+  ];
+  const verts = _transformVertices(base, rotation, pad, pad, svgWidth - 2 * pad, svgHeight - 2 * pad);
+  const c     = _centroid(verts);
+
+  let m = '';
+  m += _svgParallelPijl(verts[0], verts[1], 2, s);
+  m += _svgParallelPijl(verts[3], verts[2], 2, s);
+  m += _svgParallelPijl(verts[1], verts[2], 1, s);
+  m += _svgParallelPijl(verts[3], verts[0], 1, s);
+
+  // Welk basishoekpunt EERST bepalen (beïnvloedt welke labels worden getoond)
+  let welke = opts.welkeHoogte;
+  if (welke !== 'links' && welke !== 'rechts') welke = Math.random() < 0.5 ? 'links' : 'rechts';
+  // verts[3] = linker basishoekpunt → voet buiten segment (drager nodig)
+  // verts[2] = rechter basishoekpunt → voet binnen segment
+  const vanPunt      = welke === 'links' ? verts[3] : verts[2];
+  const anderBasisPt = welke === 'links' ? verts[2] : verts[3];
+
+  // Labels: alleen de onderste basis + de schuine zijde NIET aangrenzend aan vanPunt.
+  // De overstaande zijde (verts[0]→verts[1]) en de zijde die vanPunt deelt met de hoogte
+  // worden weggelaten omdat ze te dicht bij de hoogtelijn liggen.
+  let l = '';
+  l += _svgLabel(verts[2], verts[3], _fmt(basis, factor), c, s);
+  if (welke === 'links') {
+    l += _svgLabel(verts[1], verts[2], _fmt(zij, factor), c, s);
+  } else {
+    l += _svgLabel(verts[3], verts[0], _fmt(zij, factor), c, s);
+  }
+
+  // Loodrechte voet van vanPunt op de overstaande zijde verts[0]→verts[1]
+  const A = verts[0], B = verts[1];
+  const dx = B.x - A.x, dy = B.y - A.y;
+  const t  = ((vanPunt.x - A.x) * dx + (vanPunt.y - A.y) * dy) / (dx * dx + dy * dy);
+  const F  = { x: A.x + t * dx, y: A.y + t * dy };
+
+  // Drager als voet buiten segment valt
+  if (t < 0 || t > 1) {
+    const grens  = t < 0 ? A : B;
+    const udx    = F.x - grens.x, udy = F.y - grens.y;
+    const ul     = Math.hypot(udx, udy) || 1;
+    const draEnd = { x: F.x + (udx / ul) * 14, y: F.y + (udy / ul) * 14 };
+    m += `<line x1="${grens.x.toFixed(1)}" y1="${grens.y.toFixed(1)}" ` +
+         `x2="${draEnd.x.toFixed(1)}" y2="${draEnd.y.toFixed(1)}" ` +
+         `stroke="#aaa" stroke-width="1.5" stroke-dasharray="7,4"/>`;
+  }
+
+  // Hoogtelijn
+  m += `<line x1="${vanPunt.x.toFixed(1)}" y1="${vanPunt.y.toFixed(1)}" ` +
+       `x2="${F.x.toFixed(1)}" y2="${F.y.toFixed(1)}" ` +
+       `stroke="${s.hoogteColor}" stroke-width="2" stroke-linecap="round"/>`;
+
+  // Winkelhaakjes op vanPunt en op de voet F (in hoogteColor)
+  const sH = Object.assign({}, s, { markerColor: s.hoogteColor });
+  m += _svgHoekTeken(vanPunt, F, anderBasisPt, sH);
+  m += _svgHoekTeken(F, vanPunt, verts[1], sH);
+
+  // Hoogte-waarde: zijde × sin(binnenhoek); sin uit de vaste basisvorm: 90/|zijdevector|
+  const sinA = 90 / Math.sqrt(45 * 45 + 90 * 90);
+  const hVal = (zij.value || 0) * (factor || 1) * sinA;
+  // Afronden op evenveel decimalen als de zijde met de meeste decimalen
+  const _nDec = v => { const s = String(Math.round(v * 10000) / 10000); const i = s.indexOf('.'); return i === -1 ? 0 : s.length - i - 1; };
+  const decimals = Math.max(_nDec((basis.value || 0) * (factor || 1)), _nDec((zij.value || 0) * (factor || 1)));
+  const hTekst   = hVal.toFixed(decimals).replace('.', ',') + (zij.unit ? ` ${zij.unit}` : '');
+
+  // Label op middelpunt van de hoogtelijn, loodrecht.
+  // 'rechts': hoogte ligt binnen het figuur → label naar de binnenkant (richting centroid)
+  //           om verwarring met de schuine zijde te vermijden.
+  // 'links':  hoogte loopt buiten via drager → label naar de buitenkant (weg van centroid).
+  const mx   = (vanPunt.x + F.x) / 2, my = (vanPunt.y + F.y) / 2;
+  const hlDx = F.x - vanPunt.x,       hlDy = F.y - vanPunt.y;
+  const hlL  = Math.hypot(hlDx, hlDy) || 1;
+  const nAx  = -hlDy / hlL,           nAy  = hlDx / hlL;
+  const dot  = nAx * (mx - c.x) + nAy * (my - c.y);
+  const flip = welke === 'rechts' ? -1 : 1;
+  const nx   = flip * (dot >= 0 ? nAx : -nAx), ny = flip * (dot >= 0 ? nAy : -nAy);
+  const lx   = mx + nx * s.labelOffset;
+  const ly   = my + ny * s.labelOffset;
+
+  let anchor = 'middle';
+  if (nx > 0.3) anchor = 'start'; else if (nx < -0.3) anchor = 'end';
+  let baseline = 'middle';
+  if (ny > 0.35) baseline = 'hanging'; else if (ny < -0.35) baseline = 'auto';
+
+  l += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ` +
+       `text-anchor="${anchor}" dominant-baseline="${baseline}" ` +
+       `font-family="${s.fontFamily}" font-size="${s.fontSize}" ` +
+       `fill="${s.hoogteColor}">${hTekst}</text>`;
+
+  container.innerHTML = _buildPolygonSVG(verts, m, l, svgWidth, svgHeight, s);
+}
+
 // ============================================================
 // PUBLIEKE API
 // ============================================================
@@ -587,19 +712,21 @@ function drawVierhoek(container, opts = {}) {
  *
  * @param {HTMLElement|string} container  Element of CSS-selector
  * @param {string} type  'vierkant' | 'rechthoek' | 'driehoek' | 'trapezium' |
- *                       'ruit' | 'parallellogram' | 'cirkel' | 'vierhoek'
+ *                       'ruit' | 'parallellogram' | 'parallellogram-hoogte' |
+ *                       'cirkel' | 'vierhoek'
  * @param {Object} opts  Zie de afzonderlijke tekenfuncties hierboven
  */
 function drawFiguur(container, type, opts) {
   const functies = {
-    vierkant:       drawVierkant,
-    rechthoek:      drawRechthoek,
-    driehoek:       drawDriehoek,
-    trapezium:      drawTrapezium,
-    ruit:           drawRuit,
-    parallellogram: drawParallellogram,
-    cirkel:         drawCirkel,
-    vierhoek:       drawVierhoek,
+    vierkant:               drawVierkant,
+    rechthoek:              drawRechthoek,
+    driehoek:               drawDriehoek,
+    trapezium:              drawTrapezium,
+    ruit:                   drawRuit,
+    parallellogram:         drawParallellogram,
+    'parallellogram-hoogte': drawParallellogramHoogte,
+    cirkel:                 drawCirkel,
+    vierhoek:               drawVierhoek,
   };
   const fn = functies[type];
   if (fn) {

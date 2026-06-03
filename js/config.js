@@ -284,6 +284,90 @@ const LESSONS_CONFIG = {
           scoreA: 85,
           scoreB: 70
         }
+      },
+      {
+        id: 'part-4',
+        type: 'exercise',
+        title: 'Oppervlakte berekenen',
+        exerciseType: '5-4-oppervlakte-rechthoek',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-5',
+        type: 'exercise',
+        title: 'Instap: oppervlakte parallellogram',
+        exerciseType: '5-5-instap-parallellogram',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 75,
+          scoreB: 50
+        }
+      },
+      {
+        id: 'part-6',
+        type: 'video',
+        title: 'Oppervlakte van een parallellogram',
+        videoUrl: '',
+        xpReward: 20
+      },
+      {
+        id: 'part-7',
+        type: 'exercise',
+        title: 'Hoogte van een parallellogram herkennen',
+        exerciseType: '5-7-hoogte-parallellogram',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 75
+        }
+      },
+      {
+        id: 'part-8',
+        type: 'exercise',
+        title: 'Formules inprenten: parallellogram',
+        exerciseType: '5-8-formules-drill',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 70
+        }
+      },
+      {
+        id: 'part-9',
+        type: 'exercise',
+        title: 'Oppervlakte berekenen: parallellogram',
+        exerciseType: '5-9-oppervlakte-parallellogram',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-10',
+        type: 'exercise',
+        title: 'Gemengd: omtrek en oppervlakte parallellogram',
+        exerciseType: '5-10-parallellogram-gemengd',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-11',
+        type: 'exercise',
+        title: 'Alles gemengd: omtrek en oppervlakte',
+        exerciseType: '5-11-alles-gemengd',
+        xpReward: 80,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 65
+        }
       }
     ]
   },
