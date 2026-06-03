@@ -271,7 +271,7 @@ const LESSONS_CONFIG = {
         id: 'part-2',
         type: 'video',
         title: 'Oppervlakte van rechthoek en vierkant',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1vIzbgmg_p3VzmPJ2J8KeYfnWxMWJCdYK/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -311,7 +311,7 @@ const LESSONS_CONFIG = {
         id: 'part-6',
         type: 'video',
         title: 'Oppervlakte van een parallellogram',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1qBgc5eJObLwP0lRFA7XEpEiOjEoprICx/view?usp=drive_link',
         xpReward: 20
       },
       {
