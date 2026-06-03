@@ -278,6 +278,40 @@ async function checkBadgeCriteria(badgeConfig, userData, lessonId) {
                 );
             });
             
+        case 'all-first-attempt': {
+            // Som van attempts over alle delen van targetLesson moet gelijk zijn aan het aantal delen
+            const targetLesson = criteria.targetLesson;
+            const lesson = getLessonById(targetLesson);
+            if (!lesson) return false;
+
+            const lessonProgress = userData.progress?.[targetLesson];
+            if (!lessonProgress?.completed) return false;
+
+            const totalParts = lesson.parts.length;
+            const totalAttempts = lesson.parts.reduce((sum, part) => {
+                return sum + (lessonProgress.parts?.[part.id]?.attempts || 0);
+            }, 0);
+
+            return totalAttempts === totalParts;
+        }
+
+        case 'near-perfect-attempts': {
+            // Som van attempts over alle delen van targetLesson moet gelijk zijn aan aantal delen + 1
+            const targetLesson = criteria.targetLesson;
+            const lesson = getLessonById(targetLesson);
+            if (!lesson) return false;
+
+            const lessonProgress = userData.progress?.[targetLesson];
+            if (!lessonProgress?.completed) return false;
+
+            const totalParts = lesson.parts.length;
+            const totalAttempts = lesson.parts.reduce((sum, part) => {
+                return sum + (lessonProgress.parts?.[part.id]?.attempts || 0);
+            }, 0);
+
+            return totalAttempts === totalParts + 1;
+        }
+
         default:
             return false;
     }

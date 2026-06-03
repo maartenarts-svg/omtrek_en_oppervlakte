@@ -482,6 +482,39 @@ const BADGES_CONFIG = {
       weekNumber: 2,
       beforeDate: '2026-05-29'
     }
+  },
+  'week-3-speedster': {
+    weekNumber: 3,
+    title: 'Speedster',
+    description: 'Alle oefeningen afgemaakt voor zaterdagavond',
+    icon: '⚡',
+    criteria: {
+      type: 'deadline-early',
+      weekNumber: 3,
+      beforeDate: '2026-06-07'
+    }
+  },
+  'week-3-bovennatuurlijk': {
+    weekNumber: 3,
+    title: 'Bovennatuurlijk',
+    description: 'Alle oefeningen van de eerste keer geslaagd',
+    icon: '✨',
+    criteria: {
+      type: 'all-first-attempt',
+      weekNumber: 3,
+      targetLesson: 'les-5'
+    }
+  },
+  'week-3-knappe-kop': {
+    weekNumber: 3,
+    title: 'Knappe kop',
+    description: 'Eén oefening een tweede keer geprobeerd, de rest van de eerste keer geslaagd',
+    icon: '🧠',
+    criteria: {
+      type: 'near-perfect-attempts',
+      weekNumber: 3,
+      targetLesson: 'les-5'
+    }
   }
   // Voeg wekelijks badges toe
 };
