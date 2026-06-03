@@ -351,6 +351,8 @@
     <script src="../js/exercise-4-3-eenheden-kiezen.js"></script>
     <script src="../js/exercise-4-5-eenheden-omzetten.js"></script>
     <script src="../js/exercise-4-6-eenheden-omzetten-oefenen.js"></script>
+    <script src="../js/exercise-5-1-instap-oppervlakte.js"></script>
+    <script src="../js/exercise-5-3-formules-drill.js"></script>
 
     <script>
         let userData = null;
@@ -615,6 +617,10 @@
                 initOppervlakteEenhedenOmzetten(container, handleExerciseComplete);
             } else if (part.exerciseType === '4-6-eenheden-omzetten-oefenen') {
                 initOppervlakteEenhedenOmzettenOefenen(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-1-instap-oppervlakte') {
+                init51InstapOppervlakte(container, handleExerciseComplete);
+            } else if (part.exerciseType === '5-3-formules-drill') {
+                init53FormulasDrill(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `

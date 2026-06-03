@@ -256,7 +256,35 @@ const LESSONS_CONFIG = {
     order: 5,
     theorySection: "theorie-5",
     parts: [
-      // Voeg later toe
+      {
+        id: 'part-1',
+        type: 'exercise',
+        title: 'Instap: oppervlakte tellen en berekenen',
+        exerciseType: '5-1-instap-oppervlakte',
+        xpReward: 40,
+        passingCriteria: {
+          scoreA: 100,
+          scoreB: 75
+        }
+      },
+      {
+        id: 'part-2',
+        type: 'video',
+        title: 'Oppervlakte van rechthoek en vierkant',
+        videoUrl: '',
+        xpReward: 20
+      },
+      {
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Formules inprenten',
+        exerciseType: '5-3-formules-drill',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 70
+        }
+      }
     ]
   },
   'les-6': {
