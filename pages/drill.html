@@ -5,6 +5,286 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oefenen - Wiskunde Leerplatform</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/exercise-styles.css">
+    <style>
+        .drill-container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* ── Formule-overzicht ── */
+        .fo-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .fo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            font-size: var(--font-size-large);
+            cursor: pointer;
+            user-select: none;
+            transition: background var(--transition-fast);
+        }
+
+        .fo-header:hover { filter: brightness(1.08); }
+
+        .fo-header-good {
+            background: var(--color-secondary);
+            color: #1a4d1a;
+        }
+
+        .fo-arrow { font-size: var(--font-size-small); }
+
+        .fo-body {
+            padding: var(--spacing-lg) var(--spacing-xl);
+        }
+
+        .fo-subtitle {
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-dark);
+        }
+
+        .fo-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .fo-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-danger);
+            border-radius: var(--radius-md);
+        }
+
+        .fo-item-known {
+            background: var(--color-success);
+        }
+
+        .fo-label {
+            font-size: var(--font-size-base);
+            min-width: 200px;
+        }
+
+        .fo-answer {
+            font-size: var(--font-size-base);
+            font-weight: 700;
+            color: #721c24;
+            font-family: monospace;
+        }
+
+        .fo-answer-known {
+            font-size: var(--font-size-base);
+            font-weight: 700;
+            color: #1a4d1a;
+            font-family: monospace;
+        }
+
+        .fo-btn { margin-top: var(--spacing-sm); }
+
+        /* ── Tegel-overzicht ── */
+        .drill-group {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .drill-group-title {
+            font-size: var(--font-size-h2);
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        .drill-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .drill-tile {
+            background: white;
+            border: 2px solid var(--color-gray);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            min-height: 140px;
+        }
+
+        .drill-tile:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+
+        .drill-tile-icon {
+            font-size: 2rem;
+        }
+
+        .drill-tile-title {
+            font-size: var(--font-size-base);
+            font-weight: 700;
+            color: var(--color-dark);
+            line-height: 1.3;
+        }
+
+        .drill-tile-desc {
+            font-size: var(--font-size-small);
+            color: #666;
+            flex: 1;
+        }
+
+        .drill-tile-badge {
+            align-self: flex-start;
+            font-size: var(--font-size-small);
+            font-weight: 700;
+            padding: 2px var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            margin-top: var(--spacing-xs);
+        }
+
+        .drill-tile-badge.score-A {
+            background: var(--color-success);
+            color: #2d6a2d;
+        }
+
+        .drill-tile-badge.score-B {
+            background: var(--color-warning);
+            color: #7a5500;
+        }
+
+        .drill-tile-badge.score-C {
+            background: var(--color-danger);
+            color: #721c24;
+        }
+
+        .drill-tile-badge.score-none {
+            background: var(--color-gray);
+            color: #888;
+        }
+
+        /* ── Oefenoverlay ── */
+        .drill-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--color-light);
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .drill-overlay.active {
+            display: block;
+        }
+
+        .drill-overlay-header {
+            background: white;
+            border-bottom: 1px solid var(--color-gray);
+            padding: var(--spacing-md) var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .drill-back-btn {
+            background: none;
+            border: none;
+            font-size: var(--font-size-large);
+            cursor: pointer;
+            color: var(--color-primary);
+            font-weight: 600;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: background var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .drill-back-btn:hover {
+            background: var(--color-light);
+        }
+
+        .drill-overlay-title {
+            font-size: var(--font-size-large);
+            font-weight: 700;
+            color: var(--color-dark);
+        }
+
+        .drill-overlay-body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+        }
+
+        /* ── Afrondingsscherm ── */
+        .drill-completion {
+            display: none;
+            text-align: center;
+            padding: var(--spacing-xxl);
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-xl);
+        }
+
+        .drill-completion.active {
+            display: block;
+        }
+
+        .drill-completion h2 {
+            font-size: var(--font-size-h1);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .drill-completion-score {
+            font-size: 64px;
+            font-weight: 700;
+            padding: var(--spacing-md) var(--spacing-xxl);
+            border-radius: var(--radius-lg);
+            display: inline-block;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .drill-completion-score.score-A {
+            background: var(--color-success);
+            color: #2d6a2d;
+        }
+
+        .drill-completion-score.score-B {
+            background: var(--color-warning);
+            color: #7a5500;
+        }
+
+        .drill-completion-score.score-C {
+            background: var(--color-danger);
+            color: #721c24;
+        }
+
+        .drill-completion-msg {
+            font-size: var(--font-size-large);
+            color: #555;
+            margin-bottom: var(--spacing-xl);
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -25,145 +305,149 @@
             </div>
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar">?</div>
-                <span class="user-name">Leerling</span>
+                <span class="user-name" id="userName">Leerling</span>
             </div>
             <button class="btn btn-secondary btn-small" onclick="logout()">Uitloggen</button>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Tegel-overzicht -->
     <main class="main-content">
-        <div class="content-section">
+        <div class="drill-container">
             <h1>💪 Oefenen</h1>
-            <p class="text-muted">Oefen formules en eenheden tot je ze perfect kent!</p>
-            
-            <!-- Mode Selector -->
-            <div class="drill-mode-selector">
-                <button class="drill-mode-btn active" data-mode="formulas" onclick="switchDrillMode('formulas')">
-                    📝 Formules Inprenten
-                </button>
-                <button class="drill-mode-btn" data-mode="units" onclick="switchDrillMode('units')">
-                    📏 Eenheden Omzetten
-                </button>
+            <p class="text-muted" style="margin-bottom:var(--spacing-xxl);">Kies een oefening om te starten. Je kunt oefeningen zo vaak herhalen als je wilt.</p>
+
+            <!-- Formule-overzicht -->
+            <div id="formulaOverviewCard" style="margin-bottom:var(--spacing-xxl);"></div>
+
+            <!-- Groep: Eenheden -->
+            <div class="drill-group">
+                <h2 class="drill-group-title">📏 Eenheden</h2>
+                <div class="drill-tiles" id="tilesEenheden"></div>
             </div>
 
-            <!-- Stats -->
-            <div class="drill-stats">
-                <div class="drill-stat">
-                    <span class="drill-stat-label">Vandaag geoefend:</span>
-                    <span class="drill-stat-value" id="todayCount">0</span>
-                </div>
-                <div class="drill-stat">
-                    <span class="drill-stat-label">Totaal deze week:</span>
-                    <span class="drill-stat-value" id="weekCount">0</span>
-                </div>
-            </div>
-
-            <!-- FORMULAS MODE -->
-            <div id="formulasMode" class="drill-content active">
-                <div class="drill-card">
-                    <div id="formulaQuestion" class="drill-question">
-                        <!-- Wordt via JS ingevuld -->
-                    </div>
-                    
-                    <div class="drill-input-area">
-                        <input type="text" 
-                               id="formulaInput" 
-                               class="drill-input" 
-                               placeholder="Typ de formule..."
-                               autocomplete="off">
-                        <button class="btn btn-primary" onclick="checkFormulaAnswer()">
-                            Controleren
-                        </button>
-                    </div>
-                    
-                    <div id="formulaFeedback" class="drill-feedback hidden">
-                        <!-- Feedback komt hier -->
-                    </div>
-                </div>
-                
-                <div class="drill-progress">
-                    <div class="progress-label">Voortgang:</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="formulaProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="formulasMastered">0</span> / <span id="formulasTotal">0</span> gekend
-                    </div>
-                </div>
-            </div>
-
-            <!-- UNITS MODE -->
-            <div id="unitsMode" class="drill-content hidden">
-                <div class="drill-card">
-                    <div id="unitQuestion" class="drill-question">
-                        <!-- Wordt via JS ingevuld -->
-                    </div>
-                    
-                    <div class="drill-input-area">
-                        <input type="number" 
-                               id="unitInput" 
-                               class="drill-input" 
-                               placeholder="Typ het antwoord..."
-                               step="any"
-                               autocomplete="off">
-                        <button class="btn btn-primary" onclick="checkUnitAnswer()">
-                            Controleren
-                        </button>
-                    </div>
-                    
-                    <div id="unitFeedback" class="drill-feedback hidden">
-                        <!-- Feedback komt hier -->
-                    </div>
-                </div>
-                
-                <div class="drill-progress">
-                    <div class="progress-label">Voortgang:</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="unitProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="unitsCorrect">0</span> / <span id="unitsTotal">10</span> correct
-                    </div>
-                </div>
+            <!-- Groep: Omtrek en oppervlakte -->
+            <div class="drill-group">
+                <h2 class="drill-group-title">📐 Omtrek en oppervlakte</h2>
+                <div class="drill-tiles" id="tilesOmtrekOppervlakte"></div>
             </div>
         </div>
     </main>
+
+    <!-- Oefenoverlay -->
+    <div class="drill-overlay" id="drillOverlay">
+        <div class="drill-overlay-header">
+            <button class="drill-back-btn" onclick="closeOverlay()">← Terug naar keuze</button>
+            <span class="drill-overlay-title" id="overlayTitle"></span>
+        </div>
+        <div class="drill-overlay-body">
+            <div id="exerciseContainer" class="exercise-container"></div>
+            <div class="drill-completion" id="drillCompletion">
+                <h2 id="completionEmoji">✅ Oefening voltooid!</h2>
+                <div class="drill-completion-score" id="completionScore"></div>
+                <p class="drill-completion-msg" id="completionMsg"></p>
+                <div style="display:flex;gap:var(--spacing-md);justify-content:center;flex-wrap:wrap;">
+                    <button class="btn btn-primary btn-large" onclick="closeOverlay()">Terug naar keuze</button>
+                    <button class="btn btn-secondary btn-large" id="retryBtn">Opnieuw oefenen</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- App Scripts -->
     <script src="../js/firebase-config.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
-    
+
+    <!-- Drill Exercise Scripts -->
+    <script src="../js/figures.js"></script>
+    <script src="../js/exercise-drill-lengte-eenheden.js"></script>
+    <script src="../js/exercise-drill-omtrek-schatten.js"></script>
+    <script src="../js/exercise-drill-oppervlakte-eenheden.js"></script>
+    <script src="../js/exercise-drill-oppervlakte-schatten.js"></script>
+    <script src="../js/exercise-drill-formules.js"></script>
+    <script src="../js/exercise-drill-omtrek-berekenen.js"></script>
+    <script src="../js/exercise-drill-oppervlakte-berekenen.js"></script>
+    <script src="../js/exercise-drill-gemengd.js"></script>
+
     <script>
-        let userData = null;
-        let currentUser = null;
-        let currentMode = 'formulas';
-        
-        // Formulas drill state
-        let formulas = [
-            { question: 'Omtrek van een rechthoek', answer: 'O=2l+2b', alternatives: ['O=2*l+2*b', 'O=2b+2l'] },
-            { question: 'Omtrek van een vierkant', answer: 'O=4z', alternatives: ['O=4*z'] },
-            { question: 'Omtrek van een cirkel', answer: 'O=2πr', alternatives: ['O=2*π*r', 'O=πd', 'O=π*d'] },
-            { question: 'Oppervlakte van een rechthoek', answer: 'A=l×b', alternatives: ['A=l*b', 'A=b×l', 'A=b*l'] },
-            { question: 'Oppervlakte van een vierkant', answer: 'A=z²', alternatives: ['A=z*z', 'A=z×z'] },
-            { question: 'Oppervlakte van een cirkel', answer: 'A=πr²', alternatives: ['A=π*r²', 'A=π*r*r'] },
-            { question: 'Oppervlakte van een driehoek', answer: 'A=(b×h)/2', alternatives: ['A=(b*h)/2', 'A=b×h/2', 'A=b*h/2'] }
+        const DRILL_EXERCISES = [
+            {
+                id: 'drill-lengte-eenheden',
+                group: 'eenheden',
+                icon: '📏',
+                title: 'Lengte-eenheden omzetten',
+                desc: 'Zet lengtematen om (km, m, cm, mm …)',
+                init: initDrillLengteEenheden
+            },
+            {
+                id: 'drill-omtrek-schatten',
+                group: 'eenheden',
+                icon: '🔍',
+                title: 'Omtrek schatten',
+                desc: 'Schat de omtrek van figuren',
+                init: initDrillOmtrekSchatten
+            },
+            {
+                id: 'drill-oppervlakte-eenheden',
+                group: 'eenheden',
+                icon: '🟦',
+                title: 'Oppervlakte-eenheden omzetten',
+                desc: 'Zet oppervlaktematen om (m², cm², mm² …)',
+                init: initDrillOppervlakteEenheden
+            },
+            {
+                id: 'drill-oppervlakte-schatten',
+                group: 'eenheden',
+                icon: '🔎',
+                title: 'Oppervlakte schatten',
+                desc: 'Schat de oppervlakte van figuren',
+                init: initDrillOppervlakteSchatten
+            },
+            {
+                id: 'drill-formules',
+                group: 'omtrek-oppervlakte',
+                icon: '📝',
+                title: 'Formules inoefenen',
+                desc: 'Ken de formules voor omtrek en oppervlakte',
+                init: initDrillFormules
+            },
+            {
+                id: 'drill-omtrek-berekenen',
+                group: 'omtrek-oppervlakte',
+                icon: '🔵',
+                title: 'Omtrek berekenen',
+                desc: 'Bereken de omtrek van verschillende figuren',
+                init: initDrillOmtrekBerekenen
+            },
+            {
+                id: 'drill-oppervlakte-berekenen',
+                group: 'omtrek-oppervlakte',
+                icon: '🟩',
+                title: 'Oppervlakte berekenen',
+                desc: 'Bereken de oppervlakte van verschillende figuren',
+                init: initDrillOppervlakteBerekenen
+            },
+            {
+                id: 'drill-gemengd',
+                group: 'omtrek-oppervlakte',
+                icon: '🎯',
+                title: 'Omtrek en oppervlakte berekenen',
+                desc: 'Gemengde oefeningen: omtrek én oppervlakte',
+                init: initDrillGemengd
+            }
         ];
-        let remainingFormulas = [];
-        let masteredFormulas = [];
-        let currentFormula = null;
-        
-        // Units drill state
-        let unitQuestions = [];
-        let currentUnitQuestion = null;
-        let unitsCorrect = 0;
-        let unitsTotal = 10;
+
+        let currentUser = null;
+        let userData = null;
+        let activeExercise = null;
+
+        // ── Initialisatie ──────────────────────────────────────────
 
         async function initDrill() {
             currentUser = checkAuth();
@@ -171,390 +455,215 @@
 
             const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = currentUser.name;
 
             userData = await DB.getUser(currentUser.email);
             if (!userData) return;
 
             document.getElementById('totalXP').textContent = userData.totalXP || 0;
 
-            // Initialize formulas
-            resetFormulas();
-            showNextFormula();
-            
-            // Setup enter key
-            document.getElementById('formulaInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkFormulaAnswer();
-            });
-            document.getElementById('unitInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkUnitAnswer();
-            });
+            renderTiles();
+            renderFormulaOverview();
         }
 
-        function switchDrillMode(mode) {
-            currentMode = mode;
-            
-            // Update buttons
-            document.querySelectorAll('.drill-mode-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-            
-            // Update content
-            document.querySelectorAll('.drill-content').forEach(content => {
-                content.classList.remove('active');
-                content.classList.add('hidden');
-            });
-            
-            if (mode === 'formulas') {
-                document.getElementById('formulasMode').classList.remove('hidden');
-                document.getElementById('formulasMode').classList.add('active');
-                showNextFormula();
+        // ── Formule-overzicht ──────────────────────────────────────
+
+        const FORMULA_DISPLAY = [
+            { id: 'P_vierkant',       label: 'P<sub>vierkant</sub>',       answer: '4z'                },
+            { id: 'P_rechthoek',      label: 'P<sub>rechthoek</sub>',      answer: '2(b+h)'            },
+            { id: 'P_ruit',           label: 'P<sub>ruit</sub>',           answer: '4z'                },
+            { id: 'P_cirkel',         label: 'P<sub>cirkel</sub>',         answer: '2πr'               },
+            { id: 'P_driehoek',       label: 'P<sub>driehoek</sub>',       answer: 'som van de zijden' },
+            { id: 'P_parallellogram', label: 'P<sub>parallellogram</sub>', answer: 'som van de zijden' },
+            { id: 'P_trapezium',      label: 'P<sub>trapezium</sub>',      answer: 'som van de zijden' },
+            { id: 'A_rechthoek',      label: 'A<sub>rechthoek</sub>',      answer: 'bh'                },
+            { id: 'A_vierkant',       label: 'A<sub>vierkant</sub>',       answer: 'z²'                },
+            { id: 'A_parallellogram', label: 'A<sub>parallellogram</sub>', answer: 'bh'                },
+        ];
+
+        function renderFormulaOverview() {
+            const card = document.getElementById('formulaOverviewCard');
+            const data = userData.drillFormules;
+            if (!data || !data.results) { card.innerHTML = ''; return; }
+
+            const unknown  = FORMULA_DISPLAY.filter(f => !data.results[f.id]);
+            const allKnown = unknown.length === 0;
+            const expanded = !allKnown;
+
+            if (allKnown) {
+                card.innerHTML = `
+                    <div class="fo-card">
+                        <div class="fo-header fo-header-good" onclick="toggleFormulaOverview()">
+                            <span>✅ Je kent alle formules!</span>
+                            <span class="fo-arrow" id="foArrow">▼</span>
+                        </div>
+                        <div class="fo-body" id="foBody" style="display:none;">
+                            <div class="fo-list">
+                                ${FORMULA_DISPLAY.map(f => `
+                                    <div class="fo-item fo-item-known">
+                                        <span class="fo-label">${f.label} =</span>
+                                        <span class="fo-answer-known">${f.answer}</span>
+                                    </div>`).join('')}
+                            </div>
+                            <button class="btn btn-secondary fo-btn" onclick="openExercise('drill-formules')">
+                                Opnieuw oefenen
+                            </button>
+                        </div>
+                    </div>`;
             } else {
-                document.getElementById('unitsMode').classList.remove('hidden');
-                document.getElementById('unitsMode').classList.add('active');
-                generateUnitQuestion();
+                card.innerHTML = `
+                    <div class="fo-card">
+                        <div class="fo-header" onclick="toggleFormulaOverview()">
+                            <span>📋 Mijn formule-overzicht</span>
+                            <span class="fo-arrow" id="foArrow">▲</span>
+                        </div>
+                        <div class="fo-body" id="foBody">
+                            <p class="fo-subtitle">Deze formules ken je nog niet goed:</p>
+                            <div class="fo-list">
+                                ${unknown.map(f => `
+                                    <div class="fo-item">
+                                        <span class="fo-label">${f.label} =</span>
+                                        <span class="fo-answer">${f.answer}</span>
+                                    </div>`).join('')}
+                            </div>
+                            <button class="btn btn-primary fo-btn" onclick="openExercise('drill-formules')">
+                                Oefen nu →
+                            </button>
+                        </div>
+                    </div>`;
             }
         }
 
-        // ============================================
-        // FORMULAS MODE
-        // ============================================
-
-        function resetFormulas() {
-            remainingFormulas = [...formulas];
-            masteredFormulas = [];
-            updateFormulaProgress();
+        function toggleFormulaOverview() {
+            const body  = document.getElementById('foBody');
+            const arrow = document.getElementById('foArrow');
+            if (!body || !arrow) return;
+            const open = body.style.display === 'none';
+            body.style.display = open ? 'block' : 'none';
+            arrow.textContent  = open ? '▲' : '▼';
         }
 
-        function showNextFormula() {
-            if (remainingFormulas.length === 0) {
-                // All mastered!
-                document.getElementById('formulaQuestion').innerHTML = `
-                    <div class="success-message">
-                        <h2>🎉 Perfect!</h2>
-                        <p>Je kent alle formules!</p>
-                        <button class="btn btn-primary" onclick="resetFormulas(); showNextFormula();">
-                            Opnieuw oefenen
-                        </button>
+        // ── Tegels renderen ────────────────────────────────────────
+
+        function renderTiles() {
+            const history = userData.drillHistory || [];
+
+            const lastScores = {};
+            history.forEach(entry => {
+                if (!lastScores[entry.type] || entry.timestamp > lastScores[entry.type].timestamp) {
+                    lastScores[entry.type] = entry;
+                }
+            });
+
+            renderTileGroup('tilesEenheden', 'eenheden', lastScores);
+            renderTileGroup('tilesOmtrekOppervlakte', 'omtrek-oppervlakte', lastScores);
+        }
+
+        function renderTileGroup(containerId, group, lastScores) {
+            const container = document.getElementById(containerId);
+            const exercises = DRILL_EXERCISES.filter(e => e.group === group);
+
+            container.innerHTML = exercises.map(ex => {
+                const last = lastScores[ex.id];
+                const badgeClass = last ? `score-${last.scoreLetter}` : 'score-none';
+                const badgeText = last ? last.scoreLetter : '–';
+
+                return `
+                    <div class="drill-tile" onclick="openExercise('${ex.id}')">
+                        <div class="drill-tile-icon">${ex.icon}</div>
+                        <div class="drill-tile-title">${ex.title}</div>
+                        <div class="drill-tile-desc">${ex.desc}</div>
+                        <div class="drill-tile-badge ${badgeClass}">${badgeText}</div>
                     </div>
                 `;
-                document.querySelector('.drill-input-area').style.display = 'none';
-                return;
-            }
-            
-            document.querySelector('.drill-input-area').style.display = 'flex';
-            
-            // Pick random formula
-            const randomIndex = Math.floor(Math.random() * remainingFormulas.length);
-            currentFormula = remainingFormulas[randomIndex];
-            
-            document.getElementById('formulaQuestion').innerHTML = `
-                <h3>Wat is de formule voor:</h3>
-                <p class="formula-prompt">${currentFormula.question}</p>
-            `;
-            
-            document.getElementById('formulaInput').value = '';
-            document.getElementById('formulaFeedback').classList.add('hidden');
-            document.getElementById('formulaInput').focus();
+            }).join('');
         }
 
-        function checkFormulaAnswer() {
-            const userAnswer = document.getElementById('formulaInput').value.trim().replace(/\s/g, '');
-            const feedback = document.getElementById('formulaFeedback');
-            
-            const correctAnswers = [currentFormula.answer, ...currentFormula.alternatives].map(a => 
-                a.replace(/\s/g, '').toLowerCase()
-            );
-            
-            if (correctAnswers.includes(userAnswer.toLowerCase())) {
-                // Correct!
-                feedback.className = 'drill-feedback success';
-                feedback.innerHTML = '✅ Correct!';
-                feedback.classList.remove('hidden');
-                
-                // Remove from remaining
-                remainingFormulas = remainingFormulas.filter(f => f !== currentFormula);
-                masteredFormulas.push(currentFormula);
-                updateFormulaProgress();
-                
-                // Next question after delay
-                setTimeout(() => {
-                    showNextFormula();
-                }, 1000);
-                
-            } else {
-                // Wrong
-                feedback.className = 'drill-feedback error';
-                feedback.innerHTML = `
-                    ❌ Niet correct. Het juiste antwoord is: <strong>${currentFormula.answer}</strong><br>
-                    <small>Let op: geen spaties, gebruik × of * voor vermenigvuldigen</small>
-                `;
-                feedback.classList.remove('hidden');
-                
-                // Keep in remaining (will come back)
-            }
+        // ── Overlay openen/sluiten ─────────────────────────────────
+
+        function openExercise(exerciseId) {
+            activeExercise = DRILL_EXERCISES.find(e => e.id === exerciseId);
+            if (!activeExercise) return;
+
+            document.getElementById('overlayTitle').textContent = activeExercise.title;
+            document.getElementById('drillCompletion').classList.remove('active');
+
+            const container = document.getElementById('exerciseContainer');
+            container.innerHTML = '';
+            container.style.display = '';
+
+            document.getElementById('drillOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('retryBtn').onclick = () => openExercise(exerciseId);
+
+            activeExercise.init(container, onDrillComplete);
         }
 
-        function updateFormulaProgress() {
-            const progress = (masteredFormulas.length / formulas.length) * 100;
-            document.getElementById('formulaProgress').style.width = progress + '%';
-            document.getElementById('formulasMastered').textContent = masteredFormulas.length;
-            document.getElementById('formulasTotal').textContent = formulas.length;
+        function closeOverlay() {
+            document.getElementById('drillOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            activeExercise = null;
         }
 
-        // ============================================
-        // UNITS MODE
-        // ============================================
+        // ── Oefening voltooien ─────────────────────────────────────
 
-        function generateUnitQuestion() {
-            const conversions = [
-                { from: 'km', to: 'm', factor: 1000 },
-                { from: 'm', to: 'km', factor: 0.001 },
-                { from: 'm', to: 'cm', factor: 100 },
-                { from: 'cm', to: 'm', factor: 0.01 },
-                { from: 'm', to: 'mm', factor: 1000 },
-                { from: 'mm', to: 'm', factor: 0.001 },
-                { from: 'cm', to: 'mm', factor: 10 },
-                { from: 'mm', to: 'cm', factor: 0.1 },
-                { from: 'dm', to: 'cm', factor: 10 },
-                { from: 'cm', to: 'dm', factor: 0.1 }
-            ];
-            
-            const conversion = conversions[Math.floor(Math.random() * conversions.length)];
-            const value = Math.random() < 0.5 ? 
-                Math.floor(Math.random() * 100) + 1 : 
-                (Math.random() * 10).toFixed(1);
-            
-            currentUnitQuestion = {
-                value: parseFloat(value),
-                from: conversion.from,
-                to: conversion.to,
-                answer: parseFloat(value) * conversion.factor
+        async function onDrillComplete(result) {
+            // result = { score, correctAnswers, totalQuestions, letterScore }
+            const letterScore = result.letterScore || calculateLetterScore(result.score);
+
+            // Opslaan in Firebase
+            const entry = {
+                type: activeExercise.id,
+                scorePoints: result.score,
+                scoreLetter: letterScore,
+                timestamp: new Date().toISOString()
             };
-            
-            document.getElementById('unitQuestion').innerHTML = `
-                <h3>Zet om:</h3>
-                <p class="formula-prompt">${currentUnitQuestion.value} ${currentUnitQuestion.from} = ? ${currentUnitQuestion.to}</p>
-            `;
-            
-            document.getElementById('unitInput').value = '';
-            document.getElementById('unitFeedback').classList.add('hidden');
-            document.getElementById('unitInput').focus();
-        }
 
-        function checkUnitAnswer() {
-            const userAnswer = parseFloat(document.getElementById('unitInput').value);
-            const feedback = document.getElementById('unitFeedback');
-            
-            // Allow small floating point errors
-            const tolerance = 0.01;
-            const isCorrect = Math.abs(userAnswer - currentUnitQuestion.answer) < tolerance;
-            
-            if (isCorrect) {
-                feedback.className = 'drill-feedback success';
-                feedback.innerHTML = '✅ Correct!';
-                feedback.classList.remove('hidden');
-                
-                unitsCorrect++;
-                updateUnitProgress();
-                
-                if (unitsCorrect >= unitsTotal) {
-                    // Completed!
-                    setTimeout(() => {
-                        feedback.innerHTML = `
-                            🎉 Perfect! Je hebt ${unitsTotal} omzettingen correct gedaan!<br>
-                            <button class="btn btn-primary" onclick="resetUnits()">Opnieuw oefenen</button>
-                        `;
-                    }, 1000);
-                } else {
-                    setTimeout(() => {
-                        generateUnitQuestion();
-                    }, 1000);
-                }
-                
-            } else {
-                feedback.className = 'drill-feedback error';
-                feedback.innerHTML = `
-                    ❌ Niet correct. Het juiste antwoord is: <strong>${currentUnitQuestion.answer} ${currentUnitQuestion.to}</strong>
-                `;
-                feedback.classList.remove('hidden');
+            await DB.addDrillHistory(currentUser.email, entry);
+
+            // Formule-resultaten opslaan indien aanwezig (drill-formules)
+            if (result.formulaResults) {
+                await DB.saveDrillFormules(currentUser.email, result.formulaResults);
+                userData.drillFormules = result.formulaResults;
+                renderFormulaOverview();
             }
+
+            // Lokale cache bijwerken
+            if (!userData.drillHistory) userData.drillHistory = [];
+            userData.drillHistory.push(entry);
+
+            // Tegels bijwerken (nieuwe score-badge)
+            renderTiles();
+
+            // Afrondingsscherm tonen
+            showCompletion(letterScore, result.score);
         }
 
-        function updateUnitProgress() {
-            const progress = (unitsCorrect / unitsTotal) * 100;
-            document.getElementById('unitProgress').style.width = progress + '%';
-            document.getElementById('unitsCorrect').textContent = unitsCorrect;
+        function calculateLetterScore(score) {
+            if (score >= 85) return 'A';
+            if (score >= 70) return 'B';
+            return 'C';
         }
 
-        function resetUnits() {
-            unitsCorrect = 0;
-            updateUnitProgress();
-            generateUnitQuestion();
+        function showCompletion(letterScore, scorePoints) {
+            const scoreEl = document.getElementById('completionScore');
+            scoreEl.textContent = letterScore;
+            scoreEl.className = `drill-completion-score score-${letterScore}`;
+
+            const msgs = {
+                A: 'Uitstekend! Je beheerst dit helemaal.',
+                B: 'Goed bezig! Blijf oefenen om nog beter te worden.',
+                C: 'Nog niet perfect. Maak deze oefening opnieuw!'
+            };
+            document.getElementById('completionMsg').textContent =
+                `${scorePoints}% correct — ${msgs[letterScore]}`;
+
+            document.getElementById('exerciseContainer').style.display = 'none';
+            document.getElementById('drillCompletion').classList.add('active');
         }
 
         document.addEventListener('DOMContentLoaded', initDrill);
     </script>
-
-    <style>
-        .drill-mode-selector {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .drill-mode-btn {
-            flex: 1;
-            padding: var(--spacing-md) var(--spacing-lg);
-            border: 2px solid var(--color-gray);
-            background: white;
-            border-radius: var(--radius-lg);
-            font-size: var(--font-size-large);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-        }
-
-        .drill-mode-btn:hover {
-            border-color: var(--color-primary);
-            transform: translateY(-2px);
-        }
-
-        .drill-mode-btn.active {
-            background: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
-        }
-
-        .drill-stats {
-            display: flex;
-            gap: var(--spacing-xl);
-            padding: var(--spacing-lg);
-            background: var(--color-light);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .drill-stat {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-        }
-
-        .drill-stat-label {
-            font-size: var(--font-size-small);
-            color: #666;
-        }
-
-        .drill-stat-value {
-            font-size: var(--font-size-h2);
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .drill-content {
-            display: none;
-        }
-
-        .drill-content.active {
-            display: block;
-        }
-
-        .drill-card {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xxl);
-            box-shadow: var(--shadow-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .drill-question {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .formula-prompt {
-            font-size: var(--font-size-h2);
-            font-weight: 600;
-            color: var(--color-primary);
-            margin-top: var(--spacing-lg);
-        }
-
-        .drill-input-area {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .drill-input {
-            flex: 1;
-            padding: var(--spacing-md) var(--spacing-lg);
-            font-size: var(--font-size-large);
-            border: 2px solid var(--color-gray);
-            border-radius: var(--radius-lg);
-            font-family: monospace;
-        }
-
-        .drill-input:focus {
-            border-color: var(--color-primary);
-            outline: none;
-        }
-
-        .drill-feedback {
-            padding: var(--spacing-md);
-            border-radius: var(--radius-md);
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .drill-feedback.success {
-            background: var(--color-success);
-            color: #2d6a2d;
-        }
-
-        .drill-feedback.error {
-            background: var(--color-danger);
-            color: #721c24;
-        }
-
-        .drill-progress {
-            text-align: center;
-        }
-
-        .progress-label {
-            font-weight: 600;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 24px;
-            background: var(--color-gray);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            color: #666;
-            font-size: var(--font-size-small);
-        }
-
-        .success-message {
-            text-align: center;
-            padding: var(--spacing-xl);
-        }
-
-        .success-message h2 {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-md);
-        }
-    </style>
 </body>
 </html>

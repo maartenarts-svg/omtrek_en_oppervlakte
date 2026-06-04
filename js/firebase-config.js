@@ -227,6 +227,17 @@ const DB = {
     }
   },
 
+  async saveDrillFormules(email, data) {
+    // data = { timestamp: ISO string, results: { P_vierkant: bool, ... } }
+    try {
+      await db.collection('users').doc(email).update({ drillFormules: data });
+      return true;
+    } catch (error) {
+      console.error('Error saving drill formules:', error);
+      return false;
+    }
+  },
+
   // WEEKLY PROGRESS
   async updateWeeklyProgress(email, weekNumber, data) {
     try {
@@ -267,6 +278,18 @@ const DB = {
       return true;
     } catch (error) {
       console.error('Error incrementing weekly parts:', error);
+      return false;
+    }
+  },
+
+  async addDrillHistory(email, entry) {
+    try {
+      await db.collection('users').doc(email).update({
+        drillHistory: firebase.firestore.FieldValue.arrayUnion(entry)
+      });
+      return true;
+    } catch (error) {
+      console.error('Error adding drill history:', error);
       return false;
     }
   },
