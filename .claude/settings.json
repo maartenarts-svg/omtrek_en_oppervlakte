@@ -2,6 +2,9 @@
   "permissions": {
     "additionalDirectories": [
       "c:\\Users\\maart\\.claude\\projects\\c--Users-maart-OneDrive-Documents-GitHub-omtrek-en-oppervlakte\\memory"
+    ],
+    "allow": [
+      "Read(//c/Users/maart/.claude/projects/c--Users-maart-OneDrive-Documents-GitHub-omtrek-en-oppervlakte/**)"
     ]
   }
 }

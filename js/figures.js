@@ -134,9 +134,10 @@ function _svgHoekTeken(V, prev, next, s) {
   // A en B: op de zijden, sz van V (aan de V-kant van C)
   const A = { x: V.x + uP.x * sz, y: V.y + uP.y * sz };
   const B = { x: V.x + uN.x * sz, y: V.y + uN.y * sz };
-  // A' en B': gespiegeld rond C (aan de binnenkant van C, weg van V)
-  const Ap = { x: 2 * C.x - A.x, y: 2 * C.y - A.y };
-  const Bp = { x: 2 * C.x - B.x, y: 2 * C.y - B.y };
+  // A' en B': homothetie vanuit C met factor legFactor (standaard 1 = spiegeling)
+  const lf = s.markerLegFactor || 1;
+  const Ap = { x: C.x + lf * (C.x - A.x), y: C.y + lf * (C.y - A.y) };
+  const Bp = { x: C.x + lf * (C.x - B.x), y: C.y + lf * (C.y - B.y) };
 
   const x = v => v.x.toFixed(1);
   const y = v => v.y.toFixed(1);
@@ -703,6 +704,159 @@ function drawParallellogramHoogte(container, opts = {}) {
   container.innerHTML = _buildPolygonSVG(verts, m, l, svgWidth, svgHeight, s);
 }
 
+/**
+ * Driehoek met hoogte-aanduiding
+ *
+ * Vaste driehoeksvormen per type; k schaalt de labels, niet de tekening.
+ *
+ * @param {HTMLElement|string} container
+ * @param {Object} opts
+ *   type      {1|2|3|4}
+ *               1 = scherphoekig  (a=5, b=4, c=6;  basis=a)
+ *               2 = rechthoekig   (a=3, b=4, c=5;  basis=a, rechte hoek bij P0)
+ *               3 = stomphoekig   (a=5, b=4, c=8;  basis=a, voet hoogte buiten basis)
+ *               4 = stomphoekig   (a=5, b=8, c=10; basis=c)
+ *   k         {number}  Factor voor alle labels (default: 1)
+ *   unit      {string}  Eenheid (default: 'cm')
+ *   rotation  {number}  Rotatie in graden (default: 0)
+ *   svgWidth  {number}  (default: 280)
+ *   svgHeight {number}  (default: 260)
+ *
+ * @returns {{ a, b, c, h, oppervlakte }}  Afgeronde labelwaarden (1 dec.) + oppervlakte (2 dec.)
+ */
+function drawDriehoekHoogte(container, opts = {}) {
+  container = _resolveContainer(container);
+  const {
+    type = 1, k = 1, unit = 'cm',
+    rotation = 0,
+    svgWidth = 300, svgHeight = 300,
+  } = opts;
+  const stijl = Object.assign({}, FIGUUR_STIJL, { labelOffset: 10, markerSize: 5, markerLegFactor: 2 }, opts.stijl);
+  const pad   = 40;
+
+  // Vaste (a₀, b₀, c₀) per type – bepalen de visuele vorm
+  //                        a  b   c  schaalFactor
+  const VORMEN = { 1: [5, 4,  6, 1  ],
+                   2: [3, 4,  5, 1  ],
+                   3: [5, 4,  8, 1  ],
+                   4: [5, 8, 10, 1  ] };
+  const [a0, b0, c0, schaalFactor] = VORMEN[type] || VORMEN[1];
+
+  // Basis en zijden in basiscoördinaten
+  const basisLen  = (type === 4) ? c0 : a0;
+  const sideLeft  = (type === 4) ? a0 : b0;   // P0→P2
+  const sideRight = (type === 4) ? b0 : c0;   // P1→P2
+
+  const p2x = (basisLen*basisLen + sideLeft*sideLeft - sideRight*sideRight) / (2*basisLen);
+  const p2y = Math.sqrt(Math.max(0, sideLeft*sideLeft - p2x*p2x));
+
+  const P0 = { x: 0,        y:    0 };
+  const P1 = { x: basisLen, y:    0 };
+  const P2 = { x: p2x,      y: -p2y };
+  const F  = { x: p2x,      y:    0 };
+
+  // Vaste schaal op basis van de ongeroteerde bounding box van de driehoek
+  const drawW  = svgWidth  - 2 * pad;
+  const drawH  = svgHeight - 2 * pad;
+  const bMinX  = Math.min(P0.x, P1.x, P2.x), bMaxX = Math.max(P0.x, P1.x, P2.x);
+  const bMinY  = Math.min(P0.y, P1.y, P2.y), bMaxY = Math.max(P0.y, P1.y, P2.y);
+  const scale  = Math.min(drawW / (bMaxX - bMinX || 1), drawH / (bMaxY - bMinY || 1)) * schaalFactor;
+
+  // Centreer de geschaalde driehoek in de container, daarna roteren rond het midden
+  const cx  = svgWidth  / 2;
+  const cy  = svgHeight / 2;
+  const offX = cx - (bMinX + bMaxX) / 2 * scale;
+  const offY = cy - (bMinY + bMaxY) / 2 * scale;
+
+  const preTrans = v => ({ x: v.x * scale + offX, y: v.y * scale + offY });
+  const [pP0, pP1, pP2, pF] = [P0, P1, P2, F].map(preTrans);
+
+  // Roteer alle punten rond het midden van de container
+  const rot   = v => _rotateAround(v.x, v.y, cx, cy, rotation);
+  const tP0 = rot(pP0), tP1 = rot(pP1), tP2 = rot(pP2), tF = rot(pF);
+  const verts  = [tP0, tP1, tP2];
+  const cg     = _centroid(verts);
+
+  // Afgeronde labelwaarden (k × vaste maat) en oppervlakte via Heron
+  const rnd1 = v => Math.round(v * 10) / 10;
+  const aR = rnd1(a0*k), bR = rnd1(b0*k), cR = rnd1(c0*k), hR = rnd1(p2y*k);
+  const basisR = (type === 4) ? cR : aR;
+  const oppervlakte = Math.round(basisR * hR / 2 * 1000) / 1000;
+
+  const fmt = v => v.toFixed(1).replace('.', ',') + (unit ? ` ${unit}` : '');
+
+  let m = '', l = '';
+
+  // Zijlabels
+  if (type === 4) {
+    l += _svgLabel(tP0, tP1, fmt(cR), cg, stijl);
+    l += _svgLabel(tP1, tP2, fmt(bR), cg, stijl);
+    l += _svgLabel(tP2, tP0, fmt(aR), cg, stijl);
+  } else {
+    l += _svgLabel(tP0, tP1, fmt(aR), cg, stijl);
+    l += _svgLabel(tP1, tP2, fmt(cR), cg, stijl);
+    // Type 3: label b aan de andere kant → gespiegeld zwaartepunt t.o.v. het midden van P2→P0
+    if (type === 3) {
+      // Ankerpunt op 70% van P2 naar P0, normaal aan de andere kant
+      const t = 0.7;
+      const anker = { x: tP2.x + t*(tP0.x - tP2.x), y: tP2.y + t*(tP0.y - tP2.y) };
+      const norm  = _outwardNormal(tP2, tP0, cg);
+      const lx = anker.x - norm.x * stijl.labelOffset;
+      const ly = anker.y - norm.y * stijl.labelOffset;
+      l += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle"
+        font-family="${stijl.fontFamily}" font-size="${stijl.fontSize}" fill="${stijl.labelColor}">${fmt(bR)}</text>`;
+    } else {
+      l += _svgLabel(tP2, tP0, fmt(bR), cg, stijl);
+    }
+  }
+
+  if (type === 2) {
+    // Rechthoekige driehoek: winkelhaak bij P0 in zijkleur, geen aparte hoogtelijn
+    m += _svgHoekTeken(tP0, tP2, tP1, stijl);
+  } else {
+    // Hoogtelijn van apex naar voet
+    m += `<line x1="${tP2.x.toFixed(1)}" y1="${tP2.y.toFixed(1)}" ` +
+         `x2="${tF.x.toFixed(1)}" y2="${tF.y.toFixed(1)}" ` +
+         `stroke="${stijl.hoogteColor}" stroke-width="2" stroke-linecap="round"/>`;
+
+    // Winkelhaak bij voet F in hoogteColor
+    const sH = Object.assign({}, stijl, { markerColor: stijl.hoogteColor });
+    m += _svgHoekTeken(tF, tP2, tP1, sH);
+
+    // Drager voor type 3: stippellijn van P0 voorbij F
+    if (type === 3) {
+      const draDx = tF.x - tP0.x, draDy = tF.y - tP0.y;
+      const draL  = Math.hypot(draDx, draDy) || 1;
+      const ext   = { x: tF.x + (draDx/draL)*14, y: tF.y + (draDy/draL)*14 };
+      m += `<line x1="${tP0.x.toFixed(1)}" y1="${tP0.y.toFixed(1)}" ` +
+           `x2="${ext.x.toFixed(1)}" y2="${ext.y.toFixed(1)}" ` +
+           `stroke="#aaa" stroke-width="1.5" stroke-dasharray="7,4"/>`;
+    }
+
+    // Hoogte-label naast de hoogtelijn, aan de buitenkant van de driehoek
+    const hmx  = (tP2.x + tF.x) / 2, hmy = (tP2.y + tF.y) / 2;
+    const hlDx = tF.x - tP2.x,       hlDy = tF.y - tP2.y;
+    const hlL  = Math.hypot(hlDx, hlDy) || 1;
+    const nAx  = -hlDy/hlL, nAy = hlDx/hlL;
+    const dot  = nAx*(hmx - cg.x) + nAy*(hmy - cg.y);
+    const flip = (type === 1 || type === 4) ? -1 : 1;
+    const nx   = flip * (dot >= 0 ? nAx : -nAx), ny = flip * (dot >= 0 ? nAy : -nAy);
+    const lx   = hmx + nx*stijl.labelOffset;
+    const ly   = hmy + ny*stijl.labelOffset;
+    let anchor = 'middle';
+    if (nx > 0.3) anchor = 'start'; else if (nx < -0.3) anchor = 'end';
+    let baseline = 'middle';
+    if (ny > 0.35) baseline = 'hanging'; else if (ny < -0.35) baseline = 'auto';
+    l += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" ` +
+         `text-anchor="${anchor}" dominant-baseline="${baseline}" ` +
+         `font-family="${stijl.fontFamily}" font-size="${stijl.fontSize}" ` +
+         `fill="${stijl.hoogteColor}">${fmt(hR)}</text>`;
+  }
+
+  container.innerHTML = _buildPolygonSVG(verts, m, l, svgWidth, svgHeight, stijl);
+  return { a: aR, b: bR, c: cR, h: hR, oppervlakte };
+}
+
 // ============================================================
 // PUBLIEKE API
 // ============================================================
@@ -713,7 +867,7 @@ function drawParallellogramHoogte(container, opts = {}) {
  * @param {HTMLElement|string} container  Element of CSS-selector
  * @param {string} type  'vierkant' | 'rechthoek' | 'driehoek' | 'trapezium' |
  *                       'ruit' | 'parallellogram' | 'parallellogram-hoogte' |
- *                       'cirkel' | 'vierhoek'
+ *                       'cirkel' | 'vierhoek' | 'driehoek-hoogte'
  * @param {Object} opts  Zie de afzonderlijke tekenfuncties hierboven
  */
 function drawFiguur(container, type, opts) {
@@ -725,12 +879,13 @@ function drawFiguur(container, type, opts) {
     ruit:                   drawRuit,
     parallellogram:         drawParallellogram,
     'parallellogram-hoogte': drawParallellogramHoogte,
+    'driehoek-hoogte':      drawDriehoekHoogte,
     cirkel:                 drawCirkel,
     vierhoek:               drawVierhoek,
   };
   const fn = functies[type];
   if (fn) {
-    fn(container, opts || {});
+    return fn(container, opts || {});
   } else {
     console.warn(`[figures.js] Onbekend figuurtype: "${type}"`);
   }

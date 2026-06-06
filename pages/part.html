@@ -360,6 +360,15 @@
     <script src="../js/exercise-5-9-oppervlakte-parallellogram.js"></script>
     <script src="../js/exercise-5-10-parallellogram-gemengd.js"></script>
     <script src="../js/exercise-5-11-alles-gemengd.js"></script>
+    <script src="../js/exercise-6-1-instap-driehoek.js"></script>
+    <script src="../js/exercise-6-3-formules-drill.js"></script>
+    <script src="../js/exercise-6-4-oppervlakte-driehoek.js"></script>
+    <script src="../js/exercise-6-5-driehoek-gemengd.js"></script>
+    <script src="../js/exercise-7-2-formules-drill.js"></script>
+    <script src="../js/exercise-7-3-oppervlakte-cirkel.js"></script>
+    <script src="../js/exercise-7-4-cirkel-gemengd.js"></script>
+    <script src="../js/exercise-6-6-alles-gemengd.js"></script>
+    <script src="../js/exercise-7-5-alles-gemengd.js"></script>
 
     <script>
         let userData = null;
@@ -642,6 +651,24 @@
                 init510ParallellogramGemengd(container, handleExerciseComplete);
             } else if (part.exerciseType === '5-11-alles-gemengd') {
                 init511AllesGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '6-1-instap-driehoek') {
+                init61InstapDriehoek(container, handleExerciseComplete);
+            } else if (part.exerciseType === '6-3-formules-drill') {
+                init63FormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === '6-4-oppervlakte-driehoek') {
+                init64OppervlakteDriehoek(container, handleExerciseComplete);
+            } else if (part.exerciseType === '6-5-driehoek-gemengd') {
+                init65DriehoekGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '7-2-formules-drill') {
+                init72FormulasDrill(container, handleExerciseComplete);
+            } else if (part.exerciseType === '7-3-oppervlakte-cirkel') {
+                init73OppervlakteCirkel(container, handleExerciseComplete);
+            } else if (part.exerciseType === '7-4-cirkel-gemengd') {
+                init74CirkelGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '6-6-alles-gemengd') {
+                init66AllesGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '7-5-alles-gemengd') {
+                init75AllesGemengd(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `

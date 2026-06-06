@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo – Driehoek met hoogte</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 24px; }
+    h1   { font-size: 1.3rem; margin-bottom: 8px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .kaart {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .kaart h2 { font-size: 1rem; margin: 0 0 4px; color: #333; }
+    .kaart p  { font-size: 0.8rem; color: #666; margin: 0 0 12px; }
+    .figuur   { display: inline-flex; }
+    .data {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      background: #f0f6e8;
+      border-radius: 4px;
+      padding: 8px 12px;
+      line-height: 1.7;
+    }
+    .data span { font-weight: bold; color: #1565c0; }
+    button {
+      margin-top: 16px;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #4a7a10;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover { background: #3a6a0e; }
+  </style>
+</head>
+<body>
+  <h1>Demo – <code>drawDriehoekHoogte</code></h1>
+  <p style="font-size:0.85rem;color:#555;margin-bottom:20px">
+    Vaste driehoeksvormen per type; k schaalt de labels.
+  </p>
+
+  <div class="grid">
+    <!-- Type 1 -->
+    <div class="kaart">
+      <h2>Type 1 – scherphoekig</h2>
+      <p id="par1"></p>
+      <div class="figuur" id="fig1"></div>
+      <div class="data" id="data1"></div>
+    </div>
+
+    <!-- Type 2 -->
+    <div class="kaart">
+      <h2>Type 2 – rechthoekig</h2>
+      <p id="par2"></p>
+      <div class="figuur" id="fig2"></div>
+      <div class="data" id="data2"></div>
+    </div>
+
+    <!-- Type 3 -->
+    <div class="kaart">
+      <h2>Type 3 – stomphoekig (voet buiten basis)</h2>
+      <p id="par3"></p>
+      <div class="figuur" id="fig3"></div>
+      <div class="data" id="data3"></div>
+    </div>
+
+    <!-- Type 4 -->
+    <div class="kaart">
+      <h2>Type 4 – stomphoekig (c als basis)</h2>
+      <p id="par4"></p>
+      <div class="figuur" id="fig4"></div>
+      <div class="data" id="data4"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <button onclick="tekenAlles()">Herlaad k</button>
+    <label style="font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+      Rotatie:
+      <input type="range" id="slider" min="0" max="359" value="0" step="1"
+             style="width:220px;" oninput="updateRotatie(this.value)">
+      <span id="rotLabel" style="font-weight:bold; min-width:38px;">0°</span>
+    </label>
+  </div>
+
+  <script src="js/figures.js"></script>
+  <script>
+    let huidigK = [1, 1, 1, 1];
+
+    function toonData(id, d) {
+      const fmt = v => String(v).replace('.', ',');
+      document.getElementById(id).innerHTML =
+        `a = ${fmt(d.a)} cm &nbsp;|&nbsp; b = ${fmt(d.b)} cm &nbsp;|&nbsp; c = <span>${fmt(d.c)} cm</span><br>` +
+        `hoogte h = <span>${fmt(d.h)} cm</span><br>` +
+        `Oppervlakte (afgeronde waarden) = <span>${fmt(d.oppervlakte)} cm²</span>`;
+    }
+
+    function randK(lo, hi) {
+      return Math.round((lo + Math.random() * (hi - lo)) * 10) / 10;
+    }
+
+    function tekenMet(rot) {
+      [1, 2, 3, 4].forEach((type, i) => {
+        const k = huidigK[i];
+        document.getElementById(`par${type}`).textContent =
+          `k = ${String(k).replace('.', ',')} | rotatie = ${rot}°`;
+        toonData(`data${type}`, drawDriehoekHoogte(
+          document.getElementById(`fig${type}`),
+          { type, k, unit: 'cm', rotation: rot }
+        ));
+      });
+    }
+
+    function updateRotatie(val) {
+      document.getElementById('rotLabel').textContent = val + '°';
+      tekenMet(Number(val));
+    }
+
+    function tekenAlles() {
+      huidigK = [1,2,3,4].map(() => randK(0.5, 2.0));
+      tekenMet(Number(document.getElementById('slider').value));
+    }
+
+    tekenAlles();
+  </script>
+</body>
+</html>

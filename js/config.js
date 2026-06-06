@@ -376,7 +376,68 @@ const LESSONS_CONFIG = {
     order: 6,
     theorySection: "theorie-6",
     parts: [
-      // Voeg later toe
+      {
+        id: 'part-1',
+        type: 'exercise',
+        title: 'Instap: driehoek vanuit parallellogram',
+        exerciseType: '6-1-instap-driehoek',
+        xpReward: 40,
+        passingCriteria: {
+          scoreA: 75,
+          scoreB: 50
+        }
+      },
+      {
+        id: 'part-2',
+        type: 'video',
+        title: 'Oppervlakte van een driehoek',
+        videoUrl: '',
+        xpReward: 20
+      },
+      {
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Formules inprenten: driehoek',
+        exerciseType: '6-3-formules-drill',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 70
+        }
+      },
+      {
+        id: 'part-4',
+        type: 'exercise',
+        title: 'Oppervlakte berekenen: driehoek',
+        exerciseType: '6-4-oppervlakte-driehoek',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-5',
+        type: 'exercise',
+        title: 'Gemengd: omtrek en oppervlakte driehoek',
+        exerciseType: '6-5-driehoek-gemengd',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-6',
+        type: 'exercise',
+        title: 'Alles gemengd: omtrek en oppervlakte',
+        exerciseType: '6-6-alles-gemengd',
+        xpReward: 80,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 65
+        }
+      }
     ]
   },
   'les-7': {
@@ -384,7 +445,57 @@ const LESSONS_CONFIG = {
     order: 7,
     theorySection: "theorie-7",
     parts: [
-      // Voeg later toe
+      {
+        id: 'part-1',
+        type: 'video',
+        title: 'Oppervlakte van een cirkel',
+        videoUrl: '',
+        xpReward: 20
+      },
+      {
+        id: 'part-2',
+        type: 'exercise',
+        title: 'Formules inprenten: cirkel',
+        exerciseType: '7-2-formules-drill',
+        xpReward: 50,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 70
+        }
+      },
+      {
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Oppervlakte berekenen: cirkel',
+        exerciseType: '7-3-oppervlakte-cirkel',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-4',
+        type: 'exercise',
+        title: 'Gemengd: omtrek en oppervlakte cirkel',
+        exerciseType: '7-4-cirkel-gemengd',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-5',
+        type: 'exercise',
+        title: 'Alles gemengd: omtrek en oppervlakte',
+        exerciseType: '7-5-alles-gemengd',
+        xpReward: 80,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 65
+        }
+      }
     ]
   },
   'les-8': {

@@ -6,7 +6,7 @@
     <title>Theorie - Wiskunde Leerplatform</title>
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        /* Theory container with sidebar */
+        /* WIP: styles voor theory-inhoud — activeren zodra theory-inhoud terugkomt
         .theory-wrapper {
             display: flex;
             max-width: 1400px;
@@ -14,8 +14,6 @@
             padding: 2rem;
             gap: 2rem;
         }
-        
-        /* Sidebar TOC */
         .sidebar-toc {
             position: sticky;
             top: 100px;
@@ -26,245 +24,43 @@
             border-radius: var(--radius-lg);
             flex-shrink: 0;
         }
-        
-        .sidebar-toc h3 {
-            margin: 0 0 1rem 0;
-            color: #2d5016;
-            font-size: 1rem;
-        }
-        
-        .sidebar-toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.85rem;
-        }
-        
-        .sidebar-toc li {
-            margin: 0.3rem 0;
-        }
-        
-        .sidebar-toc a {
-            color: #3d6b1f;
-            text-decoration: none;
-        }
-        
-        .sidebar-toc a:hover {
-            text-decoration: underline;
-        }
-        
-        .sidebar-toc ul ul {
-            padding-left: 1rem;
-            font-size: 0.8rem;
-            margin-top: 0.2rem;
-        }
-        
-        /* Main theory content */
-        .theory-content {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        /* Headings */
-        h1 {
-            color: #2d5016;
-            font-size: 2rem;
-            margin: 2rem 0 1rem 0;
-            border-bottom: 3px solid #2d5016;
-            padding-bottom: 0.5rem;
-        }
-        
-        h2 {
-            color: #3d6b1f;
-            font-size: 1.6rem;
-            margin: 1.5rem 0 1rem 0;
-        }
-        
-        h3 {
-            color: #4d7e28;
-            font-size: 1.3rem;
-            margin: 1.2rem 0 0.8rem 0;
-        }
-        
-        /* Theory box */
-        .theory-box {
-            background: #e8f5e3;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            margin: 1rem 0;
-            border: none;
-        }
-        
-        /* Example box */
-        .example-box {
-            background: #f0f9ec;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            margin: 1rem 0;
-            border: none;
-        }
-        
-        .example-box .example-title {
-            font-weight: 700;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-        
-        /* Tables */
-        .theory-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        
-        .theory-table th,
-        .theory-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border: 1px solid #c5e1b5;
-        }
-        
-        .theory-table th {
-            background: #d4ecc8;
-            font-weight: 600;
-        }
-        
-        .theory-table td {
-            background: white;
-        }
-        
-        /* Two column layout */
-        .two-col-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .two-col-table td {
-            padding: 1rem;
-            vertical-align: top;
-            border: none;
-            background: transparent;
-        }
-        
-        .two-col-table td:first-child {
-            width: 50%;
-        }
-        
-        /* Reference table */
-        .reference-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        
-        .reference-table td {
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid #c5e1b5;
-            background: white;
-            width: 25%;
-        }
-        
-        .reference-table td.empty {
-            border: none;
-            background: transparent;
-        }
-        
-        .reference-table img {
-            width: 100%;
-            max-width: 150px;
-            height: 120px;
-            background: #f0f0f0;
-            border: 1px dashed #999;
-            display: block;
-            margin: 0.5rem auto;
-        }
-        
-        /* Colors for maatgetal and eenheid */
-        .maatgetal {
-            color: #9B59B6;
-            font-weight: 600;
-        }
-        
-        .eenheid {
-            color: #E67E22;
-            font-weight: 600;
-        }
-        
-        /* Ladder container */
-        .ladder-with-arrows {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 1.5rem 0;
-            gap: 1rem;
-        }
-        
-        .arrow-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 14px;
-            color: #3d6b1f;
-            max-width: 120px;
-            text-align: center;
-        }
-        
-        .arrow-up, .arrow-down {
-            font-size: 48px;
-            color: #4d7e28;
-        }
-        
-        /* Hidden sections */
-        .theory-section {
-            display: none;
-        }
-        
-        .theory-section.visible {
-            display: block;
-        }
-
-        .theory-content ul {
-          margin-left: 0;
-          padding-left: 1.2em;
-        }
-        
-        .theory-content ul ul {
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        /* Back to top button */
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 50px;
-            height: 50px;
-            background: #4d7e28;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .back-to-top.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .back-to-top:hover {
-            background: #3d6b1f;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
+        .sidebar-toc h3 { margin: 0 0 1rem 0; color: #2d5016; font-size: 1rem; }
+        .sidebar-toc ul { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
+        .sidebar-toc li { margin: 0.3rem 0; }
+        .sidebar-toc a { color: #3d6b1f; text-decoration: none; }
+        .sidebar-toc a:hover { text-decoration: underline; }
+        .sidebar-toc ul ul { padding-left: 1rem; font-size: 0.8rem; margin-top: 0.2rem; }
+        .theory-content { flex: 1; min-width: 0; }
+        h1 { color: #2d5016; font-size: 2rem; margin: 2rem 0 1rem 0; border-bottom: 3px solid #2d5016; padding-bottom: 0.5rem; }
+        h2 { color: #3d6b1f; font-size: 1.6rem; margin: 1.5rem 0 1rem 0; }
+        h3 { color: #4d7e28; font-size: 1.3rem; margin: 1.2rem 0 0.8rem 0; }
+        .theory-box { background: #e8f5e3; padding: 1.5rem; border-radius: var(--radius-lg); margin: 1rem 0; border: none; }
+        .example-box { background: #f0f9ec; padding: 1.5rem; border-radius: var(--radius-lg); margin: 1rem 0; border: none; }
+        .example-box .example-title { font-weight: 700; margin-bottom: 1rem; font-size: 1.1rem; }
+        .theory-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        .theory-table th, .theory-table td { padding: 0.75rem; text-align: left; border: 1px solid #c5e1b5; }
+        .theory-table th { background: #d4ecc8; font-weight: 600; }
+        .theory-table td { background: white; }
+        .two-col-table { width: 100%; border-collapse: collapse; }
+        .two-col-table td { padding: 1rem; vertical-align: top; border: none; background: transparent; }
+        .two-col-table td:first-child { width: 50%; }
+        .reference-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        .reference-table td { padding: 1rem; text-align: center; border: 1px solid #c5e1b5; background: white; width: 25%; }
+        .reference-table td.empty { border: none; background: transparent; }
+        .reference-table img { width: 100%; max-width: 150px; height: 120px; background: #f0f0f0; border: 1px dashed #999; display: block; margin: 0.5rem auto; }
+        .maatgetal { color: #9B59B6; font-weight: 600; }
+        .eenheid { color: #E67E22; font-weight: 600; }
+        .ladder-with-arrows { display: flex; justify-content: center; align-items: center; margin: 1.5rem 0; gap: 1rem; }
+        .arrow-label { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-size: 14px; color: #3d6b1f; max-width: 120px; text-align: center; }
+        .arrow-up, .arrow-down { font-size: 48px; color: #4d7e28; }
+        .theory-section { display: none; }
+        .theory-section.visible { display: block; }
+        .theory-content ul { margin-left: 0; padding-left: 1.2em; }
+        .theory-content ul ul { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px; background: #4d7e28; color: white; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: all 0.3s; z-index: 100; opacity: 0; pointer-events: none; }
+        .back-to-top.visible { opacity: 1; pointer-events: all; }
+        .back-to-top:hover { background: #3d6b1f; transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+        */
     </style>
 </head>
 <body>
@@ -292,8 +88,17 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <!-- Tijdelijk: iframe naar H12 theorie -->
+    <main style="height: calc(100vh - 70px); overflow: hidden;">
+        <iframe
+            src="https://maartenarts-svg.github.io/maarten-svg.github.io/cursus-prototype/hoofdstukken/H12/H12_theorie.html"
+            style="width: 100%; height: 100%; border: none;"
+            title="Theorie H12">
+        </iframe>
+    </main>
+
+    <!-- WIP: Onderstaande theorie-inhoud wordt later verder afgewerkt -->
+    <main id="theory-wip" class="main-content" style="display:none">
         <div class="theory-wrapper">
             <!-- Sidebar TOC -->
             <aside class="sidebar-toc">
@@ -309,7 +114,7 @@
                     </li>
                 </ul>
             </aside>
-            
+
             <!-- Main theory content -->
             <div class="theory-content">
                 <h1 style="border-bottom: none; margin-bottom: 1rem;">Theorie</h1>
@@ -317,7 +122,7 @@
                 <!-- Theory Section 1 -->
                 <div id="theory-1" class="theory-section">
                     <h1>1 Wat is omtrek en oppervlakte?</h1>
-                    
+
                     <div class="theory-box">
                         <table class="two-col-table">
                             <tr>
@@ -330,17 +135,17 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <svg width="100" height="100" viewBox="0 0 80 80">
-                                        <path d="M 10 10 L 50 10 L 50 40 L 70 40 L 70 70 L 10 70 Z" 
-                                              fill="none" 
-                                              stroke="#FFB366" 
+                                        <path d="M 10 10 L 50 10 L 50 40 L 70 40 L 70 70 L 10 70 Z"
+                                              fill="none"
+                                              stroke="#FFB366"
                                               stroke-width="4"/>
                                     </svg>
                                 </td>
                             </tr>
                         </table>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <table class="two-col-table">
                             <tr>
                                 <td>
@@ -352,9 +157,9 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <svg width="100" height="100" viewBox="0 0 80 80">
-                                        <path d="M 10 10 L 50 10 L 50 40 L 70 40 L 70 70 L 40 70 L 40 40 L 10 40 Z" 
-                                              fill="#A8D8E5" 
-                                              stroke="#333" 
+                                        <path d="M 10 10 L 50 10 L 50 40 L 70 40 L 70 70 L 40 70 L 40 40 L 10 40 Z"
+                                              fill="#A8D8E5"
+                                              stroke="#333"
                                               stroke-width="2"/>
                                     </svg>
                                 </td>
@@ -365,7 +170,7 @@
                     <div class="example-box">
                         <div class="example-title">Voorbeeld</div>
                         <p>Bereken de omtrek en de oppervlakte van de figuur.</p>
-                        
+
                         <div style="text-align: center; margin: 1.5rem 0;">
                             <svg width="220" height="220" viewBox="0 0 220 220">
                                 <!-- Grid 6x6, cellSize=30 -->
@@ -386,9 +191,9 @@
                                     <line x1="20" y1="200" x2="200" y2="200"/>
                                 </g>
                                 <!-- Polygon: A(1,1) B(2,1) C(2,4) D(4,4) E(4,3) F(5,3) G(5,5) A(1,5) -->
-                                <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170" 
-                                         fill="rgba(200, 200, 200, 0.4)" 
-                                         stroke="#333" 
+                                <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170"
+                                         fill="rgba(200, 200, 200, 0.4)"
+                                         stroke="#333"
                                          stroke-width="2"/>
                                 <!-- Eenheid: stip (4,1), stip (5,1), lijnstuk, "1" -->
                                 <circle cx="140" cy="50" r="2.5" fill="#000"/>
@@ -397,7 +202,7 @@
                                 <text x="155" y="45" text-anchor="middle" font-size="13" fill="#000" font-weight="600">1</text>
                             </svg>
                         </div>
-                        
+
                         <table class="two-col-table">
                             <tr>
                                 <td>
@@ -421,9 +226,9 @@
                                             <line x1="20" y1="200" x2="200" y2="200"/>
                                         </g>
                                         <!-- Polygon -->
-                                        <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170" 
-                                                 fill="rgba(200, 200, 200, 0.4)" 
-                                                 stroke="#FF8C42" 
+                                        <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170"
+                                                 fill="rgba(200, 200, 200, 0.4)"
+                                                 stroke="#FF8C42"
                                                  stroke-width="2.5"/>
                                         <!-- Cijfers buiten zijden: AB=1, BC=3, CD=2, DE=1, EF=1, FG=2, GA=4, AA=4 -->
                                         <text x="65" y="43" text-anchor="middle" font-size="15" fill="#FF8C42" font-weight="600">1</text>
@@ -466,9 +271,9 @@
                                             <line x1="20" y1="200" x2="200" y2="200"/>
                                         </g>
                                         <!-- Polygon -->
-                                        <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170" 
-                                                 fill="rgba(168, 216, 229, 0.6)" 
-                                                 stroke="#333" 
+                                        <polygon points="50,50 80,50 80,140 140,140 140,110 170,110 170,170 50,170"
+                                                 fill="rgba(168, 216, 229, 0.6)"
+                                                 stroke="#333"
                                                  stroke-width="2"/>
                                         <!-- Cijfers in vakjes: 1-8 -->
                                         <text x="65" y="70" text-anchor="middle" font-size="14" fill="#6B9BD1" font-weight="600">1</text>
@@ -499,14 +304,14 @@
                     <h1 id="theory-2">2 Omtrek</h1>
                     <h2 id="theory-2-1">2.1 Eenheden voor omtrek</h2>
                     <h3 id="theory-2-1-1">2.1.1 Lengte-eenheden</h3>
-                    
+
                     <div class="theory-box">
                         <p>De omtrek is een afstand. Daarom gebruiken we voor omtrek de lengte-eenheden.<br>
                         De standaardeenheid daarbij is 1 meter.<br>
                         Omdat sommige afstanden veel groter of veel kleiner zijn dan 1 meter, gebruiken we extra onderverdelingen.</p>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <table class="theory-table">
                             <tr>
                                 <th>Eenheid</th>
@@ -549,17 +354,17 @@
                                 <td>1 mm = 0,001 m</td>
                             </tr>
                         </table>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <p>Je kunt dit onthouden met behulp van de eenhedenladder.</p>
-                        
+
                         <div class="ladder-with-arrows">
                             <div class="arrow-label">
                                 <div class="arrow-up">↑</div>
                                 <div>Bij elke stap omhoog wordt de eenheid 10 keer groter.</div>
                             </div>
-                            
+
                             <svg width="200" height="350" viewBox="0 0 200 350">
                                 <rect x="20" y="10" width="15" height="330" fill="#A8D8A8" stroke="#8BC68B" stroke-width="2" rx="5"/>
                                 <rect x="165" y="10" width="15" height="330" fill="#A8D8A8" stroke="#8BC68B" stroke-width="2" rx="5"/>
@@ -578,7 +383,7 @@
                                 <rect x="35" y="313" width="130" height="12" fill="#FFE5A3" stroke="#FFD580" stroke-width="2" rx="4"/>
                                 <text x="100" y="335" text-anchor="middle" font-size="16" font-weight="600" fill="#2C3E50">mm</text>
                             </svg>
-                            
+
                             <div class="arrow-label">
                                 <div class="arrow-down">↓</div>
                                 <div>Bij elke stap omlaag wordt de eenheid 10 keer kleiner.</div>
@@ -588,7 +393,7 @@
 
                     <div class="example-box">
                         <div class="example-title">Voorbeeld</div>
-                        
+
                         <table class="two-col-table">
                             <tr>
                                 <td>
@@ -654,12 +459,12 @@
                     </div>
 
                     <h3 id="theory-2-1-2">2.1.2 Referentie-eenheden voor lengte</h3>
-                    
+
                     <div class="theory-box">
                         <p>Om in te schatten hoe lang een eenheid is, kun je die eenheid linken aan afmetingen die je kent.</p>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <table class="reference-table">
                             <tr>
                                 <td>
@@ -684,9 +489,9 @@
                                 </td>
                             </tr>
                         </table>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <table class="reference-table">
                             <tr>
                                 <td>
@@ -714,14 +519,14 @@
                 <!-- Theory Section 2.2 -->
                 <div id="theory-2-2" class="theory-section">
                     <h3 id="theory-2-1-3">2.1.3 Lengte-eenheden omzetten</h3>
-                    
+
                     <div class="theory-box">
                         <p>Meet je lengtes en afstanden, dan gebruik je daarvoor eenheden.<br>
                         Zo is de omtrek van een voetbalveld ongeveer <span class="maatgetal">300</span> <span class="eenheid">m</span>.<br>
                         Hierbij is 1 m <strong class="eenheid">de eenheid</strong> en 300 <strong class="maatgetal">het maatgetal</strong>.</p>
-                        
+
                         <div style="height: 1rem;"></div>
-                        
+
                         <p style="margin-bottom: 0.25rem;">Wil je een afstand omzetten in een andere eenheid,</p>
                         <ul style="margin-top: 0.25rem;">
                             <li>dan onderzoek je eerst hoeveel keer de eenheid groter of kleiner wordt;
@@ -739,7 +544,7 @@
 
                     <div class="example-box">
                         <div class="example-title">Voorbeeld</div>
-                        
+
                         <div style="margin: 1.5rem 0;">
                             <svg width="500" height="250" viewBox="0 0 500 250">
                                 <defs>
@@ -764,7 +569,7 @@
                                 </text>
                             </svg>
                         </div>
-                        
+
                         <div style="margin: 1.5rem 0;">
                             <svg width="500" height="250" viewBox="0 0 500 250">
                                 <defs>
@@ -794,76 +599,57 @@
             </div>
         </div>
     </main>
-    
-    <!-- Back to top button -->
-    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="display:none">↑</button>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <script src="../js/firebase-config.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/progress.js"></script>
     <script src="../js/deadlines.js"></script>
-    
+
     <script>
         // Check auth
         let currentUser = checkAuth();
         if (!currentUser) {
             window.location.href = 'index.html';
         }
-        
-        // Load theory sections
+
+        // WIP: loadTheory() — activeren zodra theory-wip main terugkomt
         async function loadTheory() {
             try {
                 const userDoc = await firebase.firestore()
                     .collection('users')
                     .doc(currentUser.email)
                     .get();
-                
+
                 if (!userDoc.exists) return;
-                
+
                 const progress = userDoc.data().progress || {};
-                
-                // Theory-1: visible after les-1/part-1
+
                 if (progress['les-1']?.parts?.['part-1']?.completed) {
                     document.getElementById('theory-1').classList.add('visible');
                 }
-                
-                // Theory-2-1: visible after les-2/part-1 (video)
                 if (progress['les-2']?.parts?.['part-1']?.completed) {
                     document.getElementById('theory-2-1').classList.add('visible');
                 }
-                
-                // Theory-2-2: visible after les-2/part-4 (video)
                 if (progress['les-2']?.parts?.['part-4']?.completed) {
                     document.getElementById('theory-2-2').classList.add('visible');
                 }
-                
+
             } catch (error) {
                 console.error('Error loading theory:', error);
             }
         }
-        
+
         // Set user display
         const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
         document.getElementById('userAvatar').textContent = initials;
-        
-        // Back to top button
-        window.addEventListener('scroll', () => {
-            const backToTop = document.getElementById('backToTop');
-            if (window.scrollY > 300) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-        
-        // Load theory
-        loadTheory();
     </script>
 </body>
 </html>
