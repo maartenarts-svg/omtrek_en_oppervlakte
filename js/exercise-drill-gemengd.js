@@ -247,7 +247,7 @@ function initDrillGemengd(container, onComplete) {
                 </div>
             </div>`;
 
-        const figType = data.fig === 'parallellogram' && data.task === 'oppervlakte'
+        const figType = data.fig === 'parallellogram'
             ? 'parallellogram-hoogte'
             : data.fig;
         drawFiguur(document.getElementById('dg-fig'), figType, data.figOpts);
@@ -469,17 +469,12 @@ function initDrillGemengd(container, onComplete) {
         return { ok: false, error: 'generic' };
     }
 
+    function normalizeCalcCirkel(s) {
+        return s.replace(/,/g, '.').replace(/[*·]/g, '').replace(/pi/gi, 'π').replace(/\s+/g, '');
+    }
+
     function checkCalcCirkel(r, input) {
-        const n = input.replace(/,/g, '.').replace(/\*/g, '·').replace(/pi/gi, 'π').replace(/\s+/g, '');
-        const parts = n.split('·');
-        if (parts.length !== 3) return { ok: false, error: 'generic' };
-        const hasPi = parts.some(p => p === 'π');
-        const has2  = parts.some(p => p === '2');
-        const rPart = parts.find(p => p !== 'π' && p !== '2');
-        if (!hasPi || !has2 || !rPart) return { ok: false, error: 'generic' };
-        const v = parseFloat(rPart);
-        if (!isNaN(v) && Math.abs(v - r) < 0.05) return { ok: true };
-        return { ok: false, error: 'generic' };
+        return normalizeCalcCirkel(input) === normalizeCalcCirkel(`2·π·${r}`) ? { ok: true } : { ok: false, error: 'generic' };
     }
 
     function checkCalcDriehoek(sides, input) {

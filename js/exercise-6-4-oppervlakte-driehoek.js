@@ -183,7 +183,7 @@ function init64OppervlakteDriehoek(container, onComplete) {
             const calc   = calcEl.value.trim();
             const ans    = ansEl.value.trim();
             const showWithAction = isLast ? showFeedbackWithFinish : showFeedbackWithNext;
-            const errors = buildFeedback({ unit: data.unit, basis, hoogte, answer }, unit, calc, ans);
+            const errors = buildFeedback({ unit: data.unit, basis, hoogte, answer, driehoekType: data.driehoekType }, unit, calc, ans);
 
             if (errors.length === 0) {
                 const pts = qAttempts === 1 ? 1 : 0.5;
@@ -269,6 +269,7 @@ function init64OppervlakteDriehoek(container, onComplete) {
         if (bOk && hOk) return { ok: true };
 
         if (Math.abs(x - data.hoogte) < 0.05 && Math.abs(y - data.basis) < 0.05) {
+            if (data.driehoekType === 2) return { ok: true };
             return { ok: false, error: 'volgorde' };
         }
 

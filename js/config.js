@@ -449,7 +449,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Oppervlakte van een cirkel',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1qBgc5eJObLwP0lRFA7XEpEiOjEoprICx/view?usp=drive_link',
         xpReward: 20
       },
       {

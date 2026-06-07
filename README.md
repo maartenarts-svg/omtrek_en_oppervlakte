@@ -348,4 +348,22 @@ Bij vragen of problemen:
 
 ---
 
+## Ontwikkelaarsnoten — Oefening-validatie
+
+### Rechthoekige driehoek (type 2): volgorde basis en hoogte
+
+Bij de `driehoek-hoogte` figuren bestaan vier driehoektypes (1–4). Bij **type 2** (de rechthoekige driehoek met de rechte hoek in P0) zijn de twee rechthoekszijden elkaars basis én hoogte. De leerling kan op de figuur niet zien welke zijde als "basis" en welke als "hoogte" is aangewezen in de code.
+
+**Regel:** voor type 2 moeten **beide volgorden** van de berekening worden geaccepteerd: zowel `b·h:2` als `h·b:2`.
+
+Dit is geïmplementeerd in:
+- `js/exercise-6-4-oppervlakte-driehoek.js` — in `checkCalc`: `if (data.driehoekType === 2) return { ok: true };`
+- `js/exercise-6-5-driehoek-gemengd.js` — in `checkCalcOppervlakte`: `if (driehoekType === 2) return { ok: true };`
+- `js/exercise-6-6-alles-gemengd.js` — `checkCalcDriehoekOpp` accepteert al beide volgorden voor alle types
+- `js/exercise-7-5-alles-gemengd.js` — zelfde als 6-6
+
+Bij **nieuwe oefeningen** met driehoek-hoogte en een volgorde-check: altijd uitzonderingsregel voor type 2 inbouwen.
+
+---
+
 **Veel succes met je leerplatform! 🚀**

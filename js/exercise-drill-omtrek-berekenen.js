@@ -221,7 +221,8 @@ function initDrillOmtrekBerekenen(container, onComplete) {
                 </div>
             </div>`;
 
-        drawFiguur(document.getElementById('ex33-fig'), data.type, data.figOpts);
+        const figType = data.type === 'parallellogram' ? 'parallellogram-hoogte' : data.type;
+        drawFiguur(document.getElementById('ex33-fig'), figType, data.figOpts);
         initCS('ex33-cs');
 
         function updateRow3() {
@@ -313,14 +314,7 @@ function initDrillOmtrekBerekenen(container, onComplete) {
         }
 
         if (type === 'cirkel') {
-            const parts = n.split('·');
-            if (parts.length !== 3) return false;
-            const hasPi = parts.some(p => p === 'π');
-            const has2  = parts.some(p => p === '2');
-            const rPart = parts.find(p => p !== 'π' && p !== '2');
-            if (!hasPi || !has2 || !rPart) return false;
-            const v = parseFloat(rPart);
-            return !isNaN(v) && Math.abs(v - dims.r) < 0.001;
+            return n === normalizeCalc(`2·π·${dims.r}`);
         }
 
         // P = som van de zijden

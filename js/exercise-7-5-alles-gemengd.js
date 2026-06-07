@@ -260,7 +260,7 @@ function init75AllesGemengd(container, onComplete) {
                 ? round2(fd.a + fd.b + fd.c)
                 : fd.oppervlakte;
         } else {
-            const figType = data.fig === 'parallellogram' && data.task === 'oppervlakte'
+            const figType = data.fig === 'parallellogram'
                 ? 'parallellogram-hoogte'
                 : data.fig;
             drawFiguur(figEl, figType, data.figOpts);
@@ -444,7 +444,7 @@ function init75AllesGemengd(container, onComplete) {
                 case 'vierkant':        return checkCalcVierkantOpp(dims.z, input);
                 case 'rechthoek':       return checkCalcRechthoekOpp(dims, input);
                 case 'parallellogram':  return checkCalcParaOpp(dims, input);
-                case 'driehoek-hoogte': return checkCalcDriehoekOpp(dims.basis, dims.h, input);
+                case 'driehoek-hoogte': return checkCalcDriehoekOpp(dims.basis, dims.h, dims.driehoekType, input);
                 case 'cirkel':          return checkCalcCirkelOpp(dims.r, input);
             }
         }
@@ -491,41 +491,16 @@ function init75AllesGemengd(container, onComplete) {
         return { ok: false, error: 'generic' };
     }
 
+    function normalizeCalcCirkel(s) {
+        return s.replace(/,/g, '.').replace(/[*·]/g, '').replace(/pi/gi, 'π').replace(/\s+/g, '');
+    }
+
     function checkCalcCirkel(r, input) {
-        const n = input.replace(/,/g, '.').replace(/\*/g, '·').replace(/pi/gi, 'π').replace(/\s+/g, '');
-        const parts = n.split('·');
-        if (parts.length !== 3) return { ok: false, error: 'generic' };
-        const hasPi = parts.some(p => p === 'π');
-        const has2  = parts.some(p => p === '2');
-        const rPart = parts.find(p => p !== 'π' && p !== '2');
-        if (!hasPi || !has2 || !rPart) return { ok: false, error: 'generic' };
-        const v = parseFloat(rPart);
-        if (!isNaN(v) && Math.abs(v - r) < 0.05) return { ok: true };
-        return { ok: false, error: 'generic' };
+        return normalizeCalcCirkel(input) === normalizeCalcCirkel(`2·π·${r}`) ? { ok: true } : { ok: false, error: 'generic' };
     }
 
     function checkCalcCirkelOpp(r, input) {
-        const n = input.replace(/,/g, '.').replace(/\*/g, '·').replace(/pi/gi, 'π').replace(/\s+/g, '');
-        const parts = n.split('·');
-        if (parts.length === 2) {
-            const hasPi   = parts.some(p => p === 'π');
-            const rSqPart = parts.find(p => p !== 'π');
-            if (!hasPi || !rSqPart) return { ok: false, error: 'generic' };
-            const mSq = rSqPart.match(/^(.+)²$/);
-            if (mSq) {
-                const v = parseFloat(mSq[1].replace(',', '.'));
-                if (!isNaN(v) && Math.abs(v - r) < 0.05) return { ok: true };
-            }
-            return { ok: false, error: 'generic' };
-        }
-        if (parts.length === 3) {
-            const hasPi  = parts.some(p => p === 'π');
-            const rParts = parts.filter(p => p !== 'π');
-            if (!hasPi || rParts.length !== 2) return { ok: false, error: 'generic' };
-            const vals = rParts.map(p => parseFloat(p.replace(',', '.')));
-            if (vals.every(v => !isNaN(v) && Math.abs(v - r) < 0.05)) return { ok: true };
-        }
-        return { ok: false, error: 'generic' };
+        return normalizeCalcCirkel(input) === normalizeCalcCirkel(`π·${r}²`) ? { ok: true } : { ok: false, error: 'generic' };
     }
 
     function checkCalcDriehoek(sides, input) {
@@ -540,7 +515,7 @@ function init75AllesGemengd(container, onComplete) {
         return { ok: false, error: 'generic' };
     }
 
-    function checkCalcDriehoekOpp(basis, h, input) {
+    function checkCalcDriehoekOpp(basis, h, type, input) {
         const n = normalizeCalc(input);
         const m = n.match(/^(.+)[·](.+)[:/]2$/);
         if (!m) {
@@ -549,9 +524,12 @@ function init75AllesGemengd(container, onComplete) {
         }
         const x = parseFloat(m[1]), y = parseFloat(m[2]);
         if (isNaN(x) || isNaN(y)) return { ok: false, error: 'generic' };
-        if ((Math.abs(x - basis) < 0.05 && Math.abs(y - h) < 0.05) ||
-            (Math.abs(x - h) < 0.05 && Math.abs(y - basis) < 0.05)) {
-            return { ok: true };
+        const basisOk    = Math.abs(x - basis) < 0.05 && Math.abs(y - h) < 0.05;
+        const reversedOk = Math.abs(x - h) < 0.05 && Math.abs(y - basis) < 0.05;
+        if (basisOk) return { ok: true };
+        if (reversedOk) {
+            if (type === 2) return { ok: true };
+            return { ok: false, error: 'volgorde' };
         }
         return { ok: false, error: 'generic' };
     }

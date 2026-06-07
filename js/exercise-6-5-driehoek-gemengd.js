@@ -323,7 +323,7 @@ function init65DriehoekGemengd(container, onComplete) {
 
         const calcResult = isOmtrek
             ? checkCalcOmtrek(figData, calc)
-            : checkCalcOppervlakte(basis, figData.h, calc);
+            : checkCalcOppervlakte(basis, figData.h, calc, q.driehoekType);
 
         if (!calcResult.ok) {
             if (calcResult.error === 'missing-division') {
@@ -360,7 +360,7 @@ function init65DriehoekGemengd(container, onComplete) {
         return { ok: false, error: 'generic' };
     }
 
-    function checkCalcOppervlakte(basis, hoogte, input) {
+    function checkCalcOppervlakte(basis, hoogte, input, driehoekType) {
         const n = input.replace(/,/g, '.').replace(/\*/g, '·').replace(/\s+/g, '');
         const m = n.match(/^(.+)[·](.+)[:/]2$/);
         if (!m) {
@@ -373,7 +373,10 @@ function init65DriehoekGemengd(container, onComplete) {
         const bOk = Math.abs(x - basis)  < 0.05;
         const hOk = Math.abs(y - hoogte) < 0.05;
         if (bOk && hOk) return { ok: true };
-        if (Math.abs(x - hoogte) < 0.05 && Math.abs(y - basis) < 0.05) return { ok: false, error: 'volgorde' };
+        if (Math.abs(x - hoogte) < 0.05 && Math.abs(y - basis) < 0.05) {
+            if (driehoekType === 2) return { ok: true };
+            return { ok: false, error: 'volgorde' };
+        }
         return { ok: false, error: 'generic' };
     }
 
