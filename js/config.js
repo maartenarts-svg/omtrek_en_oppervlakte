@@ -391,7 +391,7 @@ const LESSONS_CONFIG = {
         id: 'part-2',
         type: 'video',
         title: 'Oppervlakte van een driehoek',
-        videoUrl: '',
+        videoUrl: 'https://drive.google.com/file/d/1Qfj3NIm6egsUy2p2Pi3Jn4P0hD8t8M7P/view?usp=drive_link',
         xpReward: 20
       },
       {
@@ -449,7 +449,7 @@ const LESSONS_CONFIG = {
         id: 'part-1',
         type: 'video',
         title: 'Oppervlakte van een cirkel',
-        videoUrl: 'https://drive.google.com/file/d/1qBgc5eJObLwP0lRFA7XEpEiOjEoprICx/view?usp=drive_link',
+        videoUrl: 'https://drive.google.com/file/d/1LA8IDw0jpO9FHjHTDsbmDrsYhIPX84dm/view?usp=drive_link',
         xpReward: 20
       },
       {
