@@ -340,7 +340,8 @@ function init33FormulasGebruiken(container, onComplete) {
                 break;
             }
             case 'rechthoek': {
-                const b = randomDim(), h = randomDim();
+                let b = randomDim(), h = randomDim();
+                while (Math.abs(b - h) < 0.5) h = randomDim();
                 dims    = { b, h };
                 figOpts = { factor: 1, rotation, breedte: { value: b, unit }, hoogte: { value: h, unit } };
                 answer  = round1(2 * (b + h));

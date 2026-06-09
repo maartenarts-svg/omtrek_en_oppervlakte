@@ -27,7 +27,7 @@ function initDrillFormules(container, onComplete) {
         { id: 'P_trapezium',      label: '<i>P</i><sub>trapezium</sub>',      pLabel: '<i>P</i>', figType: 'trapezium',             correct: ['somvandezijden']                              },
         { id: 'A_rechthoek',      label: '<i>A</i><sub>rechthoek</sub>',      pLabel: '<i>A</i>', figType: 'rechthoek',             correct: ['bh', 'hb']                                   },
         { id: 'A_vierkant',       label: '<i>A</i><sub>vierkant</sub>',       pLabel: '<i>A</i>', figType: 'vierkant',              correct: ['z²']                                         },
-        { id: 'A_parallellogram', label: '<i>A</i><sub>parallellogram</sub>', pLabel: '<i>A</i>', figType: 'parallellogram-hoogte', correct: ['bh', 'hb']                                   },
+        { id: 'A_parallellogram', label: '<i>A</i><sub>parallellogram</sub>', pLabel: '<i>A</i>', figType: 'parallellogram',        correct: ['bh', 'hb']                                   },
     ];
 
     const DISPLAY = {
@@ -74,10 +74,15 @@ function initDrillFormules(container, onComplete) {
 
     function progressHTML() {
         const pct = ((currentQ - 1) / TOTAL_Q) * 100;
+        const correctSoFar =
+            Object.values(textResults).filter(Boolean).length +
+            Object.values(figResults).filter(Boolean).length +
+            (currentQ > 21 ? (q21Correct ? 1 : 0) : 0);
         return `
             <div class="exercise-progress">
                 <div class="progress-header">
                     <span class="progress-label">Vraag ${currentQ} van ${TOTAL_Q}</span>
+                    <span class="progress-score">Score: <strong>${correctSoFar}</strong> / ${TOTAL_Q}</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${pct}%"></div>
@@ -194,20 +199,11 @@ function initDrillFormules(container, onComplete) {
         document.addEventListener('keydown', onEnter);
     }
 
-    function hintHTML(f) {
-        if (hasPi(f))     return '<p class="hint-text">Tip: typ <kbd>pi</kbd> voor π &nbsp;|&nbsp; typ <kbd>*</kbd> voor het maalteken ·</p>';
-        if (isSom(f))     return '';
-        if (hasSquared(f))return '';
-        return '';
-    }
-
     // ── TEKST VRAGEN Q1–10 ───────────────────────────────────
 
     function renderTextQ(n) {
-        const f      = TEXT_ORDER[n - 1];
-        const som    = isSom(f);
-        const sq     = hasSquared(f);
-        const pi     = hasPi(f);
+        const f   = TEXT_ORDER[n - 1];
+        const som = isSom(f);
 
         container.innerHTML = `
             <div class="exercise-container">
@@ -223,8 +219,8 @@ function initDrillFormules(container, onComplete) {
                             </div>` : ''}
                         </div>
                     </div>
-                    ${sq ? squaredHelperHTML() : ''}
-                    ${hintHTML(f)}
+                    ${squaredHelperHTML()}
+                    <p class="hint-text">Typ <kbd>pi</kbd> voor π &nbsp;|&nbsp; typ <kbd>*</kbd> voor ·</p>
                     <div id="feedbackArea" class="feedback-area"></div>
                     <div class="question-actions">
                         <button class="btn btn-primary" id="checkBtn">Controleer</button>
@@ -232,8 +228,9 @@ function initDrillFormules(container, onComplete) {
                 </div>
             </div>`;
 
-        if (sq)  setupSquaredBtn('dfInput');
-        if (pi)  { setupPiConversion('dfInput'); setupTimesConversion('dfInput'); }
+        setupSquaredBtn('dfInput');
+        setupPiConversion('dfInput');
+        setupTimesConversion('dfInput');
         if (som) setupSomAutocomplete('dfInput');
 
         document.getElementById('dfInput').focus();
@@ -283,8 +280,6 @@ function initDrillFormules(container, onComplete) {
     function renderFigureQ(n) {
         const f   = FIGURE_ORDER[n - 1];
         const som = isSom(f);
-        const sq  = hasSquared(f);
-        const pi  = hasPi(f);
 
         container.innerHTML = `
             <div class="exercise-container">
@@ -301,8 +296,8 @@ function initDrillFormules(container, onComplete) {
                             </div>` : ''}
                         </div>
                     </div>
-                    ${sq ? squaredHelperHTML() : ''}
-                    ${hintHTML(f)}
+                    ${squaredHelperHTML()}
+                    <p class="hint-text">Typ <kbd>pi</kbd> voor π &nbsp;|&nbsp; typ <kbd>*</kbd> voor ·</p>
                     <div id="feedbackArea" class="feedback-area"></div>
                     <div class="question-actions">
                         <button class="btn btn-primary" id="checkBtn">Controleer</button>
@@ -312,8 +307,9 @@ function initDrillFormules(container, onComplete) {
 
         drawFiguur(document.getElementById('dfFigContainer'), f.figType, generateFigOpts(f));
 
-        if (sq)  setupSquaredBtn('dfInput');
-        if (pi)  { setupPiConversion('dfInput'); setupTimesConversion('dfInput'); }
+        setupSquaredBtn('dfInput');
+        setupPiConversion('dfInput');
+        setupTimesConversion('dfInput');
         if (som) setupSomAutocomplete('dfInput');
 
         document.getElementById('dfInput').focus();
@@ -365,35 +361,35 @@ function initDrillFormules(container, onComplete) {
         const rot    = Math.floor(Math.random() * 72) * 5;
         const pick   = arr => arr[Math.floor(Math.random() * arr.length)];
 
+        const nl = { stijl: { noLabels: true } };
+
         switch (f.figType) {
             case 'vierkant':
-                return { factor: 1, rotation: rot, zijde: { value: pick([3,4,5,6]), unit } };
-            case 'rechthoek':
+                return { factor: 1, rotation: rot, zijde: { value: pick([3,4,5,6]), unit }, ...nl };
+            case 'rechthoek': {
+                const bVal = pick([3,4,5]);
                 return { factor: 1, rotation: rot,
-                    breedte: { value: pick([3,4,5]),   unit },
-                    hoogte:  { value: pick([4,5,6,7]), unit } };
+                    breedte: { value: bVal,                                    unit },
+                    hoogte:  { value: pick([4,5,6,7].filter(v => v !== bVal)), unit }, ...nl };
+            }
             case 'ruit':
-                return { factor: 1, rotation: rot, zijde: { value: pick([3,4,5]), unit } };
+                return { factor: 1, rotation: rot, zijde: { value: pick([3,4,5]), unit }, ...nl };
             case 'cirkel':
-                return { factor: 1, straal: { value: pick([2,3,4,5]), unit } };
+                return { factor: 1, straal: { value: pick([2,3,4,5]), unit }, ...nl };
             case 'driehoek':
                 return { factor: 1, rotation: rot,
-                    zijden: [{ value: 3, unit }, { value: 4, unit }, { value: 5, unit }] };
+                    zijden: [{ value: 3, unit }, { value: 4, unit }, { value: 5, unit }], ...nl };
             case 'parallellogram':
                 return { factor: 1, rotation: rot,
                     basis: { value: pick([4,5,6]), unit },
-                    zijde: { value: pick([2,3,4]), unit } };
-            case 'parallellogram-hoogte':
-                return { factor: 1, rotation: rot,
-                    basis: { value: pick([4,5,6]), unit },
-                    zijde: { value: pick([2,3,4]), unit } };
+                    zijde: { value: pick([2,3,4]), unit }, ...nl };
             case 'trapezium':
                 return { factor: 1, rotation: rot, zijden: [
                     { value: pick([3,4]),   unit },
                     { value: pick([2,3]),   unit },
                     { value: pick([5,6,7]), unit },
                     { value: pick([2,3]),   unit }
-                ]};
+                ], ...nl };
         }
     }
 

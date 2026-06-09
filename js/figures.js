@@ -185,7 +185,7 @@ function _svgParallelPijl(A, B, count, s) {
 
 // Label op het midden van zijde A→B, buiten de figuur
 function _svgLabel(A, B, tekst, centroid, s) {
-  if (!tekst) return '';
+  if (!tekst || (s && s.noLabels)) return '';
   const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
   const norm = _outwardNormal(A, B, centroid);
   const lx = mx + norm.x * s.labelOffset;

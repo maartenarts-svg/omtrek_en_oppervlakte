@@ -483,7 +483,13 @@
 
         function renderFormulaOverview() {
             const card = document.getElementById('formulaOverviewCard');
-            const data = userData.drillFormules;
+
+            // Voorkeur: laatste drill-formules sessie in history met formulaResults
+            const lastEntry = (userData.drillHistory || [])
+                .filter(e => e.type === 'drill-formules' && e.formulaResults)
+                .sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
+            const data = lastEntry ? { results: lastEntry.formulaResults } : userData.drillFormules;
+
             if (!data || !data.results) { card.innerHTML = ''; return; }
 
             const unknown  = FORMULA_DISPLAY.filter(f => !data.results[f.id]);
@@ -617,21 +623,24 @@
                 type: activeExercise.id,
                 scorePoints: result.score,
                 scoreLetter: letterScore,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                ...(result.formulaResults ? { formulaResults: result.formulaResults.results } : {})
             };
 
             await DB.addDrillHistory(currentUser.email, entry);
 
-            // Formule-resultaten opslaan indien aanwezig (drill-formules)
+            // Formule-resultaten ook afzonderlijk opslaan (achterwaartse compatibiliteit)
             if (result.formulaResults) {
                 await DB.saveDrillFormules(currentUser.email, result.formulaResults);
                 userData.drillFormules = result.formulaResults;
-                renderFormulaOverview();
             }
 
             // Lokale cache bijwerken
             if (!userData.drillHistory) userData.drillHistory = [];
             userData.drillHistory.push(entry);
+
+            // Formule-overzicht bijwerken indien van toepassing
+            if (result.formulaResults) renderFormulaOverview();
 
             // Tegels bijwerken (nieuwe score-badge)
             renderTiles();
