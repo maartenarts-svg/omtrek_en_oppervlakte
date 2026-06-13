@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo – Ruit met diagonalen</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 24px; }
+    h1   { font-size: 1.3rem; margin-bottom: 8px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .kaart {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .kaart h2 { font-size: 1rem; margin: 0 0 4px; color: #333; }
+    .figuur   { display: inline-flex; }
+    .data {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      background: #f0f6e8;
+      border-radius: 4px;
+      padding: 8px 12px;
+      line-height: 1.7;
+    }
+    .data span { font-weight: bold; color: #1565c0; }
+    button {
+      margin-top: 16px;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #4a7a10;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover { background: #3a6a0e; }
+  </style>
+</head>
+<body>
+  <h1>Demo – <code>drawRuitDiagonalen</code></h1>
+  <p style="font-size:0.85rem;color:#555;margin-bottom:20px">
+    Ruit ABCD met diagonalen [AC] en [BD], snijpunt M.
+    a = |AM| = |CM|, b = |BM| = |DM|, z = |AB| = √(a² + b²).
+  </p>
+
+  <div class="grid">
+    <div class="kaart">
+      <h2>Figuur</h2>
+      <div class="figuur" id="fig"></div>
+      <div class="data" id="data"></div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <button onclick="nieuweFiguur()">Nieuwe figuur</button>
+    <label style="font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+      <input type="checkbox" id="lengtesCheck" checked onchange="herteken()">
+      Toon lengtes
+    </label>
+  </div>
+
+  <script src="js/figures.js"></script>
+  <script>
+    let huidige = null;
+
+    function toonData(d) {
+      const fmt = v => String(v).replace('.', ',');
+      const hoekGraden = Math.round(d.hoek * 180 / Math.PI * 10) / 10;
+      document.getElementById('data').innerHTML =
+        `α = ${fmt(hoekGraden)}°<br>` +
+        `a = <span>${fmt(d.aLabel.value)} ${d.aLabel.unit}</span> &nbsp;|&nbsp; ` +
+        `b = <span>${fmt(d.bLabel.value)} ${d.bLabel.unit}</span><br>` +
+        `z = <span>${fmt(d.zLabel.value)} ${d.zLabel.unit}</span>`;
+    }
+
+    function herteken() {
+      const lengtes = document.getElementById('lengtesCheck').checked;
+      huidige = drawFiguur(document.getElementById('fig'), 'ruit-diagonalen', {
+        x: huidige.x, y: huidige.y,
+        a: huidige.a, b: huidige.b, hoek: huidige.hoek, eenheid: huidige.eenheid,
+        lengtes
+      });
+      toonData(huidige);
+    }
+
+    function nieuweFiguur() {
+      const lengtes = document.getElementById('lengtesCheck').checked;
+      huidige = drawFiguur(document.getElementById('fig'), 'ruit-diagonalen', { lengtes });
+      toonData(huidige);
+    }
+
+    nieuweFiguur();
+  </script>
+</body>
+</html>

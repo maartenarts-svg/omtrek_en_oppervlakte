@@ -173,7 +173,7 @@ function init61InstapDriehoek(container, onComplete) {
         let basis, hoogte;
         do {
             basis  = 2 + Math.floor(Math.random() * 9); // 2..10
-            hoogte = 2 + Math.floor(Math.random() * 9); // 2..10
+            hoogte = 5 + Math.floor(Math.random() * 6); // 5..10
         } while (basis % 2 !== 0 && hoogte % 2 !== 0); // herhaal tot minstens één even
 
         const areaPara = basis * hoogte;

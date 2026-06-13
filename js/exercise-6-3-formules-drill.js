@@ -684,7 +684,8 @@ function init63FormulasDrill(container, onComplete) {
             case 'parallellogram-hoogte':
                 return { factor: 1, rotation,
                     basis: { value: pick([3,4,5,6]), unit: 'cm' },
-                    zijde: { value: pick([2,3,4]),   unit: 'cm' } };
+                    zijde: { value: pick([2,3,4]),   unit: 'cm' },
+                    stijl: { hoogteDecimals: 1 } };
             case 'driehoek-hoogte':
                 return { type: pick([1,2,3,4]), k: 1, unit: 'cm', rotation };
             case 'vierhoek':

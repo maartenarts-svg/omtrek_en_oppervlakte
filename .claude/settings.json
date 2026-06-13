@@ -1,10 +1,13 @@
 {
   "permissions": {
+    "allow": [
+      "Read(//c/Users/maart/.claude/projects/c--Users-maart-OneDrive-Documents-GitHub-omtrek-en-oppervlakte/**)",
+      "PowerShell(\\(Get-Content js\\\\figures.js | Measure-Object -Line\\).Lines)",
+      "Skill(run)",
+      "Skill(run:*)"
+    ],
     "additionalDirectories": [
       "c:\\Users\\maart\\.claude\\projects\\c--Users-maart-OneDrive-Documents-GitHub-omtrek-en-oppervlakte\\memory"
-    ],
-    "allow": [
-      "Read(//c/Users/maart/.claude/projects/c--Users-maart-OneDrive-Documents-GitHub-omtrek-en-oppervlakte/**)"
     ]
   }
 }

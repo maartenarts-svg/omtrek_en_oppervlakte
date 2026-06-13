@@ -681,7 +681,8 @@ function init58FormulasDrill(container, onComplete) {
             case 'parallellogram-hoogte':
                 return { factor: 1, rotation,
                     basis: { value: pick([3,4,5,6]), unit: 'cm' },
-                    zijde: { value: pick([2,3,4]),   unit: 'cm' } };
+                    zijde: { value: pick([2,3,4]),   unit: 'cm' },
+                    stijl: { hoogteDecimals: 1 } };
             case 'driehoek':
                 return { factor: 1, rotation, zijden: pick(DRIEHOEKEN) };
             case 'vierhoek':

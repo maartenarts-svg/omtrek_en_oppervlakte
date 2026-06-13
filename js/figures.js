@@ -37,7 +37,7 @@
 //
 // Beschikbare types:
 //   'vierkant', 'rechthoek', 'driehoek', 'trapezium',
-//   'ruit', 'parallellogram', 'cirkel', 'vierhoek'
+//   'ruit', 'ruit-diagonalen', 'parallellogram', 'cirkel', 'vierhoek'
 // ============================================================
 
 // ---- Stijlconstanten ----
@@ -183,13 +183,22 @@ function _svgParallelPijl(A, B, count, s) {
   }).join('');
 }
 
-// Label op het midden van zijde A→B, buiten de figuur
-function _svgLabel(A, B, tekst, centroid, s) {
+// Label op het midden van zijde A→B, buiten de figuur.
+// angleDeg (optioneel): draait het label evenwijdig aan A→B, gecentreerd op het label.
+function _svgLabel(A, B, tekst, centroid, s, angleDeg) {
   if (!tekst || (s && s.noLabels)) return '';
   const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
   const norm = _outwardNormal(A, B, centroid);
   const lx = mx + norm.x * s.labelOffset;
   const ly = my + norm.y * s.labelOffset;
+
+  if (angleDeg) {
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}"
+      text-anchor="middle" dominant-baseline="middle"
+      transform="rotate(${angleDeg.toFixed(2)} ${lx.toFixed(1)} ${ly.toFixed(1)})"
+      font-family="${s.fontFamily}" font-size="${s.fontSize}"
+      fill="${s.labelColor}">${tekst}</text>`;
+  }
 
   let anchor = 'middle';
   if (norm.x > 0.3) anchor = 'start';
@@ -674,7 +683,9 @@ function drawParallellogramHoogte(container, opts = {}) {
   const hVal = (zij.value || 0) * (factor || 1) * sinA;
   // Afronden op evenveel decimalen als de zijde met de meeste decimalen
   const _nDec = v => { const s = String(Math.round(v * 10000) / 10000); const i = s.indexOf('.'); return i === -1 ? 0 : s.length - i - 1; };
-  const decimals = Math.max(_nDec((basis.value || 0) * (factor || 1)), _nDec((zij.value || 0) * (factor || 1)));
+  const decimals = (s.hoogteDecimals != null)
+    ? s.hoogteDecimals
+    : Math.max(_nDec((basis.value || 0) * (factor || 1)), _nDec((zij.value || 0) * (factor || 1)));
   const hTekst   = hVal.toFixed(decimals).replace('.', ',') + (zij.unit ? ` ${zij.unit}` : '');
 
   // Label op middelpunt van de hoogtelijn, loodrecht.
@@ -857,6 +868,126 @@ function drawDriehoekHoogte(container, opts = {}) {
   return { a: aR, b: bR, c: cR, h: hR, oppervlakte };
 }
 
+/**
+ * Ruit met diagonalen
+ *
+ * Diagonalen [AC] en [BD] snijden elkaar loodrecht in M, het midden van het
+ * tekengebied. a = |AM| = |CM| en b = |BM| = |DM| (in px) bepalen de vorm en
+ * worden willekeurig gekozen (of meegegeven om dezelfde figuur te hertekenen).
+ * Voor de labels wordt a/b omgezet naar een 'mooi' getal via factor f = max(x,y)/10,
+ * afgerond op 1 decimaal.
+ *
+ * @param {HTMLElement|string} container
+ * @param {Object} opts
+ *   x        {number}   Breedte van het tekengebied in px (default: 280)
+ *   y        {number}   Hoogte van het tekengebied in px (default: 260)
+ *   lengtes  {boolean}  Toon a, b (op de diagonalen) en z (op [AB]) (default: false)
+ *   a, b     {number}   Halve diagonalen in px (default: willekeurig binnen geldig bereik)
+ *   hoek     {number}   Hoek α in radialen, bereik [0, π/4] (default: willekeurig)
+ *   eenheid  {string}   'm' | 'dm' | 'cm' | 'mm' (default: willekeurig)
+ *
+ * @returns {{x, y, a, b, hoek, eenheid, aLabel, bLabel, zLabel}}
+ *   aLabel/bLabel/zLabel: {value, unit} — afgeronde waarden voor weergave/nakijken.
+ *   x, y, a, b, hoek, eenheid kunnen teruggegeven worden aan een volgende aanroep
+ *   om exact dezelfde figuur te hertekenen (bv. lengtes aan/uit).
+ */
+function drawRuitDiagonalen(container, opts = {}) {
+  container = _resolveContainer(container);
+  const x = opts.x || _W;
+  const y = opts.y || _H;
+  const lengtes = !!opts.lengtes;
+  const s = Object.assign({}, FIGUUR_STIJL, opts.stijl);
+
+  // (1) Willekeurig genereren — of hergebruik meegegeven waarden
+  const hoek = (opts.hoek != null) ? opts.hoek : Math.random() * Math.PI / 4;
+  const ca = Math.cos(hoek), sa = Math.sin(hoek);
+
+  const lo  = Math.min(x / 4, y / 4);
+  const hiA = Math.min(x / (2 * ca), y / (2 * sa));
+  const hiB = Math.min(x / (2 * sa), y / (2 * ca));
+
+  const a = (opts.a != null) ? opts.a : lo + Math.random() * (hiA - lo);
+  let   b = (opts.b != null) ? opts.b : lo + Math.random() * (hiB - lo);
+
+  const f    = Math.max(x, y) / 10;
+  const aVal = Math.round((a / f) * 10) / 10;
+  let   bVal = Math.round((b / f) * 10) / 10;
+
+  // a ≠ b: bij gelijke afgeronde waarden b opnieuw loten
+  if (opts.b == null) {
+    let pogingen = 0;
+    while (bVal === aVal && pogingen < 20) {
+      b = lo + Math.random() * (hiB - lo);
+      bVal = Math.round((b / f) * 10) / 10;
+      pogingen++;
+    }
+  }
+
+  const eenheden = ['m', 'dm', 'cm', 'mm'];
+  const eenheid  = opts.eenheid || eenheden[Math.floor(Math.random() * eenheden.length)];
+  const zVal     = Math.round(Math.sqrt(aVal * aVal + bVal * bVal) * 10) / 10;
+
+  const aLabel = { value: aVal, unit: eenheid };
+  const bLabel = { value: bVal, unit: eenheid };
+  const zLabel = { value: zVal, unit: eenheid };
+
+  // (2) Hoekpunten (rechtstreeks in px van het tekengebied)
+  const M = { x: x / 2, y: y / 2 };
+  const A = { x: x / 2 + a * ca, y: y / 2 + a * sa };
+  const B = { x: x / 2 - b * sa, y: y / 2 + b * ca };
+  const C = { x: x / 2 - a * ca, y: y / 2 - a * sa };
+  const D = { x: x / 2 + b * sa, y: y / 2 - b * ca };
+  const verts = [A, B, C, D];
+  const c = _centroid(verts);
+
+  let m = '';
+  // Zijden: alle even lang (z) -> 1 gelijkheidsteken per zijde, zoals drawRuit
+  for (let i = 0; i < 4; i++) {
+    m += _svgTick(verts[i], verts[(i + 1) % 4], 1, s);
+  }
+  // Diagonalen [AC] en [BD]
+  m += `<line x1="${A.x.toFixed(1)}" y1="${A.y.toFixed(1)}" x2="${C.x.toFixed(1)}" y2="${C.y.toFixed(1)}" stroke="${s.markerColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+  m += `<line x1="${B.x.toFixed(1)}" y1="${B.y.toFixed(1)}" x2="${D.x.toFixed(1)}" y2="${D.y.toFixed(1)}" stroke="${s.markerColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+
+  // (3) Lengtematen
+  let l = '';
+  if (lengtes) {
+    const off = 14;
+    const aAngle = hoek * 180 / Math.PI;   // richting [AM]/[CM] = α
+    const bAngle = aAngle - 90;            // richting [BM]/[DM] = α - π/2
+    // a-labels op [AM] en [CM], verschoven richting D (loodrecht op AC, lengte D-M = b)
+    const nA = { x: (D.x - M.x) / b, y: (D.y - M.y) / b };
+    l += _diagonaalLabel(A, M, nA, off, _fmt(aLabel, 1), aAngle, s);
+    l += _diagonaalLabel(C, M, nA, off, _fmt(aLabel, 1), aAngle, s);
+    // b-labels op [BM] en [DM], verschoven richting A (loodrecht op BD, lengte A-M = a)
+    const nB = { x: (A.x - M.x) / a, y: (A.y - M.y) / a };
+    l += _diagonaalLabel(B, M, nB, off, _fmt(bLabel, 1), bAngle, s);
+    l += _diagonaalLabel(D, M, nB, off, _fmt(bLabel, 1), bAngle, s);
+  }
+  // z op [AB], buiten de figuur, evenwijdig aan AB: hoek = α - arctan(b/a)
+  const zAngle = (hoek - Math.atan2(b, a)) * 180 / Math.PI;
+  l += _svgLabel(A, B, lengtes ? _fmt(zLabel, 1) : '', c, s, zAngle);
+
+  container.innerHTML = _buildPolygonSVG(verts, m, l, x, y, s);
+
+  return { x, y, a, b, hoek, eenheid, aLabel, bLabel, zLabel };
+}
+
+// Label op de middelloodlijn van [P-M]: midden van [P-M] verschoven over 'offset' px
+// loodrecht op [P-M] (richting n, eenheidsvector), gedraaid over angleDeg zodat de
+// tekst evenwijdig aan [P-M] staat.
+function _diagonaalLabel(P, M, n, offset, tekst, angleDeg, s) {
+  if (!tekst) return '';
+  const mx = (P.x + M.x) / 2, my = (P.y + M.y) / 2;
+  const lx = mx + n.x * offset, ly = my + n.y * offset;
+
+  return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}"
+    text-anchor="middle" dominant-baseline="middle"
+    transform="rotate(${angleDeg.toFixed(2)} ${lx.toFixed(1)} ${ly.toFixed(1)})"
+    font-family="${s.fontFamily}" font-size="${s.fontSize}"
+    fill="${s.labelColor}">${tekst}</text>`;
+}
+
 // ============================================================
 // PUBLIEKE API
 // ============================================================
@@ -866,7 +997,7 @@ function drawDriehoekHoogte(container, opts = {}) {
  *
  * @param {HTMLElement|string} container  Element of CSS-selector
  * @param {string} type  'vierkant' | 'rechthoek' | 'driehoek' | 'trapezium' |
- *                       'ruit' | 'parallellogram' | 'parallellogram-hoogte' |
+ *                       'ruit' | 'ruit-diagonalen' | 'parallellogram' | 'parallellogram-hoogte' |
  *                       'cirkel' | 'vierhoek' | 'driehoek-hoogte'
  * @param {Object} opts  Zie de afzonderlijke tekenfuncties hierboven
  */
@@ -877,6 +1008,7 @@ function drawFiguur(container, type, opts) {
     driehoek:               drawDriehoek,
     trapezium:              drawTrapezium,
     ruit:                   drawRuit,
+    'ruit-diagonalen':      drawRuitDiagonalen,
     parallellogram:         drawParallellogram,
     'parallellogram-hoogte': drawParallellogramHoogte,
     'driehoek-hoogte':      drawDriehoekHoogte,
