@@ -3,8 +3,10 @@
 // ============================================
 // DRILL: OPPERVLAKTE BEREKENEN
 // ============================================
-// 6 vragen: vierkant × 2, rechthoek × 2, parallellogram × 2
-// Gebaseerd op exercise-5-11 (enkel oppervlakte-deel)
+// 8 vragen: vierkant × 2, rechthoek × 2, parallellogram × 2,
+//           driehoek-hoogte × 1, cirkel × 1
+// Gebaseerd op exercise-5-11 (oppervlakte-deel) +
+// driehoek/cirkel zoals in exercise-8-4-alles-gemengd
 // ============================================
 
 function initDrillOppervlakteBerekenen(container, onComplete) {
@@ -20,29 +22,35 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
     const PARA_DIMS = [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 
     const FORMULA_OPTS = [
-        { value: '',     html: '' },
-        { value: 'fAz2', html: '<i>z</i>²' },
-        { value: 'fAbh', html: '<i>bh</i>' }
+        { value: '',      html: '' },
+        { value: 'fAz2',  html: '<i>z</i>²' },
+        { value: 'fAbh',  html: '<i>bh</i>' },
+        { value: 'fAbh2', html: '<i>bh</i> : 2' },
+        { value: 'fApr2', html: '&pi;<i>r</i>²' }
     ];
 
     const CORRECT_FORMULA = {
-        'vierkant-oppervlakte':       'fAz2',
-        'rechthoek-oppervlakte':      'fAbh',
-        'parallellogram-oppervlakte': 'fAbh'
+        'vierkant-oppervlakte':        'fAz2',
+        'rechthoek-oppervlakte':       'fAbh',
+        'parallellogram-oppervlakte':  'fAbh',
+        'driehoek-hoogte-oppervlakte': 'fAbh2',
+        'cirkel-oppervlakte':          'fApr2'
     };
 
-    const TOTAL_Q    = 6;
-    const MAX_POINTS = 6;
+    const TOTAL_Q    = 8;
+    const MAX_POINTS = 8;
 
     // ── STATE ────────────────────────────────────────────────
 
     const SPECS = shuffle([
-        { fig: 'vierkant',       task: 'oppervlakte' },
-        { fig: 'vierkant',       task: 'oppervlakte' },
-        { fig: 'rechthoek',      task: 'oppervlakte' },
-        { fig: 'rechthoek',      task: 'oppervlakte' },
-        { fig: 'parallellogram', task: 'oppervlakte' },
-        { fig: 'parallellogram', task: 'oppervlakte' }
+        { fig: 'vierkant',        task: 'oppervlakte' },
+        { fig: 'vierkant',        task: 'oppervlakte' },
+        { fig: 'rechthoek',       task: 'oppervlakte' },
+        { fig: 'rechthoek',       task: 'oppervlakte' },
+        { fig: 'parallellogram',  task: 'oppervlakte' },
+        { fig: 'parallellogram',  task: 'oppervlakte' },
+        { fig: 'driehoek-hoogte', task: 'oppervlakte' },
+        { fig: 'cirkel',          task: 'oppervlakte' }
     ]);
     const questions     = SPECS.map(s => genQuestion(s.fig));
     let currentQ        = 0;
@@ -169,9 +177,15 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
     // ── VRAGEN ───────────────────────────────────────────────
 
     function renderQuestion(n) {
-        const data    = questions[n - 1];
-        let qAttempts = 0;
-        const isLast  = n === TOTAL_Q;
+        const data     = questions[n - 1];
+        let qAttempts  = 0;
+        const isLast   = n === TOTAL_Q;
+        const isCirkel = data.fig === 'cirkel';
+
+        const titleText = isCirkel
+            ? `Bereken de oppervlakte op 0,01 ${data.unit}² nauwkeurig.`
+            : 'Bereken de oppervlakte.';
+        const calcSep = isCirkel ? '&asymp;' : '=';
 
         const csOptsHtml = FORMULA_OPTS.map(o =>
             `<div class="ex33-cs-opt" data-value="${o.value}">${o.html || '&mdash;'}</div>`
@@ -185,7 +199,7 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
             <div class="exercise-container">
                 ${progressHTML()}
                 <div class="question-card">
-                    <h3 class="question-title">Bereken de oppervlakte.</h3>
+                    <h3 class="question-title">${titleText}</h3>
                     <p class="ex54-subtitle">Je mag ICT gebruiken voor de berekening.</p>
                     <div class="ex33-fig" id="dob-fig"></div>
                     <div class="ex33-rows">
@@ -203,7 +217,7 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                             <span>:</span>
                             <span class="ex33-p-label"><i>A</i> =</span>
                             <input id="dob-calc" class="ex33-calc" type="text" autocomplete="off" placeholder="berekening">
-                            <span>=</span>
+                            <span>${calcSep}</span>
                             <input id="dob-ans" class="ex33-ans" type="text" autocomplete="off" placeholder="antwoord">
                         </div>
                         <div class="ex33-row ex33-sentence">
@@ -216,7 +230,7 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                         <span>Om <strong>²</strong> in te voeren, druk je op de knop:</span>
                         <button type="button" class="squared-insert-btn" id="squaredBtn"><span class="key-top">3</span><span class="key-bottom">2</span></button>
                     </div>
-                    <p class="hint-text">Tip: typ <kbd>*</kbd> voor het maalteken &middot;</p>
+                    <p class="hint-text">Tip: typ <kbd>*</kbd> voor het maalteken &middot; &nbsp;|&nbsp; typ <kbd>pi</kbd> voor &pi; &nbsp;|&nbsp; gebruik <kbd>/</kbd> of <kbd>:</kbd> voor deling</p>
                     <div id="feedbackArea" class="feedback-area"></div>
                     <div class="question-actions">
                         <button class="btn btn-primary" id="checkBtn">Controleer</button>
@@ -224,7 +238,19 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                 </div>
             </div>`;
 
-        drawFiguur(document.getElementById('dob-fig'), 'parallellogram-hoogte' === data.figType ? 'parallellogram-hoogte' : data.fig, data.figOpts);
+        const figEl = document.getElementById('dob-fig');
+        if (data.fig === 'driehoek-hoogte') {
+            const fd = drawFiguur(figEl, 'driehoek-hoogte', data.figOpts);
+            data.dims.a     = fd.a;
+            data.dims.b     = fd.b;
+            data.dims.c     = fd.c;
+            data.dims.h     = fd.h;
+            data.dims.basis = data.dims.driehoekType === 4 ? fd.c : fd.a;
+            data.answer     = fd.oppervlakte;
+        } else {
+            const figType = data.fig === 'parallellogram' ? 'parallellogram-hoogte' : data.fig;
+            drawFiguur(figEl, figType, data.figOpts);
+        }
         initCS('dob-cs');
 
         const ansEl  = document.getElementById('dob-ans');
@@ -244,6 +270,17 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
             const s = calcEl.selectionStart, end = calcEl.selectionEnd;
             calcEl.value = calcEl.value.substring(0, s) + '·' + calcEl.value.substring(end);
             calcEl.selectionStart = calcEl.selectionEnd = s + 1;
+        });
+
+        calcEl.addEventListener('input', () => {
+            const old    = calcEl.value;
+            const newVal = old.replace(/pi/gi, 'π');
+            if (newVal !== old) {
+                const diff   = old.length - newVal.length;
+                const cursor = calcEl.selectionStart;
+                calcEl.value = newVal;
+                calcEl.selectionStart = calcEl.selectionEnd = Math.max(0, cursor - diff);
+            }
         });
 
         document.getElementById('squaredBtn').addEventListener('click', () => {
@@ -298,9 +335,11 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
     function buildCalcCorrect(data) {
         const { fig, dims } = data;
         switch (fig) {
-            case 'vierkant':       return `${dims.z}²`;
-            case 'rechthoek':      return `${dims.b}·${dims.h}`;
-            case 'parallellogram': return `${dims.b}·${dims.h}`;
+            case 'vierkant':        return `${dims.z}²`;
+            case 'rechthoek':       return `${dims.b}·${dims.h}`;
+            case 'parallellogram':  return `${dims.b}·${dims.h}`;
+            case 'driehoek-hoogte': return `${dims.basis}·${dims.h}:2`;
+            case 'cirkel':          return `π·${dims.r}²`;
         }
     }
 
@@ -329,6 +368,8 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                 errors.push('Je hebt de berekening niet correct opgeschreven. Controleer de volgorde waarin je de getallen noteert.');
             } else if (calcResult.error === 'zijde-als-hoogte') {
                 errors.push('De berekening is niet juist. Kijk goed naar de figuur: hoe lang is de hoogte van dit parallellogram?');
+            } else if (calcResult.error === 'missing-division') {
+                errors.push('Ben je de deling door 2 niet vergeten bij de oppervlakte van de driehoek?');
             } else {
                 errors.push('Je hebt de berekening niet correct opgeschreven.');
             }
@@ -337,7 +378,7 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
         if (!checkAnswer(data, ans)) {
             if (calcResult.ok) {
                 errors.push('Je hebt niet goed uitgerekend. Je mag ICT gebruiken.');
-            } else if (calcResult.error === 'generic') {
+            } else if (calcResult.error === 'generic' || calcResult.error === 'missing-division') {
                 errors.push('De berekening is niet juist, pas dus je antwoord aan.');
             }
         }
@@ -353,11 +394,40 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
 
     function checkCalc(data, input) {
         switch (data.fig) {
-            case 'vierkant':       return checkCalcVierkantOpp(data.dims.z, input);
-            case 'rechthoek':      return checkCalcRechthoekOpp(data.dims, input);
-            case 'parallellogram': return checkCalcParaOpp(data.dims, input);
+            case 'vierkant':        return checkCalcVierkantOpp(data.dims.z, input);
+            case 'rechthoek':       return checkCalcRechthoekOpp(data.dims, input);
+            case 'parallellogram':  return checkCalcParaOpp(data.dims, input);
+            case 'driehoek-hoogte': return checkCalcDriehoekOpp(data.dims.basis, data.dims.h, data.dims.driehoekType, input);
+            case 'cirkel':          return checkCalcCirkelOpp(data.dims.r, input);
         }
         return { ok: false, error: 'generic' };
+    }
+
+    function checkCalcDriehoekOpp(basis, h, type, input) {
+        const n = normalizeCalc(input);
+        const m = n.match(/^(.+)[·](.+)[:/]2$/);
+        if (!m) {
+            if (n.match(/^(.+)[·](.+)$/)) return { ok: false, error: 'missing-division' };
+            return { ok: false, error: 'generic' };
+        }
+        const x = parseFloat(m[1]), y = parseFloat(m[2]);
+        if (isNaN(x) || isNaN(y)) return { ok: false, error: 'generic' };
+        const basisOk    = Math.abs(x - basis) < 0.05 && Math.abs(y - h) < 0.05;
+        const reversedOk = Math.abs(x - h) < 0.05 && Math.abs(y - basis) < 0.05;
+        if (basisOk) return { ok: true };
+        if (reversedOk) {
+            if (type === 2) return { ok: true };
+            return { ok: false, error: 'volgorde' };
+        }
+        return { ok: false, error: 'generic' };
+    }
+
+    function normalizeCalcCirkel(s) {
+        return s.replace(/,/g, '.').replace(/[*·]/g, '').replace(/pi/gi, 'π').replace(/\s+/g, '');
+    }
+
+    function checkCalcCirkelOpp(r, input) {
+        return normalizeCalcCirkel(input) === normalizeCalcCirkel(`π·${r}²`) ? { ok: true } : { ok: false, error: 'generic' };
     }
 
     function checkCalcVierkantOpp(z, input) {
@@ -396,8 +466,9 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
     }
 
     function checkAnswer(data, input) {
-        const n = parseFloat(input.replace(/,/g, '.'));
-        return !isNaN(n) && Math.abs(n - data.answer) < 0.05;
+        const n   = parseFloat(input.replace(/,/g, '.'));
+        const tol = data.fig === 'cirkel' ? 0.005 : 0.05;
+        return !isNaN(n) && Math.abs(n - data.answer) < tol;
     }
 
     // ── DATA GENERATIE ───────────────────────────────────────
@@ -406,14 +477,13 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
         const unit     = randomFrom(GEN_UNITS);
         const rotation = Math.floor(Math.random() * 72) * 5;
         const key      = `${fig}-oppervlakte`;
-        let dims, figOpts, answer, figType;
+        let dims, figOpts, answer;
 
         switch (fig) {
             case 'vierkant': {
                 const z = randomDimInt();
                 dims    = { z };
                 figOpts = { factor: 1, rotation, zijde: { value: z, unit } };
-                figType = 'vierkant';
                 answer  = round2(z * z);
                 break;
             }
@@ -422,7 +492,6 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                 do { b = randomDimInt(); h = randomDimInt(); } while (b === h);
                 dims    = { b, h };
                 figOpts = { factor: 1, rotation, breedte: { value: b, unit }, hoogte: { value: h, unit } };
-                figType = 'rechthoek';
                 answer  = round2(b * h);
                 break;
             }
@@ -433,13 +502,26 @@ function initDrillOppervlakteBerekenen(container, onComplete) {
                 const h = computeHoogte(b, z);
                 dims    = { b, z, h };
                 figOpts = { factor: 1, rotation, basis: { value: b, unit }, zijde: { value: z, unit } };
-                figType = 'parallellogram-hoogte';
                 answer  = round2(b * h);
+                break;
+            }
+            case 'driehoek-hoogte': {
+                const driehoekType = randomFrom([1, 2, 3, 4]);
+                dims    = { driehoekType, a: null, b: null, c: null, h: null, basis: null };
+                figOpts = { type: driehoekType, k: 1, unit, rotation };
+                answer  = null;
+                break;
+            }
+            case 'cirkel': {
+                const r = randomFrom([2, 3, 4, 5, 6]);
+                dims    = { r };
+                figOpts = { factor: 1, straal: { value: r, unit } };
+                answer  = round2(Math.PI * r * r);
                 break;
             }
         }
 
-        return { fig, key, unit, dims, figOpts, figType, formula: CORRECT_FORMULA[key], answer };
+        return { fig, key, unit, dims, figOpts, formula: CORRECT_FORMULA[key], answer };
     }
 
     function computeHoogte(b, z) {

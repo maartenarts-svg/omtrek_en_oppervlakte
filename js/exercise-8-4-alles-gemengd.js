@@ -1,73 +1,67 @@
 'use strict';
 
-// ============================================
-// DRILL: OMTREK EN OPPERVLAKTE BEREKENEN
-// ============================================
-// 11 vragen: 6 omtrek + 5 oppervlakte, willekeurige volgorde
-// (oppervlakte: vierkant, rechthoek, parallellogram, driehoek-hoogte, cirkel)
-// Voorbeeld + stappenplan bij de start
-// Gebaseerd op exercise-5-11-alles-gemengd
-// ============================================
+function init84AllesGemengd(container, onComplete) {
 
-function initDrillGemengd(container, onComplete) {
-
-    addCSS();
+    addCSS84();
 
     // ── CONSTANTS ────────────────────────────────────────────
 
     const SIN_A = 90 / Math.sqrt(45 * 45 + 90 * 90);
 
-    const GEN_UNITS = ['m', 'dm', 'cm', 'mm'];
-    const UNIT_OPTS = ['', 'm', 'dm', 'cm', 'mm', 'm²', 'dm²', 'cm²', 'mm²'];
-    const PARA_DIMS = [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+    const GEN_UNITS  = ['m', 'dm', 'cm', 'mm'];
+    const UNIT_OPTS  = ['', 'm', 'dm', 'cm', 'mm', 'm²', 'dm²', 'cm²', 'mm²'];
+    const PARA_DIMS  = [5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 
     const FORMULA_OPTS = [
-        { value: '',      html: '' },
-        { value: 'fP4z',  html: '4<i>z</i>' },
-        { value: 'fP2bh', html: '2(<i>b</i> + <i>h</i>)' },
-        { value: 'fPsom', html: 'som van de zijden' },
-        { value: 'fP2pr', html: '2&pi;<i>r</i>' },
-        { value: 'fAz2',  html: '<i>z</i>²' },
-        { value: 'fAbh',  html: '<i>bh</i>' },
-        { value: 'fAbh2', html: '<i>bh</i> : 2' },
-        { value: 'fApr2', html: '&pi;<i>r</i>²' }
+        { value: '',       html: '' },
+        { value: 'fP4z',   html: '4<i>z</i>' },
+        { value: 'fP2bh',  html: '2(<i>b</i> + <i>h</i>)' },
+        { value: 'fPsom',  html: 'som van de zijden' },
+        { value: 'fP2pr',  html: '2&pi;<i>r</i>' },
+        { value: 'fAz2',   html: '<i>z</i>²' },
+        { value: 'fAbh',   html: '<i>bh</i>' },
+        { value: 'fAbh2',  html: '<i>bh</i> : 2' },
+        { value: 'fApr2',  html: '&pi;<i>r</i>²' },
+        { value: 'fAd1d2', html: '<i>d</i><sub>1</sub> <i>d</i><sub>2</sub>&nbsp;:&nbsp;2' }
     ];
 
     const CORRECT_FORMULA = {
-        'vierkant-omtrek':             'fP4z',
-        'rechthoek-omtrek':            'fP2bh',
-        'ruit-omtrek':                 'fP4z',
-        'parallellogram-omtrek':       'fPsom',
-        'cirkel-omtrek':               'fP2pr',
-        'driehoek-omtrek':             'fPsom',
-        'vierkant-oppervlakte':        'fAz2',
-        'rechthoek-oppervlakte':       'fAbh',
-        'parallellogram-oppervlakte':  'fAbh',
-        'driehoek-hoogte-oppervlakte': 'fAbh2',
-        'cirkel-oppervlakte':          'fApr2'
+        'vierkant-omtrek':              'fP4z',
+        'rechthoek-omtrek':             'fP2bh',
+        'ruit-diagonalen-omtrek':       'fP4z',
+        'parallellogram-omtrek':        'fPsom',
+        'cirkel-omtrek':                'fP2pr',
+        'driehoek-hoogte-omtrek':       'fPsom',
+        'vierkant-oppervlakte':         'fAz2',
+        'rechthoek-oppervlakte':        'fAbh',
+        'parallellogram-oppervlakte':   'fAbh',
+        'driehoek-hoogte-oppervlakte':  'fAbh2',
+        'cirkel-oppervlakte':           'fApr2',
+        'ruit-diagonalen-oppervlakte':  'fAd1d2'
     };
 
-    const TOTAL_Q    = 11;
-    const MAX_POINTS = 11;
+    const TOTAL_Q    = 12;
+    const MAX_POINTS = 12;
 
     // ── STATE ────────────────────────────────────────────────
 
     const SPECS = shuffle([
-        { fig: 'vierkant',        task: 'omtrek'      },
-        { fig: 'rechthoek',       task: 'omtrek'      },
-        { fig: 'ruit',            task: 'omtrek'      },
-        { fig: 'parallellogram',  task: 'omtrek'      },
-        { fig: 'cirkel',          task: 'omtrek'      },
-        { fig: 'driehoek',        task: 'omtrek'      },
-        { fig: 'vierkant',        task: 'oppervlakte' },
-        { fig: 'rechthoek',       task: 'oppervlakte' },
-        { fig: 'parallellogram',  task: 'oppervlakte' },
-        { fig: 'driehoek-hoogte', task: 'oppervlakte' },
-        { fig: 'cirkel',          task: 'oppervlakte' }
+        { fig: 'vierkant',         task: 'omtrek'      },
+        { fig: 'rechthoek',        task: 'omtrek'      },
+        { fig: 'ruit-diagonalen',  task: 'omtrek'      },
+        { fig: 'parallellogram',   task: 'omtrek'      },
+        { fig: 'cirkel',           task: 'omtrek'      },
+        { fig: 'driehoek-hoogte',  task: 'omtrek'      },
+        { fig: 'vierkant',         task: 'oppervlakte' },
+        { fig: 'rechthoek',        task: 'oppervlakte' },
+        { fig: 'parallellogram',   task: 'oppervlakte' },
+        { fig: 'driehoek-hoogte',  task: 'oppervlakte' },
+        { fig: 'cirkel',           task: 'oppervlakte' },
+        { fig: 'ruit-diagonalen',  task: 'oppervlakte' }
     ]);
-    const questions     = SPECS.map(s => genQuestion(s.fig, s.task));
-    let currentQ        = 0;
-    let totalPoints     = 0;
+    const questions = SPECS.map(s => genQuestion(s.fig, s.task));
+    let currentQ    = 0;
+    let totalPoints = 0;
     let docClickCleanup = null;
 
     render();
@@ -94,12 +88,14 @@ function initDrillGemengd(container, onComplete) {
 
     // ── FEEDBACK HELPERS ─────────────────────────────────────
 
+    function buildFeedbackHTML(items) {
+        return `<p class="feedback-text">Dit klopt niet helemaal. Verbeter.<br>Bekijk de lijst hieronder voor meer informatie.</p>
+                <ul class="ex54-feedback-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    }
+
     function showFeedback(type, items) {
         document.getElementById('feedbackArea').innerHTML = `
-            <div class="feedback-message feedback-${type}">
-                <p class="feedback-text">Dit klopt niet helemaal. Verbeter.<br>Bekijk de lijst hieronder voor meer informatie.</p>
-                <ul class="ex54-feedback-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>
-            </div>`;
+            <div class="feedback-message feedback-${type}">${buildFeedbackHTML(items)}</div>`;
     }
 
     function showFeedbackWithNext(type, msg) {
@@ -131,7 +127,7 @@ function initDrillGemengd(container, onComplete) {
         else                          finish();
     }
 
-    // ── VOORBEELD ────────────────────────────────────────────
+    // ── VOORBEELD (vierkant oppervlakte) ─────────────────────
 
     function renderExample() {
         container.innerHTML = `
@@ -140,7 +136,7 @@ function initDrillGemengd(container, onComplete) {
                     <span class="ex33-badge">Voorbeeld</span>
                     <h3 class="question-title">Bereken de oppervlakte.</h3>
                     <p class="ex54-subtitle">Je mag ICT gebruiken voor de berekening.</p>
-                    <div class="ex33-fig" id="dg-fig-eg"></div>
+                    <div class="ex33-fig" id="ex84-fig-eg"></div>
                     <div class="ex33-stepplan">
                         <strong>Stappenplan</strong>
                         <ol>
@@ -176,7 +172,7 @@ function initDrillGemengd(container, onComplete) {
                 </div>
             </div>`;
 
-        drawFiguur(document.getElementById('dg-fig-eg'), 'vierkant', {
+        drawFiguur(document.getElementById('ex84-fig-eg'), 'vierkant', {
             factor: 1, rotation: 0,
             zijde: { value: 5, unit: 'cm' }
         });
@@ -190,11 +186,13 @@ function initDrillGemengd(container, onComplete) {
     // ── VRAGEN ───────────────────────────────────────────────
 
     function renderQuestion(n) {
-        const data     = questions[n - 1];
-        let qAttempts  = 0;
-        const isLast   = n === TOTAL_Q;
-        const isOmtrek = data.task === 'omtrek';
-        const isCirkel = data.fig === 'cirkel';
+        const data       = questions[n - 1];
+        let qAttempts    = 0;
+        const isLast     = n === TOTAL_Q;
+        const isOmtrek   = data.task === 'omtrek';
+        const isCirkel   = data.fig === 'cirkel';
+        const isDriehoek = data.fig === 'driehoek-hoogte';
+        const isRuitDiag = data.fig === 'ruit-diagonalen';
 
         const csOptsHtml = FORMULA_OPTS.map(o =>
             `<div class="ex33-cs-opt" data-value="${o.value}">${o.html || '&mdash;'}</div>`
@@ -204,7 +202,7 @@ function initDrillGemengd(container, onComplete) {
             `<option value="${u}">${u || '—'}</option>`
         ).join('');
 
-        const titleText    = isOmtrek
+        const titleText = isOmtrek
             ? (isCirkel ? `Bereken de omtrek op 0,01 ${data.unit} nauwkeurig.`       : 'Bereken de omtrek.')
             : (isCirkel ? `Bereken de oppervlakte op 0,01 ${data.unit}² nauwkeurig.` : 'Bereken de oppervlakte.');
         const pLabel       = isOmtrek ? '<i>P</i>' : '<i>A</i>';
@@ -217,29 +215,29 @@ function initDrillGemengd(container, onComplete) {
                 <div class="question-card">
                     <h3 class="question-title">${titleText}</h3>
                     <p class="ex54-subtitle">Je mag ICT gebruiken voor de berekening.</p>
-                    <div class="ex33-fig" id="dg-fig"></div>
+                    <div class="ex33-fig" id="ex84-fig"></div>
                     <div class="ex33-rows">
                         <div class="ex33-row">
                             <span class="ex33-label">Formule:</span>
                             <span class="ex33-p-label">${pLabel} =</span>
-                            <div class="ex33-cs" id="dg-cs" data-value="">
+                            <div class="ex33-cs" id="ex84-cs" data-value="">
                                 <div class="ex33-cs-display">&mdash;</div>
                                 <div class="ex33-cs-list" hidden>${csOptsHtml}</div>
                             </div>
                         </div>
                         <div class="ex33-row ex33-row-calc">
                             <span class="ex33-label">Berekening in</span>
-                            <select id="dg-unit" class="ex33-unit">${unitOptsHtml}</select>
+                            <select id="ex84-unit" class="ex33-unit">${unitOptsHtml}</select>
                             <span>:</span>
                             <span class="ex33-p-label">${pLabel} =</span>
-                            <input id="dg-calc" class="ex33-calc" type="text" autocomplete="off" placeholder="berekening">
+                            <input id="ex84-calc" class="ex33-calc" type="text" autocomplete="off" placeholder="berekening">
                             <span>${calcSep}</span>
-                            <input id="dg-ans" class="ex33-ans" type="text" autocomplete="off" placeholder="antwoord">
+                            <input id="ex84-ans" class="ex33-ans" type="text" autocomplete="off" placeholder="antwoord">
                         </div>
                         <div class="ex33-row ex33-sentence">
                             Antwoord: De ${sentenceWord} is
-                            <span id="dg-ans-disp" class="ex33-val">...</span>
-                            <span id="dg-unit-disp" class="ex33-val">...</span>.
+                            <span id="ex84-ans-disp" class="ex33-val">...</span>
+                            <span id="ex84-unit-disp" class="ex33-val">...</span>.
                         </div>
                     </div>
                     <div class="squared-helper">
@@ -254,28 +252,42 @@ function initDrillGemengd(container, onComplete) {
                 </div>
             </div>`;
 
-        const figEl = document.getElementById('dg-fig');
-        if (data.fig === 'driehoek-hoogte') {
+        const figEl = document.getElementById('ex84-fig');
+        if (isDriehoek) {
             const fd = drawFiguur(figEl, 'driehoek-hoogte', data.figOpts);
             data.dims.a     = fd.a;
             data.dims.b     = fd.b;
             data.dims.c     = fd.c;
             data.dims.h     = fd.h;
             data.dims.basis = data.dims.driehoekType === 4 ? fd.c : fd.a;
-            data.answer     = fd.oppervlakte;
+            data.answer = isOmtrek
+                ? round2(fd.a + fd.b + fd.c)
+                : fd.oppervlakte;
+        } else if (isRuitDiag) {
+            const fd = drawFiguur(figEl, 'ruit-diagonalen', { lengtes: true });
+            data.unit    = fd.eenheid;
+            data.dims.d1 = round1(fd.aLabel.value * 2);
+            data.dims.d2 = round1(fd.bLabel.value * 2);
+            data.dims.z  = fd.zLabel.value;
+            data.answer  = isOmtrek
+                ? round1(4 * data.dims.z)
+                : round3(data.dims.d1 * data.dims.d2 / 2);
         } else {
-            const figType = data.fig === 'parallellogram' ? 'parallellogram-hoogte' : data.fig;
+            const figType = data.fig === 'parallellogram'
+                ? 'parallellogram-hoogte'
+                : data.fig;
             drawFiguur(figEl, figType, data.figOpts);
         }
-        initCS('dg-cs');
 
-        const ansEl  = document.getElementById('dg-ans');
-        const unitEl = document.getElementById('dg-unit');
-        const calcEl = document.getElementById('dg-calc');
+        initCS('ex84-cs');
+
+        const ansEl  = document.getElementById('ex84-ans');
+        const unitEl = document.getElementById('ex84-unit');
+        const calcEl = document.getElementById('ex84-calc');
 
         function updateRow3() {
-            document.getElementById('dg-ans-disp').textContent  = ansEl.value.trim()  || '...';
-            document.getElementById('dg-unit-disp').textContent = unitEl.value || '...';
+            document.getElementById('ex84-ans-disp').textContent  = ansEl.value.trim()  || '...';
+            document.getElementById('ex84-unit-disp').textContent = unitEl.value || '...';
         }
         ansEl.addEventListener('input', updateRow3);
         unitEl.addEventListener('change', updateRow3);
@@ -308,7 +320,7 @@ function initDrillGemengd(container, onComplete) {
 
         document.getElementById('checkBtn').addEventListener('click', () => {
             qAttempts++;
-            const formula = document.getElementById('dg-cs').dataset.value || '';
+            const formula = document.getElementById('ex84-cs').dataset.value || '';
             const unit    = unitEl.value;
             const calc    = calcEl.value.trim();
             const ans     = ansEl.value.trim();
@@ -333,19 +345,20 @@ function initDrillGemengd(container, onComplete) {
     // ── JUISTE OPLOSSING INVULLEN ────────────────────────────
 
     function fillCorrectAnswer(data) {
-        const cs      = document.getElementById('dg-cs');
+        const cs      = document.getElementById('ex84-cs');
         const display = cs.querySelector('.ex33-cs-display');
         cs.dataset.value  = data.formula;
         display.innerHTML = FORMULA_OPTS.find(o => o.value === data.formula).html || '&mdash;';
 
         const correctUnit = data.task === 'omtrek' ? data.unit : data.unit + '²';
-        document.getElementById('dg-unit').value = correctUnit;
-        document.getElementById('dg-calc').value = buildCalcCorrect(data);
+        document.getElementById('ex84-unit').value = correctUnit;
+
+        document.getElementById('ex84-calc').value = buildCalcCorrect(data);
 
         const ansStr = String(data.answer);
-        document.getElementById('dg-ans').value             = ansStr;
-        document.getElementById('dg-ans-disp').textContent  = ansStr;
-        document.getElementById('dg-unit-disp').textContent = correctUnit;
+        document.getElementById('ex84-ans').value             = ansStr;
+        document.getElementById('ex84-ans-disp').textContent  = ansStr;
+        document.getElementById('ex84-unit-disp').textContent = correctUnit;
     }
 
     function buildCalcCorrect(data) {
@@ -353,19 +366,20 @@ function initDrillGemengd(container, onComplete) {
         if (task === 'omtrek') {
             switch (fig) {
                 case 'vierkant':
-                case 'ruit':           return `4·${dims.z}`;
-                case 'rechthoek':      return `2·(${dims.b}+${dims.h})`;
-                case 'parallellogram': return `${dims.b}+${dims.z}+${dims.b}+${dims.z}`;
-                case 'cirkel':         return `2·π·${dims.r}`;
-                case 'driehoek':       return dims.sides.join('+');
+                case 'ruit-diagonalen':   return `4·${dims.z}`;
+                case 'rechthoek':         return `2·(${dims.b}+${dims.h})`;
+                case 'parallellogram':    return `${dims.b}+${dims.z}+${dims.b}+${dims.z}`;
+                case 'cirkel':            return `2·π·${dims.r}`;
+                case 'driehoek-hoogte':   return `${dims.a}+${dims.b}+${dims.c}`;
             }
         } else {
             switch (fig) {
-                case 'vierkant':        return `${dims.z}²`;
-                case 'rechthoek':       return `${dims.b}·${dims.h}`;
-                case 'parallellogram':  return `${dims.b}·${dims.h}`;
-                case 'driehoek-hoogte': return `${dims.basis}·${dims.h}:2`;
-                case 'cirkel':          return `π·${dims.r}²`;
+                case 'vierkant':          return `${dims.z}²`;
+                case 'rechthoek':         return `${dims.b}·${dims.h}`;
+                case 'parallellogram':    return `${dims.b}·${dims.h}`;
+                case 'driehoek-hoogte':   return `${dims.basis}·${dims.h}:2`;
+                case 'cirkel':            return `π·${dims.r}²`;
+                case 'ruit-diagonalen':   return `${dims.d1}·${dims.d2}:2`;
             }
         }
     }
@@ -433,11 +447,11 @@ function initDrillGemengd(container, onComplete) {
         if (task === 'omtrek') {
             switch (fig) {
                 case 'vierkant':
-                case 'ruit':           return checkCalc4z(dims.z, input);
-                case 'rechthoek':      return checkCalcRechthoekOmtrek(dims, input);
-                case 'parallellogram': return checkCalcParaOmtrek(dims, input);
-                case 'cirkel':         return checkCalcCirkel(dims.r, input);
-                case 'driehoek':       return checkCalcDriehoek(dims.sides, input);
+                case 'ruit-diagonalen': return checkCalc4z(dims.z, input);
+                case 'rechthoek':       return checkCalcRechthoekOmtrek(dims, input);
+                case 'parallellogram':  return checkCalcParaOmtrek(dims, input);
+                case 'cirkel':          return checkCalcCirkel(dims.r, input);
+                case 'driehoek-hoogte': return checkCalcDriehoek([dims.a, dims.b, dims.c], input);
             }
         } else {
             switch (fig) {
@@ -446,6 +460,7 @@ function initDrillGemengd(container, onComplete) {
                 case 'parallellogram':  return checkCalcParaOpp(dims, input);
                 case 'driehoek-hoogte': return checkCalcDriehoekOpp(dims.basis, dims.h, dims.driehoekType, input);
                 case 'cirkel':          return checkCalcCirkelOpp(dims.r, input);
+                case 'ruit-diagonalen': return checkCalcRuitDiagOpp(dims.d1, dims.d2, input);
             }
         }
         return { ok: false, error: 'generic' };
@@ -534,6 +549,21 @@ function initDrillGemengd(container, onComplete) {
         return { ok: false, error: 'generic' };
     }
 
+    function checkCalcRuitDiagOpp(d1, d2, input) {
+        const n = normalizeCalc(input);
+        const m = n.match(/^(.+)[·](.+)[:/]2$/);
+        if (!m) {
+            if (n.match(/^(.+)[·](.+)$/)) return { ok: false, error: 'missing-division' };
+            return { ok: false, error: 'generic' };
+        }
+        const x = parseFloat(m[1]), y = parseFloat(m[2]);
+        if (isNaN(x) || isNaN(y)) return { ok: false, error: 'generic' };
+        if ((Math.abs(x-d1)<0.05 && Math.abs(y-d2)<0.05) || (Math.abs(x-d2)<0.05 && Math.abs(y-d1)<0.05)) {
+            return { ok: true };
+        }
+        return { ok: false, error: 'generic' };
+    }
+
     function checkCalcVierkantOpp(z, input) {
         const n = normalizeCalc(input);
         const m = n.match(/^(\d+\.?\d*)²$/);
@@ -572,8 +602,10 @@ function initDrillGemengd(container, onComplete) {
     }
 
     function checkAnswer(data, input) {
-        const n   = parseFloat(input.replace(/,/g, '.'));
-        const tol = data.fig === 'cirkel' ? 0.005 : 0.05;
+        const n = parseFloat(input.replace(/,/g, '.'));
+        let tol = 0.05;
+        if (data.fig === 'cirkel') tol = 0.005;
+        if (data.fig === 'ruit-diagonalen' && data.task === 'oppervlakte') tol = 0.0005;
         return !isNaN(n) && Math.abs(n - data.answer) < tol;
     }
 
@@ -601,11 +633,10 @@ function initDrillGemengd(container, onComplete) {
                 answer  = task === 'omtrek' ? round2(2 * (b + h)) : round2(b * h);
                 break;
             }
-            case 'ruit': {
-                const z = randomDimInt();
-                dims    = { z };
-                figOpts = { factor: 1, rotation, zijde: { value: z, unit } };
-                answer  = round2(4 * z);
+            case 'ruit-diagonalen': {
+                dims    = { d1: null, d2: null, z: null };
+                figOpts = { lengtes: true };
+                answer  = null;
                 break;
             }
             case 'parallellogram': {
@@ -629,15 +660,8 @@ function initDrillGemengd(container, onComplete) {
                 dims    = { r };
                 figOpts = { factor: 1, straal: { value: r, unit } };
                 answer  = task === 'omtrek'
-                    ? round2(2 * Math.PI * r)
-                    : round2(Math.PI * r * r);
-                break;
-            }
-            case 'driehoek': {
-                const sides = genTriangle();
-                dims    = { sides };
-                figOpts = { factor: 1, rotation, zijden: sides.map(v => ({ value: v, unit })) };
-                answer  = round2(sides.reduce((s, v) => s + v, 0));
+                    ? Math.round(2 * Math.PI * r * 100) / 100
+                    : Math.round(Math.PI * r * r * 100) / 100;
                 break;
             }
             case 'driehoek-hoogte': {
@@ -652,14 +676,6 @@ function initDrillGemengd(container, onComplete) {
         return { fig, task, key, unit, dims, figOpts, formula: CORRECT_FORMULA[key], answer };
     }
 
-    function genTriangle() {
-        const a = dimSmall(), b = dimSmall();
-        const minC = Math.abs(a - b) + 1;
-        const maxC = a + b - 1;
-        if (maxC <= minC) return genTriangle();
-        return [a, b, minC + Math.floor(Math.random() * (maxC - minC + 1))];
-    }
-
     function computeHoogte(b, z) {
         const hRaw     = z * SIN_A;
         const decimals = Math.max(nDec(b), nDec(z));
@@ -672,24 +688,17 @@ function initDrillGemengd(container, onComplete) {
         return i === -1 ? 0 : s.length - i - 1;
     }
 
+    function round1(n) { return Math.round(n * 10) / 10; }
     function round2(n) { return Math.round(n * 100) / 100; }
+    function round3(n) { return Math.round(n * 1000) / 1000; }
 
     // ── FINISH ───────────────────────────────────────────────
 
     function finish() {
         if (docClickCleanup) document.removeEventListener('click', docClickCleanup);
-        const score = Math.round((totalPoints / MAX_POINTS) * 100);
-        let letterScore = 'C';
-        if (score >= 90) letterScore = 'A';
-        else if (score >= 70) letterScore = 'B';
-
-        onComplete({
-            score,
-            correctAnswers: totalPoints,
-            totalQuestions: MAX_POINTS,
-            xpEarned: Math.round((score / 100) * 80),
-            letterScore
-        });
+        const score    = Math.round((totalPoints / MAX_POINTS) * 100);
+        const xpEarned = Math.round((score / 100) * 80);
+        onComplete({ score, correctAnswers: totalPoints, totalQuestions: MAX_POINTS, xpEarned });
     }
 
     // ── CUSTOM SELECT ────────────────────────────────────────
@@ -721,7 +730,6 @@ function initDrillGemengd(container, onComplete) {
     // ── HELPERS ──────────────────────────────────────────────
 
     function randomDimInt()  { return randomFrom([3, 4, 5, 6, 7, 8, 9, 10]); }
-    function dimSmall()      { return Math.floor(Math.random() * 8) + 3; }
     function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
     function shuffle(arr) {
@@ -734,102 +742,53 @@ function initDrillGemengd(container, onComplete) {
 
     // ── CSS ──────────────────────────────────────────────────
 
-    function addCSS() {
-        const guards = ['ex33-style', 'ex36-style', 'ex54-style', 'ex511-style',
-                        'drill-omtrek-berekenen-style', 'drill-gemengd-style',
-                        'drill-oppervlakte-berekenen-style'];
-        if (guards.some(id => document.getElementById(id))) return;
-
+    function addCSS84() {
+        if (['ex33-style','ex36-style','ex54-style','ex511-style','ex66-style','ex75-style','ex82-style','ex83-style','ex84-style'].some(id => document.getElementById(id))) return;
         const s = document.createElement('style');
-        s.id = 'drill-gemengd-style';
+        s.id = 'ex84-style';
         s.textContent = `
-.ex33-badge {
-    display: inline-block; background: var(--color-primary, #4a7a10);
-    color: #fff; font-size: 0.78rem; font-weight: 600;
-    padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.5rem;
-}
-.ex54-subtitle { font-size: var(--font-size-base, 0.95rem); color: #555; margin: -0.25rem 0 0.5rem; }
-.ex33-fig { display: flex; justify-content: center; min-height: 200px; margin: var(--spacing-lg, 1rem) 0; }
-.ex33-stepplan {
-    background: var(--color-light, #f0f7e0); border-radius: var(--radius-md, 8px);
-    padding: var(--spacing-md, 0.75rem) var(--spacing-lg, 1rem);
-    margin: var(--spacing-lg, 1rem) 0; font-size: var(--font-size-base, 0.95rem);
-}
+.ex33-badge { display: inline-block; background: var(--color-primary,#4a7a10); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.5rem; }
+.ex54-subtitle { font-size: var(--font-size-base,0.95rem); color: #555; margin: -0.25rem 0 0.5rem; }
+.ex33-fig { display: flex; justify-content: center; min-height: 200px; margin: var(--spacing-lg,1rem) 0; }
+.ex33-stepplan { background: var(--color-light,#f0f7e0); border-radius: var(--radius-md,8px); padding: var(--spacing-md,0.75rem) var(--spacing-lg,1rem); margin: var(--spacing-lg,1rem) 0; font-size: var(--font-size-base,0.95rem); }
 .ex33-stepplan strong { display: block; margin-bottom: 0.35rem; }
 .ex33-stepplan ol { margin: 0; padding-left: 1.25rem; }
 .ex33-stepplan li { margin: 0.2rem 0; }
-.ex33-rows { display: flex; flex-direction: column; gap: var(--spacing-md, 0.65rem); margin: var(--spacing-lg, 1rem) 0; }
-.ex33-row { display: flex; align-items: center; gap: var(--spacing-sm, 0.5rem); flex-wrap: wrap; }
+.ex33-rows { display: flex; flex-direction: column; gap: var(--spacing-md,0.65rem); margin: var(--spacing-lg,1rem) 0; }
+.ex33-row { display: flex; align-items: center; gap: var(--spacing-sm,0.5rem); flex-wrap: wrap; }
 .ex33-row-calc { flex-wrap: nowrap; overflow-x: auto; }
-.ex33-label { font-size: var(--font-size-base, 0.95rem); white-space: nowrap; }
-.ex33-p-label { font-size: var(--font-size-base, 0.95rem); white-space: nowrap; }
-.ex33-eg-field {
-    padding: 0.35rem 0.6rem; background: #f0f0f0;
-    border: 2px solid var(--color-gray, #ccc); border-radius: var(--radius-md, 6px);
-    font-size: var(--font-size-base, 0.95rem); color: #444;
-    min-height: 1.8rem; display: flex; align-items: center;
-}
+.ex33-label { font-size: var(--font-size-base,0.95rem); white-space: nowrap; }
+.ex33-p-label { font-size: var(--font-size-base,0.95rem); white-space: nowrap; }
+.ex33-eg-field { padding: 0.35rem 0.6rem; background: #f0f0f0; border: 2px solid var(--color-gray,#ccc); border-radius: var(--radius-md,6px); font-size: var(--font-size-base,0.95rem); color: #444; min-height: 1.8rem; display: flex; align-items: center; }
 .ex33-eg-unit { min-width: 36px; }
 .ex33-eg-calc { min-width: 90px; }
 .ex33-eg-ans  { min-width: 36px; }
 .ex33-cs { position: relative; display: inline-block; min-width: 210px; }
-.ex33-cs-display {
-    padding: 0.35rem 0.6rem; border: 2px solid var(--color-gray, #ccc);
-    border-radius: var(--radius-md, 6px); cursor: pointer; background: #fff;
-    font-size: var(--font-size-base, 0.95rem); min-height: 1.8rem;
-    display: flex; align-items: center; user-select: none;
-}
-.ex33-cs-display:hover { border-color: var(--color-primary, #4a7a10); }
-.ex33-cs-list {
-    position: absolute; top: calc(100% + 2px); left: 0; right: 0;
-    background: #fff; border: 2px solid var(--color-primary, #4a7a10);
-    border-radius: var(--radius-md, 6px); z-index: 200;
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
-}
-.ex33-cs-opt {
-    padding: 0.45rem 0.6rem; cursor: pointer;
-    font-size: var(--font-size-base, 0.95rem); min-height: 1.8rem;
-    display: flex; align-items: center;
-}
-.ex33-cs-opt:hover { background: var(--color-light, #f0f7e0); }
-.ex33-unit {
-    width: 68px; padding: 0.35rem 0.3rem; border: 2px solid var(--color-gray, #ccc);
-    border-radius: var(--radius-md, 6px); font-size: var(--font-size-base, 0.95rem);
-}
-.ex33-calc {
-    width: 130px; padding: 0.35rem 0.5rem; border: 2px solid var(--color-gray, #ccc);
-    border-radius: var(--radius-md, 6px); font-size: var(--font-size-base, 0.95rem);
-}
-.ex33-ans {
-    width: 70px; padding: 0.35rem 0.5rem; border: 2px solid var(--color-gray, #ccc);
-    border-radius: var(--radius-md, 6px); font-size: var(--font-size-base, 0.95rem);
-}
-.ex33-sentence { font-size: var(--font-size-base, 1rem); padding: 0.3rem 0; }
-.ex33-val { font-weight: 600; color: var(--color-primary, #4a7a10); }
+.ex33-cs-display { padding: 0.35rem 0.6rem; border: 2px solid var(--color-gray,#ccc); border-radius: var(--radius-md,6px); cursor: pointer; background: #fff; font-size: var(--font-size-base,0.95rem); min-height: 1.8rem; display: flex; align-items: center; user-select: none; }
+.ex33-cs-display:hover { border-color: var(--color-primary,#4a7a10); }
+.ex33-cs-list { position: absolute; top: calc(100% + 2px); left: 0; right: 0; background: #fff; border: 2px solid var(--color-primary,#4a7a10); border-radius: var(--radius-md,6px); z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.ex33-cs-opt { padding: 0.45rem 0.6rem; cursor: pointer; font-size: var(--font-size-base,0.95rem); min-height: 1.8rem; display: flex; align-items: center; }
+.ex33-cs-opt:hover { background: var(--color-light,#f0f7e0); }
+.ex33-unit { padding: 0.35rem 0.3rem; border: 2px solid var(--color-gray,#ccc); border-radius: var(--radius-md,6px); font-size: var(--font-size-base,0.95rem); width: 68px; }
+.ex33-calc { padding: 0.35rem 0.5rem; border: 2px solid var(--color-gray,#ccc); border-radius: var(--radius-md,6px); font-size: var(--font-size-base,0.95rem); width: 130px; }
+.ex33-ans { padding: 0.35rem 0.5rem; border: 2px solid var(--color-gray,#ccc); border-radius: var(--radius-md,6px); font-size: var(--font-size-base,0.95rem); width: 70px; }
+.ex33-sentence { font-size: var(--font-size-base,1rem); padding: 0.3rem 0; }
+.ex33-val { font-weight: 600; color: var(--color-primary,#4a7a10); }
 .ex54-feedback-list { margin: 0.3rem 0 0.4rem 1.2rem; padding: 0; }
 .ex54-feedback-list li { margin: 0.2rem 0; }
-.squared-helper {
-    display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
-    margin-bottom: 1rem; padding: 0.75rem 1rem;
-    background: #f0f7ff; border-radius: var(--radius-md, 8px); border: 1px solid #d0e4f7;
-    font-size: var(--font-size-base, 0.95rem);
-}
-.squared-insert-btn {
-    background: #2c2c2c; color: #fff; border: 1px solid #111; border-bottom: 3px solid #000;
-    border-radius: 5px; padding: 0.2rem 0.6rem; cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,.35);
-    display: inline-flex; flex-direction: column; align-items: center; line-height: 1.1; gap: 0;
-}
-.squared-insert-btn .key-top  { font-size: 0.7rem; font-weight: 600; opacity: 0.85; }
+.squared-helper { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.75rem 1rem; background: #f0f7ff; border-radius: var(--radius-md,8px); border: 1px solid #d0e4f7; font-size: var(--font-size-base,0.95rem); }
+.squared-insert-btn { background: #2c2c2c; color: #fff; border: 1px solid #111; border-bottom: 3px solid #000; border-radius: 5px; padding: 0.2rem 0.6rem; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,.35); display: inline-flex; flex-direction: column; align-items: center; line-height: 1.1; gap: 0; }
+.squared-insert-btn .key-top { font-size: 0.7rem; font-weight: 600; opacity: 0.85; }
 .squared-insert-btn .key-bottom { font-size: 1rem; font-weight: 700; }
-.squared-insert-btn:hover  { background: #3a3a3a; transform: translateY(1px); border-bottom-width: 2px; }
+.squared-insert-btn:hover { background: #3a3a3a; transform: translateY(1px); border-bottom-width: 2px; }
 .squared-insert-btn:active { transform: translateY(2px); border-bottom-width: 1px; box-shadow: none; }
-.hint-text { font-size: var(--font-size-small, 0.85rem); color: #666; margin: 0 0 var(--spacing-md, 0.75rem) 0; }
+.hint-text { font-size: var(--font-size-small,0.85rem); color: #666; margin: 0 0 var(--spacing-md,0.75rem) 0; }
+.exercise-container sub { vertical-align: baseline; position: relative; top: 0.3em; font-size: 0.7em; }
 `;
         document.head.appendChild(s);
     }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { initDrillGemengd };
+    module.exports = { init84AllesGemengd };
 }

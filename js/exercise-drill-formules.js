@@ -3,10 +3,10 @@
 // ============================================
 // DRILL: FORMULES INOEFENEN
 // ============================================
-// Q1–10:  tekstvorm  — label  → formule typen
-// Q11–20: figuurvorm — figuur → formule typen
-// Q21:    letters voor omtrek  (van exercise-5-8)
-// Q22:    letters voor oppervlakte (van exercise-5-8)
+// Q1–12:  tekstvorm  — label  → formule typen
+// Q13–24: figuurvorm — figuur → formule typen
+// Q25:    letters voor omtrek  (van exercise-5-8)
+// Q26:    letters voor oppervlakte (van exercise-5-8)
 // Afsluiting: overzicht + opslaan in Firestore
 // 1 poging per vraag  |  A = alles juist, C = fout
 // ============================================
@@ -28,6 +28,8 @@ function initDrillFormules(container, onComplete) {
         { id: 'A_rechthoek',      label: '<i>A</i><sub>rechthoek</sub>',      pLabel: '<i>A</i>', figType: 'rechthoek',             correct: ['bh', 'hb']                                   },
         { id: 'A_vierkant',       label: '<i>A</i><sub>vierkant</sub>',       pLabel: '<i>A</i>', figType: 'vierkant',              correct: ['z²']                                         },
         { id: 'A_parallellogram', label: '<i>A</i><sub>parallellogram</sub>', pLabel: '<i>A</i>', figType: 'parallellogram',        correct: ['bh', 'hb']                                   },
+        { id: 'A_driehoek',       label: '<i>A</i><sub>driehoek</sub>',       pLabel: '<i>A</i>', figType: 'driehoek-hoogte',       correct: ['bh:2', 'hb:2', 'bh/2', 'hb/2']               },
+        { id: 'A_cirkel',         label: '<i>A</i><sub>cirkel</sub>',         pLabel: '<i>A</i>', figType: 'cirkel',                correct: ['πr²', 'r²π', 'πrr', 'rπr', 'rrπ']            },
     ];
 
     const DISPLAY = {
@@ -41,9 +43,11 @@ function initDrillFormules(container, onComplete) {
         A_rechthoek:      'bh',
         A_vierkant:       'z²',
         A_parallellogram: 'bh',
+        A_driehoek:       'bh : 2',
+        A_cirkel:         'πr²',
     };
 
-    const TOTAL_Q = 22;
+    const TOTAL_Q = 26;
 
     // ── STATE ────────────────────────────────────────────────
 
@@ -53,18 +57,18 @@ function initDrillFormules(container, onComplete) {
     let currentQ    = 1;
     const textResults  = {};   // id → boolean
     const figResults   = {};   // id → boolean
-    let q21Correct  = true;
-    let q22Correct  = true;
+    let q25Correct  = true;
+    let q26Correct  = true;
 
     render();
 
     // ── NAVIGATIE ────────────────────────────────────────────
 
     function render() {
-        if      (currentQ <= 10)     renderTextQ(currentQ);
-        else if (currentQ <= 20)     renderFigureQ(currentQ - 10);
-        else if (currentQ === 21)    renderQ21();
-        else if (currentQ === 22)    renderQ22();
+        if      (currentQ <= 12)     renderTextQ(currentQ);
+        else if (currentQ <= 24)     renderFigureQ(currentQ - 12);
+        else if (currentQ === 25)    renderQ25();
+        else if (currentQ === 26)    renderQ26();
         else                         renderSummary();
     }
 
@@ -77,7 +81,7 @@ function initDrillFormules(container, onComplete) {
         const correctSoFar =
             Object.values(textResults).filter(Boolean).length +
             Object.values(figResults).filter(Boolean).length +
-            (currentQ > 21 ? (q21Correct ? 1 : 0) : 0);
+            (currentQ > 25 ? (q25Correct ? 1 : 0) : 0);
         return `
             <div class="exercise-progress">
                 <div class="progress-header">
@@ -264,7 +268,7 @@ function initDrillFormules(container, onComplete) {
             inp.disabled = true;
             document.getElementById('checkBtn').style.display = 'none';
 
-            const btnLabel = n === 10 ? 'Volgende deel →' : 'OK';
+            const btnLabel = n === 12 ? 'Volgende deel →' : 'OK';
             if (correct) {
                 showFeedbackBtn('correct', 'Correct!', btnLabel, next);
             } else {
@@ -343,7 +347,7 @@ function initDrillFormules(container, onComplete) {
             inp.disabled = true;
             document.getElementById('checkBtn').style.display = 'none';
 
-            const btnLabel = n === 10 ? 'Verder →' : 'OK';
+            const btnLabel = n === 12 ? 'Verder →' : 'OK';
             if (correct) {
                 showFeedbackBtn('correct', 'Correct!', btnLabel, next);
             } else {
@@ -379,6 +383,8 @@ function initDrillFormules(container, onComplete) {
             case 'driehoek':
                 return { factor: 1, rotation: rot,
                     zijden: [{ value: 3, unit }, { value: 4, unit }, { value: 5, unit }], ...nl };
+            case 'driehoek-hoogte':
+                return { type: pick([1,2,3,4]), k: 1, unit, rotation: rot, ...nl };
             case 'parallellogram':
                 return { factor: 1, rotation: rot,
                     basis: { value: pick([4,5,6]), unit },
@@ -393,9 +399,9 @@ function initDrillFormules(container, onComplete) {
         }
     }
 
-    // ── Q21: LETTERS OMTREK ──────────────────────────────────
+    // ── Q25: LETTERS OMTREK ──────────────────────────────────
 
-    function renderQ21() {
+    function renderQ25() {
         container.innerHTML = `
             <div class="exercise-container">
                 ${progressHTML()}
@@ -451,7 +457,7 @@ function initDrillFormules(container, onComplete) {
             }
 
             const correct = z === 'zijde' && b === 'basis' && h === 'hoogte' && r === 'straal';
-            q21Correct = correct;
+            q25Correct = correct;
 
             if (z !== 'zijde') document.getElementById('inpZ').value = 'zijde';
             if (b !== 'basis') document.getElementById('inpB').value = 'basis';
@@ -471,9 +477,9 @@ function initDrillFormules(container, onComplete) {
         });
     }
 
-    // ── Q22: LETTERS OPPERVLAKTE ─────────────────────────────
+    // ── Q26: LETTERS OPPERVLAKTE ─────────────────────────────
 
-    function renderQ22() {
+    function renderQ26() {
         container.innerHTML = `
             <div class="exercise-container">
                 ${progressHTML()}
@@ -524,7 +530,7 @@ function initDrillFormules(container, onComplete) {
             }
 
             const correct = b === 'basis' && h === 'hoogte' && z === 'zijde';
-            q22Correct = correct;
+            q26Correct = correct;
 
             if (b !== 'basis')  document.getElementById('inpB').value = 'basis';
             if (h !== 'hoogte') document.getElementById('inpH').value = 'hoogte';
@@ -554,15 +560,15 @@ function initDrillFormules(container, onComplete) {
 
         const unknown      = FORMULAS.filter(f => !knownResults[f.id]);
         const allFormulas  = unknown.length === 0;
-        const allCorrect   = allFormulas && q21Correct && q22Correct;
+        const allCorrect   = allFormulas && q25Correct && q26Correct;
         const letterScore  = allCorrect ? 'A' : 'C';
 
         // Totaalscore berekenen
         const correctCount =
             FORMULAS.filter(f => textResults[f.id]).length +
             FORMULAS.filter(f => figResults[f.id]).length +
-            (q21Correct ? 1 : 0) +
-            (q22Correct ? 1 : 0);
+            (q25Correct ? 1 : 0) +
+            (q26Correct ? 1 : 0);
         const score = Math.round((correctCount / TOTAL_Q) * 100);
 
         // Formularesultaten voor Firestore (via onComplete → drill.html)

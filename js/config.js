@@ -499,29 +499,52 @@ const LESSONS_CONFIG = {
     ]
   },
   'les-8': {
-    title: "Oppervlakte van ruit en parallellogram",
+    title: "Oppervlakte van een ruit ",
     order: 8,
     theorySection: "theorie-8",
     parts: [
-      // Voeg later toe
+      {
+        id: 'part-1',
+        type: 'video',
+        title: 'Oppervlakte van een ruit',
+        videoUrl: 'https://drive.google.com/file/d/1SRxXWdfn3jxPsy14ZodJg2mstyTCFZLc/view?usp=drive_link', // TODO: videoUrl invullen
+        xpReward: 20
+      },
+      {
+        id: 'part-2',
+        type: 'exercise',
+        title: 'Oppervlakte berekenen: ruit',
+        exerciseType: '8-2-oppervlakte-ruit',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-3',
+        type: 'exercise',
+        title: 'Gemengd: omtrek en oppervlakte ruit',
+        exerciseType: '8-3-ruit-gemengd',
+        xpReward: 60,
+        passingCriteria: {
+          scoreA: 88,
+          scoreB: 63
+        }
+      },
+      {
+        id: 'part-4',
+        type: 'exercise',
+        title: 'Alles gemengd: omtrek en oppervlakte',
+        exerciseType: '8-4-alles-gemengd',
+        xpReward: 80,
+        passingCriteria: {
+          scoreA: 85,
+          scoreB: 65
+        }
+      }
     ]
   },
-  'les-9': {
-    title: "Problemen oplossen met omtrek en oppervlakte",
-    order: 9,
-    theorySection: "theorie-9",
-    parts: [
-      // Voeg later toe
-    ]
-  },
-  'les-10': {
-    title: "Samengestelde vlakke figuren",
-    order: 10,
-    theorySection: "theorie-10",
-    parts: [
-      // Voeg later toe
-    ]
-  }
 };
 
 // DEADLINES CONFIGURATIE

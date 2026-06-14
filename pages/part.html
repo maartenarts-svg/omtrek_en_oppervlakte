@@ -369,6 +369,9 @@
     <script src="../js/exercise-7-4-cirkel-gemengd.js"></script>
     <script src="../js/exercise-6-6-alles-gemengd.js"></script>
     <script src="../js/exercise-7-5-alles-gemengd.js"></script>
+    <script src="../js/exercise-8-2-oppervlakte-ruit.js"></script>
+    <script src="../js/exercise-8-3-ruit-gemengd.js"></script>
+    <script src="../js/exercise-8-4-alles-gemengd.js"></script>
 
     <script>
         let userData = null;
@@ -669,6 +672,12 @@
                 init66AllesGemengd(container, handleExerciseComplete);
             } else if (part.exerciseType === '7-5-alles-gemengd') {
                 init75AllesGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '8-2-oppervlakte-ruit') {
+                init82OppervlakteRuit(container, handleExerciseComplete);
+            } else if (part.exerciseType === '8-3-ruit-gemengd') {
+                init83RuitGemengd(container, handleExerciseComplete);
+            } else if (part.exerciseType === '8-4-alles-gemengd') {
+                init84AllesGemengd(container, handleExerciseComplete);
             } else {
                 // Placeholder for other exercise types
                 container.innerHTML = `
